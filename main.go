@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	go backend.StartWebSockets()
 	backend.StartServer()
 }

@@ -7,7 +7,7 @@ import (
 
 func StartServer() {
 	http.HandleFunc("/newPlayer", handleNewPlayer)
-
+	http.HandleFunc("/ws", wsHandler)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			http.ServeFile(w, r, "./frontend/index.html")
@@ -29,9 +29,14 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 
 	color := r.FormValue("color")
 	name := r.FormValue("text")
-	fmt.Println("Joiner---", name, "[", color, "]")
+	if color == "" {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Println(name, "ei valinud v2rvi")
+		fmt.Fprintf(w, "vali v2rv")
+		return
+	}
+	fmt.Println("Joiner:", name, "[", color, "]")
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "--- %v [%v]", name, color)
-
 }

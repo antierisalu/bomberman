@@ -1,21 +1,28 @@
 ## Feature Request: [Title]
 
-### Summary
+### Task Overview
 
-<!-- A clear and concise description of the feature you are requesting. Explain the problem it solves or the use case it addresses. -->
+<!-- Briefly describe the task or feature to be implemented. Focus on what needs to be done. -->
 
-### Motivation
+### Acceptance Criteria
 
-<!-- Describe the reasons why this feature would be beneficial. How does it improve the project? What are the use cases or scenarios that make this feature important? -->
+<!-- Define clear, measurable, and testable criteria that must be met for this task to be considered complete. -->
 
-### Proposed Solution
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
 
-<!-- Describe the solution you'd like to see. If you have any specific ideas on how it should be implemented, include those details here. -->
+### Implementation Details
 
-### Alternatives Considered
+<!-- Provide specific technical details, guidelines, or requirements for how this task should be implemented. Mention any relevant code, components, or dependencies. -->
 
-<!-- If applicable, list any alternative solutions or features you've considered and explain why they are not sufficient. -->
+### Dependencies
 
-### Additional Context
+<!-- List any other issues, tasks, or prerequisites that are related to this feature request. Include links to relevant issues or PRs if applicable. -->
 
-<!-- Add any other context, screenshots, or examples about the feature request here. -->
+- Dependency 1
+- Dependency 2
+
+### Additional Notes
+
+<!-- Add any other information, constraints, or considerations that the assignee should keep in mind while working on this task. -->

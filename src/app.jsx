@@ -1,14 +1,17 @@
 import { LAR } from './framework';
 const App = () => {
 
-    const [allTasks, changeAllTasks] = LAR.useState([]);
-   let counter = 1
+    let counter = 0
 
-   const addOne = () => {counter++}
+   const [count, updateCount] = LAR.useState(1);
+
+   const addOne = () => {
+    counter = count + 1
+    updateCount(counter)
+}
 
 return (<body>
-            <h1 onClick={() => addOne()}>{counter}</h1>
-
+            <h1 onClick={() => addOne()}>COUNTER: {count}</h1>
 </body>)};
 
 export default App; 

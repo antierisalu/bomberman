@@ -1,5 +1,6 @@
 {
     "scripts": {
+        "init": "npm install --prefix frontend",
         "bomber": "npm run bomber --prefix frontend"
     }
 }

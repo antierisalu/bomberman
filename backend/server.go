@@ -5,18 +5,35 @@ import (
 	"net/http"
 )
 
+func enableCors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:9000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func StartServer() {
-	http.HandleFunc("/newPlayer", handleNewPlayer)
-	http.HandleFunc("/ws", wsHandler)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/newPlayer", handleNewPlayer)
+	mux.HandleFunc("/ws", wsHandler)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			http.ServeFile(w, r, "./frontend/index.html")
 		} else {
 			http.FileServer(http.Dir("./frontend")).ServeHTTP(w, r)
 		}
 	})
+	handlerWithCors := enableCors(mux)
 	fmt.Println("Bomberman is running on localhost:8080")
-	http.ListenAndServe(":8080", nil)
+
+	http.ListenAndServe(":8080", handlerWithCors)
 }
 
 func handleNewPlayer(w http.ResponseWriter, r *http.Request) {

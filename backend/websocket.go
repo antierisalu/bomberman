@@ -61,7 +61,6 @@ func reader(conn *websocket.Conn) {
 		messageType, message, err := conn.ReadMessage()
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
-			broadcast(conn, 1, Message{Type: "leave", Player: conns.m[conn]})
 			conns.Lock()
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
@@ -81,16 +80,6 @@ func reader(conn *websocket.Conn) {
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
-			//conn.WriteMessage() todo saada koikide olemasolevate playerite pos ja varv ja nimi
-			conns.Unlock()
-		case "move":
-			conns.Lock()
-			msg.Player = conns.m[conn]
-			msg.Player.Position = msg.Position
-			conns.m[conn] = msg.Player
-			conns.rm[msg.Player] = conn
-			broadcast(conn, messageType, msg) //saada teistele clientitele et liikusid
-			//log.Println(conns.m[conn].Username, "wanted to move")
 			conns.Unlock()
 		}
 	}
@@ -102,12 +91,11 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
-
 	for conn, _ := range conns.m {
-		if from == conn {
+		/* uncomment siis endale ei saada
+		if conn == from{
 			continue
-		}
-		//log.Println("sending to: ", player.Username)
+		} */
 		conn.WriteMessage(messageType, r)
 	}
 }

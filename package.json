@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "bomber": "npm run bomber --prefix frontend"
+    }
+}

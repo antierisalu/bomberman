@@ -3,7 +3,7 @@ import { StartClientWebsocket } from '../websocket.js'
 
 
 
-export const Lobby = () => {
+const Lobby = () => {
 
     const [players, updatePlayers] = LAR.useState([])
 
@@ -56,3 +56,5 @@ export const Lobby = () => {
         </div>
     )
 }
+
+export default Lobby;

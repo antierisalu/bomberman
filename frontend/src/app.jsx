@@ -10,7 +10,7 @@ const App = () => {
     return (
         <body>
             <div id="lobby">
-                {/* <Lobby /> */}
+                <Lobby />
             </div>
             <div id="game">
                 <Arena />

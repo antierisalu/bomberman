@@ -9,38 +9,39 @@ function plantBomb() {
 
 }
 
-function isMoving(movingDirection) {
-
-}
-
-export const movingDirection = null;
+export let movingDirection
 
 export const initControls = () => {
-    // key down ( aka when pressed )
+    // key down (aka when pressed)
     document.addEventListener('keydown', (event) => {
         switch (event.code) {
-            case 'KeyW' || 'ArrowUp':
-                console.log("W pressed")
-                movingDirection = "up"
+            case 'KeyW':
+            case 'ArrowUp':
+                movingDirection = "up";
+                console.log(movingDirection);
                 break;
-            case 'KeyA' || 'ArrowLeft':
-                console.log("A pressed")
-                movingDirection = "left"
+            case 'KeyA':
+            case 'ArrowLeft':
+                movingDirection = "left";
+                console.log(movingDirection);
                 break;
-            case 'KeyS' || 'ArrowDown':
-                console.log("S pressed")
-                movingDirection = "down"
+            case 'KeyS':
+            case 'ArrowDown':
+                movingDirection = "down";
+                console.log(movingDirection);
                 break;
-            case 'KeyD' || 'ArrowRight':
-                console.log("D pressed")
-                movingDirection = "right"
+            case 'KeyD':
+            case 'ArrowRight':
+                movingDirection = "right";
+                console.log(movingDirection);
                 break;
-            case 'Space' || 'KeyE' || 'Enter':
-                console.log("Space pressed")
-                plantBomb()
+            case 'Space':
+            case 'KeyE':
+            case 'Enter':
+                plantBomb();
                 break;
             default:
                 break;
         }
-    })
-}
+    });
+};

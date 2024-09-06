@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "backend": "nodemon",
+    "backend": "nodemon --config nodemon.json",
     "bomber": "concurrently  -k -n \"Frontend,Backend\" -c \"magenta.bold,cyan.bold\" \"npm run start\" \"npm run backend\""
   },
   "keywords": [],

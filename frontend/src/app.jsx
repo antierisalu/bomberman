@@ -1,6 +1,6 @@
 import { LAR } from './framework';
 import Lobby from './components/lobby';
-import Arena from './components/arena';
+import Game from './components/game';
 
 const App = () => {
 
@@ -13,7 +13,7 @@ const App = () => {
                 <Lobby />
             </div>
             <div id="game">
-                <Arena />
+                <Game />
             </div>
         </body>
     )

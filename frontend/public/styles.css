@@ -59,6 +59,13 @@ body {
   display: grid;
 }
 
+#fps {
+  position: absolute;
+  left: 999;
+  right: 0;
+  top: 0;
+}
+
 #player {
   width: 10px;
   height: 10px;

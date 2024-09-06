@@ -19,7 +19,14 @@ func enableCors(next http.Handler) http.Handler {
 	})
 }
 
+var gameState GameState
+
+func InitGame() {
+	gameState.Timer.Active = false
+}
+
 func StartServer() {
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/newPlayer", handleNewPlayer)
 	mux.HandleFunc("/ws", wsHandler)
@@ -32,7 +39,7 @@ func StartServer() {
 	})
 	handlerWithCors := enableCors(mux)
 	fmt.Println("Bomberman is running on localhost:8080")
-
+	InitGame()
 	http.ListenAndServe(":8080", handlerWithCors)
 }
 
@@ -52,7 +59,24 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "vali v2rv")
 		return
 	}
+	if gameState.hasPlayerName(name) {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Println(name, " nimi on taken")
+		fmt.Fprintf(w, "vali orginaalsem nimi")
+		return
+	}
+
 	fmt.Println("Joiner:", name, "[", color, "]")
+	// -- STAGING --
+
+	fmt.Println("ADDING PLAYER:", Player{Username: name, Color: color, Position: Position{X: 0, Y: 0}})
+	gameState.AddPlayer(Player{Username: name, Color: color, Position: Position{X: 0, Y: 0}})
+	fmt.Println("STARTING TIMER")
+	if !gameState.Timer.Active {
+		gameState.StartTimer(15)
+	}
+
+	// -- STAGING --
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "--- %v [%v]", name, color)

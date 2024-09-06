@@ -38,6 +38,7 @@ type Player struct {
 	Username string   `json:"username"`
 	Color    string   `json:"color"`
 	Position Position `json:"position"`
+	Lives    int      `json:"lives"`
 }
 
 // WS

@@ -3,6 +3,7 @@ import { StartClientWebsocket } from "./websocket.js";
 
 const App = () => {
 
+
     
     const [players, updatePlayers] = LAR.useState([])
     
@@ -14,8 +15,16 @@ const App = () => {
             method: 'POST',
             body: formData
         })
-        .then(response => response.text())
+        .then(response => {
+            if (response.status === 451) {
+                return response.text().then(errMsg => {
+                    throw new Error(errMsg);
+                });
+            }
+            return response.text();
+        })
         .then(data => {
+            console.log(data);
             // Connect ws 
             StartClientWebsocket(event.target.text.value, event.target.color.value, updatePlayers)
         })
@@ -24,11 +33,13 @@ const App = () => {
         })
     }
 
-    
+    // let amogus = <Lol></Lol>
+    // const [lobbyBool, changeLobby] = LAR.useState(true)
 
 
 
 return (<div>
+
     <div>{players}</div>
     <form onSubmit={(event)=>sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <div class="input-container">

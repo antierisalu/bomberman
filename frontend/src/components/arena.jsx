@@ -2,14 +2,14 @@ import { LAR } from "../framework"
 
 const Arena = () => {
 
-    const deltaTime = 0;
+    let [deltaTime] = LAR.useState(0)
 
     // game loop
     // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
     let lastFrameTime = 0;
-    function gameLoop(currentTime) {
+    function gameLoop(currentTime, deltaTime) {
         // Calculate delta time
-        const deltaTime = (currentTime - lastFrameTime) / 1000; // Convert to seconds
+        deltaTime = (currentTime - lastFrameTime) / 1000; // Convert to seconds
         lastFrameTime = currentTime;
 
         // Update game logic based on delta time

@@ -1,5 +1,6 @@
 import { LAR } from './framework';
 import Lobby from './components/lobby';
+import Arena from './components/arena';
 
 const App = () => {
 
@@ -9,9 +10,11 @@ const App = () => {
     return (
         <body>
             <div id="lobby">
-                <Lobby />
+                {/* <Lobby /> */}
             </div>
-            <div id="game"></div>
+            <div id="game">
+                <Arena />
+            </div>
         </body>
     )
 };

@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -31,7 +32,7 @@ type Cell struct {
 }
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
-	g.GenerateGameGrid()
+	// g.GenerateGameGrid()
 	g.SetBomb(Cell{X: 3, Y: 3}, 2)
 
 	g.Timer = Timer{
@@ -44,6 +45,7 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 			g.Timer.TimeRemaining -= 1 * time.Second
 			// dbg
 			fmt.Println("Time remaining:", g.Timer.TimeRemaining)
+			g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
@@ -77,15 +79,15 @@ func (g *GameState) UpdatePlayer(p Player) {
 
 }
 
-func (g *GameState) GenerateGameGrid() {
-	rows := 11
-	cols := 13
+func (g *GameState) GenerateGameGrid(worldTemplate [][]int) {
+	rows := len(worldTemplate)
+	cols := len(worldTemplate[0])
 	g.GameGrid = make([][]Cell, rows)
 	for i := range g.GameGrid {
 		g.GameGrid[i] = make([]Cell, cols)
 		for j := range g.GameGrid[i] {
 			g.GameGrid[i][j] = Cell{
-				BlockType: 0,
+				BlockType: worldTemplate[i][j],
 				OnFire:    false,
 				HasBomb:   false,
 			}
@@ -93,33 +95,18 @@ func (g *GameState) GenerateGameGrid() {
 	}
 }
 
-func (g *GameState) addSolidBorders() {
-	rows := len(g.GameGrid)
-	cols := len(g.GameGrid[0])
-
-	for j := 0; j < cols; j++ {
-		g.GameGrid[0][j].BlockType = 1
-		g.GameGrid[rows-1][j].BlockType = 1
-	}
-	for i := 0; i < rows; i++ {
-		g.GameGrid[i][0].BlockType = 1
-		g.GameGrid[i][cols-1].BlockType = 1
-	}
-}
-
 // For debugging
 func (g *GameState) DisplayGameBoard() {
+	var builder strings.Builder
+	builder.WriteString((fmt.Sprint(" -------------------------\n")))
 	for i := range g.GameGrid {
 		for j := range g.GameGrid[i] {
-			switch g.GameGrid[i][j].BlockType {
-			case 0:
-				fmt.Print(" 0 ")
-			case 1:
-				fmt.Print(" 1 ")
-			}
+			builder.WriteString(fmt.Sprintf(" %d", g.GameGrid[i][j].BlockType))
 		}
-		fmt.Println()
+		builder.WriteString("\n")
 	}
+	builder.WriteString((fmt.Sprint(" -------------------------\n")))
+	fmt.Print(builder.String())
 }
 
 func (g *GameState) SetBomb(c Cell, radius int) {

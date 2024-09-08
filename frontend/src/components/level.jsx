@@ -21,8 +21,8 @@ const Level = () => {
 
     return (
       <div>
-        <div class="topBoxes">{hardBox(numBoxes)}</div>
-        <div class="bottomBoxes" style={"bottom: 0"}>{hardBox(numBoxes)}</div>
+        <div class="topBoxes">{hardBox(numBoxes+4)}</div>
+        <div class="bottomBoxes" style={"bottom: 0"}>{hardBox(numBoxes+4)}</div>
         <div class="leftBoxes">{hardBox(numBoxes)}</div>
         <div class="rightBoxes" style={"right:0"}>{hardBox(numBoxes)}</div>
       </div>

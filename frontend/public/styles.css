@@ -361,7 +361,7 @@ body {
     position: relative;
     display: flex;
     height: 640px;
-    width: 640px;
+    width: 768px;
     border: solid 1px;
     flex-direction: column;
     background-color: #888;

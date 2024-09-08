@@ -336,3 +336,68 @@ body {
     letter-spacing: 1px;
     text-shadow: 0px 0px 0 #000;
   }
+
+
+  #level{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hud {
+    width: 100%;
+    display: flex;
+  }
+
+  .hudPlayers {
+    font-size: x-small;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px
+    ;
+  }
+
+  .gameArea {
+    position: relative;
+    display: flex;
+    height: 640px;
+    width: 640px;
+    border: solid 1px;
+    flex-direction: column;
+    background-color: #888;
+  }
+
+  .inGame {
+    position: absolute;
+    top: 32px;
+    left:32px;
+  }
+
+.indestructible-box {
+    width: 32px;
+    height: 32px;
+    background-image: url('./assets/hardbrick.png');
+    background-size: cover;
+}
+
+.destructible-box {
+  width: 32px;
+  height: 32px;
+  background-image: url('./assets/softbrick.png');
+  background-size: cover;
+}
+
+.empty-box {
+  width: 32px;
+  height: 32px;
+
+}
+
+.topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
+  position:absolute;
+  display: flex;
+}
+
+.leftBoxes, .rightBoxes {
+  flex-direction: column;
+}

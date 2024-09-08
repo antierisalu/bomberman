@@ -1,3 +1,5 @@
+
+
 class Player {
     constructor(gameWorldDiv, name, socket) {
         this.playerSize = 25;

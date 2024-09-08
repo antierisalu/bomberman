@@ -5,9 +5,6 @@ import Level from './components/level';
 
 const App = () => {
 
-
-
-
     return (
         <body>
             {/* <div id="lobby">

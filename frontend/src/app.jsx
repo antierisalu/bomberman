@@ -4,9 +4,6 @@ import Game from './components/game';
 
 const App = () => {
 
-
-
-
     return (
         <body>
             <div id="lobby">

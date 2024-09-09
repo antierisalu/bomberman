@@ -359,12 +359,14 @@ body {
 
   .gameArea {
     position: relative;
-    display: flex;
     height: 638px;
     width: 754px;
     border: solid 1px;
     flex-direction: column;
     background-color: #888;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+    gap: 0px;
   }
 
   .inGame {
@@ -390,7 +392,6 @@ body {
 .box-0 { /* empty */
   width: 58px;
   height: 58px;
-
 }
 
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {

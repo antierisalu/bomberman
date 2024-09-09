@@ -7,7 +7,6 @@ import { LAR } from "../framework";
 
 const Level = (prop) => {
 
-
   let players = [
     { name: "Neo", eliminations: 0 },
     { name: "Smith", eliminations: 0 },
@@ -71,72 +70,72 @@ const Level = (prop) => {
         cells.push(cell);
       }
     }
-    console.log('cells', cells);
+    console.log('cells peale loope', cells.length);
+    // updateGameState(gameState => gameState = data.gameState)
+
     return cells;
   };
 
-  let cells = null;
-  cells = initializeGrid();
-  console.log("Gamegrid", gameGrid)
+  let cells = [];
+
+  if (gameGrid !== undefined) {
+    cells = initializeGrid();
+  }
 
 
-  // for(var i = 0; i < cubes.length; i++) {
-  //   for(var j = 0; j < cubes[i].length; j++) {
-  //       console.log(cubes[i][j]);
-  //   }
-  // }
+    // for(var i = 0; i < cubes.length; i++) {
+    //   for(var j = 0; j < cubes[i].length; j++) {
+    //       console.log(cubes[i][j]);
+    //   }
+    // }
 
 
-  const OuterWalls = () => {
-    let numBoxes = 11;
+    // const OuterWalls = () => {
+    //   let numBoxes = 11;
 
-    const hardBox = (numBoxes) => {
-      const boxes = [];
-      for (let i = 0; i < numBoxes; i++) {
-        boxes.push(<div key={i} className="box-1"></div>);
-      }
-      return boxes;
-    };
+    //   const hardBox = (numBoxes) => {
+    //     const boxes = [];
+    //     for (let i = 0; i < numBoxes; i++) {
+    //       boxes.push(<div key={i} className="box-1"></div>);
+    //     }
+    //     return boxes;
+    //   };
+
+    //   return (
+    //     <div>
+    //       <div class="topBoxes">{hardBox(numBoxes + 2)}</div>
+    //       <div class="bottomBoxes" style={"bottom: 0"}>{hardBox(numBoxes + 2)}</div>
+    //       <div class="leftBoxes">{hardBox(numBoxes)}</div>
+    //       <div class="rightBoxes" style={"right:0"}>{hardBox(numBoxes)}</div>
+    //     </div>
+    //   );
+    // };
+
 
     return (
-      <div>
-        <div class="topBoxes">{hardBox(numBoxes + 2)}</div>
-        <div class="bottomBoxes" style={"bottom: 0"}>{hardBox(numBoxes + 2)}</div>
-        <div class="leftBoxes">{hardBox(numBoxes)}</div>
-        <div class="rightBoxes" style={"right:0"}>{hardBox(numBoxes)}</div>
+      <div id="level">
+        <div className="hud">
+          <div className="hudPlayers">
+            {players.map((player, index) => (
+              <div key={index} className="hudPlayer">
+                <span>{player.name}</span>: <span>{player.eliminations}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="gameArea" id="gameArea">
+          {/* <OuterWalls /> */}
+        {/* <div className="inGame"> */}
+
+          {cells.map((cell, index) => (
+            <div key={index}>
+              {cell.element}
+            </div>
+          ))}
+        </div>
+        {/* </div> */}
       </div>
     );
   };
 
-
-  const GameArea = (cells) => {
-
-    console.log("tra cells", cells.length)
-
-    return (
-      <div className="inGame">
-      </div>
-    )
-  }
-
-  return (
-    <div id="level">
-      <div className="hud">
-        <div className="hudPlayers">
-          {players.map((player, index) => (
-            <div key={index} className="hudPlayer">
-              <span>{player.name}</span>: <span>{player.eliminations}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="gameArea" id="gameArea">
-        <OuterWalls />
-        <GameArea />
-
-      </div>
-    </div>
-  );
-};
-
-export default Level;
+  export default Level;

@@ -27,10 +27,8 @@ const Level = (prop) => {
     }
   }
 
-  // console.log("gamestate in level", prop.gameState)
   const gameState = prop.gameState;
   const gameGrid = gameState.GameGrid;
-
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -44,14 +42,13 @@ const Level = (prop) => {
 
     for (let row = 0; row < GRID_LENGTH; row++) {
       for (let column = 0; column < GRID_WIDTH; column++) {
-        // TODO: initialize cell with data from websokk
-        // celli divid style
         const blockType = gameGrid[row][column].BlockType;
         const onFire = gameGrid[row][column].OnFire;
         const hasBomb = gameGrid[row][column].HasBomb;
         const dropType = gameGrid[row][column].dropType;
         const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
         const xyID = row.toString() + '-' + column.toString()
+
         switch (blockType) {
           case 0:
             cell.element = <div id={xyID} className="box-0"></div>;
@@ -66,51 +63,17 @@ const Level = (prop) => {
             cell.element = null;
             break;
         };
-        console.log("cell", cell);
         cells.push(cell);
       }
     }
-    console.log('cells peale loope', cells.length);
-    // updateGameState(gameState => gameState = data.gameState)
-
     return cells;
   };
 
   let cells = [];
 
-  if (gameGrid !== undefined) {
+  if (gameGrid) {
     cells = initializeGrid();
   }
-
-
-    // for(var i = 0; i < cubes.length; i++) {
-    //   for(var j = 0; j < cubes[i].length; j++) {
-    //       console.log(cubes[i][j]);
-    //   }
-    // }
-
-
-    // const OuterWalls = () => {
-    //   let numBoxes = 11;
-
-    //   const hardBox = (numBoxes) => {
-    //     const boxes = [];
-    //     for (let i = 0; i < numBoxes; i++) {
-    //       boxes.push(<div key={i} className="box-1"></div>);
-    //     }
-    //     return boxes;
-    //   };
-
-    //   return (
-    //     <div>
-    //       <div class="topBoxes">{hardBox(numBoxes + 2)}</div>
-    //       <div class="bottomBoxes" style={"bottom: 0"}>{hardBox(numBoxes + 2)}</div>
-    //       <div class="leftBoxes">{hardBox(numBoxes)}</div>
-    //       <div class="rightBoxes" style={"right:0"}>{hardBox(numBoxes)}</div>
-    //     </div>
-    //   );
-    // };
-
 
     return (
       <div id="level">
@@ -124,16 +87,12 @@ const Level = (prop) => {
           </div>
         </div>
         <div className="gameArea" id="gameArea">
-          {/* <OuterWalls /> */}
-        {/* <div className="inGame"> */}
-
           {cells.map((cell, index) => (
             <div key={index}>
               {cell.element}
             </div>
           ))}
         </div>
-        {/* </div> */}
       </div>
     );
   };

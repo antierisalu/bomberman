@@ -366,7 +366,6 @@ body {
     background-color: #888;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
-    gap: 0px;
   }
 
   .inGame {

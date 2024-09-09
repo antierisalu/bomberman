@@ -118,15 +118,14 @@ func (g *GameState) DisplayGameBoard() {
 }
 
 func (g *GameState) SetBomb(c Cell, radius int) {
-	c.HasBomb = true
-	g.GameGrid[c.X][c.Y].HasBomb = true
+	cell := &g.GameGrid[c.X][c.Y]
+	cell.HasBomb = true
 	fmt.Println("Bomb planted")
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
 		fmt.Println("Bomb exploded")
-		g.GameGrid[c.X][c.Y].HasBomb = false
-
+		cell.HasBomb = false
 		g.Explosion(c, radius)
 	}()
 }

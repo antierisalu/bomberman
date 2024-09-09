@@ -37,6 +37,9 @@ const Level = (prop) => {
   const GRID_WIDTH = 13;
 
   const initializeGrid = () => {
+    if (gameGrid === undefined) {
+      return []
+    }
     let cells = [];
 
 
@@ -44,22 +47,37 @@ const Level = (prop) => {
       for (let column = 0; column < GRID_WIDTH; column++) {
         // TODO: initialize cell with data from websokk
         // celli divid style
-        const cell = new Cell(row, column, gameGrid[row][column].BlockType, gameGrid[row][column].OnFire, gameGrid[row][column].HasBomb, gameGrid[row][column].dropType, null);
+        const blockType = gameGrid[row][column].BlockType;
+        const onFire = gameGrid[row][column].OnFire;
+        const hasBomb = gameGrid[row][column].HasBomb;
+        const dropType = gameGrid[row][column].dropType;
+        const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
+        const xyID = row.toString() + '-' + column.toString()
+        switch (blockType) {
+          case 0:
+            cell.element = <div id={xyID} className="box-0"></div>;
+            break;
+          case 1:
+            cell.element = <div id={xyID} className="box-1"></div>;
+            break;
+          case 2:
+            cell.element = <div id={xyID} className="box-2"></div>;
+            break;
+          default:
+            cell.element = null;
+            break;
+        };
         console.log("cell", cell);
         cells.push(cell);
       }
     }
+    console.log('cells', cells);
     return cells;
   };
 
-  if (gameGrid !== undefined) {
-    initializeGrid();
-    console.log("Gamegrid", gameGrid)
-    return
-  }
-
-
-
+  let cells = null;
+  cells = initializeGrid();
+  console.log("Gamegrid", gameGrid)
 
 
   // for(var i = 0; i < cubes.length; i++) {
@@ -67,9 +85,6 @@ const Level = (prop) => {
   //       console.log(cubes[i][j]);
   //   }
   // }
-
-  const createCellElements = () => {
-  }
 
 
   const OuterWalls = () => {
@@ -94,15 +109,12 @@ const Level = (prop) => {
   };
 
 
-  const GameArea = () => {
+  const GameArea = (cells) => {
+
+    console.log("tra cells", cells.length)
 
     return (
       <div className="inGame">
-        <div className="box-0"></div>
-        <div className="box-2"></div>
-        <div className="box-2"></div>
-        <div className="box-1"></div>
-        <div className="box-2"></div>
       </div>
     )
   }

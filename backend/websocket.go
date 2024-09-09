@@ -38,6 +38,7 @@ type Player struct {
 	Username string   `json:"username"`
 	Color    string   `json:"color"`
 	Position Position `json:"position"`
+	Lives    int      `json:"lives"`
 }
 
 // WS
@@ -91,7 +92,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
-	for conn, _ := range conns.m {
+	for conn := range conns.m {
 		/* uncomment siis endale ei saada
 		if conn == from{
 			continue

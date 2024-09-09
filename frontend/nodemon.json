@@ -2,6 +2,6 @@
     "watch": ["../"],
     "ext": "go",
     "exec": "go run ../main.go",
-    "delay": "1000",
+    "delay": "1300",
     "signal": "SIGTERM"
 }

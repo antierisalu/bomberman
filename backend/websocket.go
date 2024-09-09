@@ -22,11 +22,12 @@ type Connections struct {
 }
 
 type Message struct {
-	Type      string   `json:"type"`
-	Data      string   `json:"data"`
-	Player    Player   `json:"player"`
-	Direction string   `json:"direction"`
-	Position  Position `json:"position"`
+	Type      string    `json:"type"`
+	Data      string    `json:"data"`
+	Player    Player    `json:"player"`
+	Direction string    `json:"direction"`
+	Position  Position  `json:"position"`
+	GameState GameState `json:"gameState"`
 }
 
 type Position struct {
@@ -81,6 +82,7 @@ func reader(conn *websocket.Conn) {
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
+			gameStateUpdate(conn, gameState)  // saada initial gamestate (to client)
 			conns.Unlock()
 		}
 	}
@@ -99,4 +101,18 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 		} */
 		conn.WriteMessage(messageType, r)
 	}
+}
+
+// Sends current gamestate to specified client (ws conn)
+func gameStateUpdate(conn *websocket.Conn, gameState GameState) {
+	var newMessage Message
+	newMessage.Type = "gameStateUpdate"
+	newMessage.GameState = gameState
+
+	r, err := json.Marshal(newMessage)
+	if err != nil {
+		log.Println("gamestate update error:", err)
+	}
+
+	conn.WriteMessage(1, r)
 }

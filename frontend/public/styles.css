@@ -360,8 +360,8 @@ body {
   .gameArea {
     position: relative;
     display: flex;
-    height: 640px;
-    width: 768px;
+    height: 638px;
+    width: 754px;
     border: solid 1px;
     flex-direction: column;
     background-color: #888;
@@ -369,27 +369,27 @@ body {
 
   .inGame {
     position: absolute;
-    top: 32px;
-    left:32px;
+    top: 58px;
+    left:58px;
   }
 
-.indestructible-box {
-    width: 32px;
-    height: 32px;
+.box-1 { /* in-desctructible */
+    width: 58px;
+    height: 58px;
     background-image: url('./assets/hardbrick.png');
     background-size: cover;
 }
 
-.destructible-box {
-  width: 32px;
-  height: 32px;
+.box-2 { /* desctructible */
+  width: 58px;
+  height: 58px;
   background-image: url('./assets/softbrick.png');
   background-size: cover;
 }
 
-.empty-box {
-  width: 32px;
-  height: 32px;
+.box-0 { /* empty */
+  width: 58px;
+  height: 58px;
 
 }
 

@@ -101,6 +101,14 @@ func (g *GameState) DisplayGameBoard() {
 	builder.WriteString((fmt.Sprint(" -------------------------\n")))
 	for i := range g.GameGrid {
 		for j := range g.GameGrid[i] {
+			if g.GameGrid[i][j].HasBomb {
+				builder.WriteString(fmt.Sprintf(" %s", "B"))
+				continue
+			}
+			if g.GameGrid[i][j].OnFire {
+				builder.WriteString(fmt.Sprintf(" %s", "F"))
+				continue
+			}
 			builder.WriteString(fmt.Sprintf(" %d", g.GameGrid[i][j].BlockType))
 		}
 		builder.WriteString("\n")
@@ -111,11 +119,14 @@ func (g *GameState) DisplayGameBoard() {
 
 func (g *GameState) SetBomb(c Cell, radius int) {
 	c.HasBomb = true
+	g.GameGrid[c.X][c.Y].HasBomb = true
 	fmt.Println("Bomb planted")
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
 		fmt.Println("Bomb exploded")
+		g.GameGrid[c.X][c.Y].HasBomb = false
+
 		g.Explosion(c, radius)
 	}()
 }

@@ -24,7 +24,7 @@ type Timer struct {
 }
 
 type Cell struct {
-	BlockType int
+	BlockType int //0-air 1-breakable 2-permanent
 	OnFire    bool
 	HasBomb   bool
 	X         int
@@ -33,7 +33,7 @@ type Cell struct {
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
 	// g.GenerateGameGrid()
-	g.SetBomb(Cell{X: 3, Y: 3}, 2)
+	g.SetBomb(&g.GameGrid[3][3], 2)
 
 	g.Timer = Timer{
 		Active:        true,
@@ -90,6 +90,8 @@ func (g *GameState) GenerateGameGrid(worldTemplate [][]int) {
 				BlockType: worldTemplate[i][j],
 				OnFire:    false,
 				HasBomb:   false,
+				X:         i,
+				Y:         j,
 			}
 		}
 	}
@@ -101,6 +103,14 @@ func (g *GameState) DisplayGameBoard() {
 	builder.WriteString((fmt.Sprint(" -------------------------\n")))
 	for i := range g.GameGrid {
 		for j := range g.GameGrid[i] {
+			if g.GameGrid[i][j].HasBomb {
+				builder.WriteString(fmt.Sprintf(" %s", "X"))
+				continue
+			}
+			if g.GameGrid[i][j].OnFire {
+				builder.WriteString(fmt.Sprintf(" %s", "F"))
+				continue
+			}
 			builder.WriteString(fmt.Sprintf(" %d", g.GameGrid[i][j].BlockType))
 		}
 		builder.WriteString("\n")
@@ -109,45 +119,46 @@ func (g *GameState) DisplayGameBoard() {
 	fmt.Print(builder.String())
 }
 
-func (g *GameState) SetBomb(c Cell, radius int) {
+func (g *GameState) SetBomb(c *Cell, radius int) {
 	c.HasBomb = true
 	fmt.Println("Bomb planted")
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
 		fmt.Println("Bomb exploded")
+		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
 }
 
-func (g *GameState) Explosion(c Cell, r int) {
-	g.LightCell(c.X, c.Y)
+func (g *GameState) Explosion(c *Cell, r int) {
+	g.LightCell(c)
 
 	for i := 1; i <= r; i++ {
 		if c.X-i >= 0 { //left
-			g.LightCell(c.X-i, c.Y)
+			g.LightCell(&g.GameGrid[c.X-i][c.Y])
 		}
 		if c.X+i < len(g.GameGrid) { //right
-			g.LightCell(c.X+i, c.Y)
+			g.LightCell(&g.GameGrid[c.X+i][c.Y])
 		}
 		if c.Y-i >= 0 { //up
-			g.LightCell(c.X, c.Y-i)
+			g.LightCell(&g.GameGrid[c.X][c.Y-i])
 		}
 		if c.Y+i < len(g.GameGrid[0]) { //down
-			g.LightCell(c.X, c.Y+i)
+			g.LightCell(&g.GameGrid[c.X][c.Y+i])
+
 		}
 	}
 }
 
-func (g *GameState) LightCell(x, y int) {
-	g.GameGrid[x][y].OnFire = true
-	fmt.Println("Fire started at:", x, y)
+func (g *GameState) LightCell(c *Cell) {
+	c.OnFire = true
+	fmt.Println("Fire started at:", c.X, c.Y)
 
 	timer := time.NewTimer(1 * time.Second)
 	go func() {
 		<-timer.C
-		g.GameGrid[x][y].OnFire = false
-		fmt.Println("Fire ended at:", x, y)
-
+		c.OnFire = false
+		fmt.Println("Fire ended at:", c.X, c.Y)
 	}()
 }

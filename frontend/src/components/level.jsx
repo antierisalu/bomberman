@@ -39,7 +39,8 @@ const Level = (prop) => {
       for (let column = 0; column < GRID_LENGTH; column++) {
         cells.push(
           // TODO: initialize cell with data from websokk
-          // new Cell(i, j, 0, false, false)
+          // celli divid style
+          new Cell(i, j, 0, false, false, droptype, element)
         );
       }
     }

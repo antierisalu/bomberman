@@ -17,6 +17,9 @@ export function StartClientWebsocket(username, color, updatePlayers) {
                 console.log(data.player.username, "just joined, here is their data:",data)
                 updatePlayers((arr =>{arr.push(data.player.username); return arr}))
                 break;
+            case "gameStateUpdate":
+                console.log("GAMESTATE:", data.gameState)
+                break;
         }
     }
 }

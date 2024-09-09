@@ -92,7 +92,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
-	for conn, _ := range conns.m {
+	for conn := range conns.m {
 		/* uncomment siis endale ei saada
 		if conn == from{
 			continue

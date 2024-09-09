@@ -22,7 +22,7 @@ const Game = () => {
             updateFPS(FPS => FPS = Math.round((frame / ((currentFrameTime - startTime) / 1000))));
             startTime = currentFrameTime;
             frame = 0;
-        }
+        }2
         lastFrameTime = currentFrameTime;
 
         updateGame(deltaTime);

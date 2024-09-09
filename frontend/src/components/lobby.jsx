@@ -3,10 +3,9 @@ import { StartClientWebsocket } from '../websocket.js'
 
 
 
-const Lobby = () => {
+const Lobby = (prop) => {
 
-    const [players, updatePlayers] = LAR.useState([])
-
+    console.log("gamestate state", prop.gamestate)
 
     function sendJoinRequest(event) {
         event.preventDefault();
@@ -18,7 +17,7 @@ const Lobby = () => {
             .then(response => response.text())
             .then(data => {
                 // Connect ws
-                StartClientWebsocket(event.target.text.value, event.target.color.value, updatePlayers)
+                StartClientWebsocket(event.target.text.value, event.target.color.value, prop.updatePlayers, prop.updateGamestate)
             })
             .catch(error => {
                 console.log("Error:", error);
@@ -27,7 +26,7 @@ const Lobby = () => {
 
     return (
         <div>
-            <div>{players}</div>
+            <div>{prop.players}</div>
             <form onSubmit={(event) => sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="input-container">
                     <input class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />

@@ -6,6 +6,8 @@ import { LAR } from "../framework";
 
 
 const Level = () => {
+
+
   let players = [
     { name: "Neo", eliminations: 0 },
     { name: "Smith", eliminations: 0 },
@@ -13,12 +15,13 @@ const Level = () => {
     { name: "Trinity", eliminations: 0 },
   ];
   class Cell {
-    constructor(x, y, blockType, onFire, hasBomb, element) {
+    constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
       this.x = x;
       this.y = y;
       this.blockType = blockType;
       this.onFire = onFire;
       this.hasBomb = hasBomb;
+      this.dropType = dropType;
       this.element = element;
     }
   }

@@ -5,21 +5,22 @@ import Level from './components/level';
 
 
 
+
 const App = () => {
     const [players, updatePlayers] = LAR.useState([])
-    const [gamestate, updateGamestate] = LAR.useState([])
+    const [gameState, updateGameState] = LAR.useState([])
 
 
     return (
         <body>
             <div id="lobby">
-                <Lobby players={players} updatePlayers={updatePlayers} gamestate={gamestate} updateGamestate={updateGamestate}/>
+                <Lobby players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div>
-            {/* <div id="game">
-                <Game />
-            </div> */}
-            {/* <div id="game">
-                <Level />
+            <div id="game">
+                <Game players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
+            </div>
+            {/* <div id="waitingScreen">
+                <WaitingScreen />
             </div> */}
         </body>
     )

@@ -51,11 +51,11 @@ body {
 }
 
 #game {
-  z-index: 10;
+  z-index: 3;
 }
 
 #level {
-  z-index: 11;
+  z-index: 4;
   display: grid;
 }
 

@@ -5,7 +5,7 @@ import { LAR } from "../framework";
     // initialize level (box class, loopib need labi, genereerib divid)
 
 
-const Level = () => {
+const Level = (prop) => {
 
 
   let players = [
@@ -14,6 +14,8 @@ const Level = () => {
     { name: "Mr. Reagan", eliminations: 2 },
     { name: "Trinity", eliminations: 0 },
   ];
+
+
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
       this.x = x;
@@ -25,6 +27,8 @@ const Level = () => {
       this.element = element;
     }
   }
+
+  console.log("gamestate in level", prop.gameState)
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -91,6 +95,7 @@ const Level = () => {
       <div className="gameArea" id="gameArea">
         <OuterWalls />
         <GameArea />
+
       </div>
     </div>
   );

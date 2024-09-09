@@ -5,10 +5,15 @@ import { StartClientWebsocket } from '../websocket.js'
 
 const Lobby = (prop) => {
 
-    console.log("gamestate state", prop.gamestate)
+    // console.log("gamestate state", prop.gameState)
 
     function sendJoinRequest(event) {
         event.preventDefault();
+
+        // temporary hack hide after submit
+        document.getElementById('lobby').style.display = "none";
+
+
         const formData = new FormData(event.target);
         fetch('http://localhost:8080/newPlayer', {
             method: 'POST',
@@ -17,7 +22,7 @@ const Lobby = (prop) => {
             .then(response => response.text())
             .then(data => {
                 // Connect ws
-                StartClientWebsocket(event.target.text.value, event.target.color.value, prop.updatePlayers, prop.updateGamestate)
+                StartClientWebsocket(event.target.text.value, event.target.color.value, prop.updatePlayers, prop.updateGameState)
             })
             .catch(error => {
                 console.log("Error:", error);

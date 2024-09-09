@@ -2,7 +2,7 @@ import { LAR } from './framework';
 
 
 
-export function StartClientWebsocket(username, color, updatePlayers, updateGamestate, ) {
+export function StartClientWebsocket(username, color, updatePlayers, updateGameState) {
     console.log("test")
     const ws = new WebSocket("ws://localhost:8080/ws")
     ws.onopen = function (event) {
@@ -20,7 +20,7 @@ export function StartClientWebsocket(username, color, updatePlayers, updateGames
                 updatePlayers((arr =>{arr.push(data.player.username); return arr}))
                 break;
             case "gameStateUpdate":
-                updateGamestate(gamestate => gamestate = data.gameState)
+                updateGameState(gameState => gameState = data.gameState)
                 break;
         }
     }

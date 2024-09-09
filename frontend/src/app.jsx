@@ -16,8 +16,11 @@ const App = () => {
             <div id="lobby">
                 <Lobby players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div>
-            <div id="game">
+            {/* <div id="game">
                 <Game players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
+            </div> */}
+            <div id="level">
+                <Level players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div>
             {/* <div id="waitingScreen">
                 <WaitingScreen />

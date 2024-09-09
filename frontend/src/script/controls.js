@@ -12,6 +12,7 @@ function plantBomb() {
 export let movingDirection
 
 export const initControls = () => {
+    console.log("initControls");
     // key down (aka when pressed)
     document.addEventListener('keydown', (event) => {
         switch (event.code) {

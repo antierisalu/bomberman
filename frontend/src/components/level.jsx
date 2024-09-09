@@ -1,8 +1,8 @@
 import { LAR } from "../framework";
 
-    // cell class ( X Y blocktype onfire, hasbomb )
+// cell class ( X Y blocktype onfire, hasbomb )
 
-    // initialize level (box class, loopib need labi, genereerib divid)
+// initialize level (box class, loopib need labi, genereerib divid)
 
 
 const Level = (prop) => {
@@ -28,24 +28,49 @@ const Level = (prop) => {
     }
   }
 
-  console.log("gamestate in level", prop.gameState)
+  // console.log("gamestate in level", prop.gameState)
+  const gameState = prop.gameState;
+  const gameGrid = gameState.GameGrid;
+
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
 
   const initializeGrid = () => {
     let cells = [];
-    for (let row = 0; row < GRID_WIDTH; row++) {
-      for (let column = 0; column < GRID_LENGTH; column++) {
-        cells.push(
-          // TODO: initialize cell with data from websokk
-          // celli divid style
-          new Cell(i, j, 0, false, false, droptype, element)
-        );
+
+
+    for (let row = 0; row < GRID_LENGTH; row++) {
+      for (let column = 0; column < GRID_WIDTH; column++) {
+        // TODO: initialize cell with data from websokk
+        // celli divid style
+        const cell = new Cell(row, column, gameGrid[row][column].BlockType, gameGrid[row][column].OnFire, gameGrid[row][column].HasBomb, gameGrid[row][column].dropType, null);
+        console.log("cell", cell);
+        cells.push(cell);
       }
     }
     return cells;
   };
+
+  if (gameGrid !== undefined) {
+    initializeGrid();
+    console.log("Gamegrid", gameGrid)
+    return
+  }
+
+
+
+
+
+  // for(var i = 0; i < cubes.length; i++) {
+  //   for(var j = 0; j < cubes[i].length; j++) {
+  //       console.log(cubes[i][j]);
+  //   }
+  // }
+
+  const createCellElements = () => {
+  }
+
 
   const OuterWalls = () => {
     let numBoxes = 11;

@@ -1,9 +1,12 @@
 import { LAR } from "../framework"
 import { StartClientWebsocket } from '../websocket.js'
+import { initControls } from "../script/controls.js"
 
 
 
 const Lobby = (prop) => {
+
+    initControls();
 
     // console.log("gamestate state", prop.gameState)
 

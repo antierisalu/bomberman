@@ -22,7 +22,7 @@ const Game = (prop) => {
             updateFPS(FPS => FPS = Math.round((frame / ((currentFrameTime - startTime) / 1000))));
             startTime = currentFrameTime;
             frame = 0;
-        }2
+        };
         lastFrameTime = currentFrameTime;
 
         updateGame(deltaTime);
@@ -31,11 +31,10 @@ const Game = (prop) => {
         requestAnimationFrame(GameLoop);
     }
     GameLoop();
-    initControls();
+
 
     return (
         <div>
-            <Level players={prop.players} updatePlayers={prop.updatePlayers} gameState={prop.gameState} updateGameState={prop.updateGameState}/>
             <h1 id="fps">FPS: {FPS}</h1>
         </div>
     )

@@ -12,13 +12,13 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
+	CheckOrigin:     func(r *http.Request) bool { return true }, ////sellega kinnitab millised võtab vastu
 }
 
 type Connections struct {
 	sync.RWMutex
 	m  map[*websocket.Conn]Player
-	rm map[Player]*websocket.Conn
+	rm map[Player]*websocket.Conn //sama sisu mis eelmises aga key ja value on vastupidi
 }
 
 type Message struct {
@@ -27,6 +27,7 @@ type Message struct {
 	Player    Player   `json:"player"`
 	Direction string   `json:"direction"`
 	Position  Position `json:"position"`
+	//tee siia väljad chat jaoks
 }
 
 type Position struct {
@@ -46,6 +47,7 @@ var conns = Connections{
 	rm: make(map[Player]*websocket.Conn),
 }
 
+// võtab tava requesti ja teeb selle websoketiks
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -85,9 +87,11 @@ func reader(conn *websocket.Conn) {
 	}
 }
 
+// LUKAS TEGI SELLE, KUI PUCCIS SIIS TEAB KES TEGI
+// saadab kõikidele klientidele sõnumid välja
 func broadcast(from *websocket.Conn, messageType int, message Message) {
 	message.Player = conns.m[from]
-	r, err := json.Marshal(message)
+	json, err := json.Marshal(message)
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
@@ -96,6 +100,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 		if conn == from{
 			continue
 		} */
-		conn.WriteMessage(messageType, r)
+		//saadab välja sõnumid kõikidele slice of baitidena
+		conn.WriteMessage(messageType, json)
 	}
 }

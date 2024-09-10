@@ -1,4 +1,5 @@
 import { LAR } from "../framework";
+import { Player } from "../script/player";
 
 // cell class ( X Y blocktype onfire, hasbomb )
 
@@ -7,12 +8,12 @@ import { LAR } from "../framework";
 
 const Level = (prop) => {
 
-  let players = [
-    { name: "Neo", eliminations: 0 },
-    { name: "Smith", eliminations: 0 },
-    { name: "Mr. Reagan", eliminations: 2 },
-    { name: "Trinity", eliminations: 0 },
-  ];
+  // let players = [
+  //   { name: "Neo", eliminations: 0 },
+  //   { name: "Smith", eliminations: 0 },
+  //   { name: "Mr. Reagan", eliminations: 2 },
+  //   { name: "Trinity", eliminations: 0 },
+  // ];
 
 
   class Cell {
@@ -69,10 +70,29 @@ const Level = (prop) => {
     return cells;
   };
 
+  const initializePlayers = () => {
+    // TODO create instances of class Player
+
+    const gameWorldDiv = document.getElementById("gameArea");
+    const element1 = <div className="player" id="player1"></div>
+    const element2 = <div className="player" id="player2"></div>
+    const socket = "??";
+    const player1 = new Player(element1, gameWorldDiv, "Neo", socket);
+    const player2 = new Player(element2, gameWorldDiv, "Anti", socket);
+
+    let players = [];
+    players.push(player1);
+    players.push(player2);
+
+    return players
+  };
+
   let cells = [];
+  let players = [];
 
   if (gameGrid) {
     cells = initializeGrid();
+    players = initializePlayers();
   }
 
     return (
@@ -90,6 +110,11 @@ const Level = (prop) => {
           {cells.map((cell, index) => (
             <div key={index}>
               {cell.element}
+            </div>
+          ))}
+          {players.map((player, index) => (
+            <div key={index}>
+              {player.element}
             </div>
           ))}
         </div>

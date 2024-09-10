@@ -23,10 +23,7 @@ body {
     border: 5px green inset;
 }
 
-.player {
-    background-color: red;
-    border-radius: 50%;
-}
+
 .name {
     position: relative;
     width: max-content;
@@ -66,11 +63,6 @@ body {
   top: 0;
 }
 
-#player {
-  width: 10px;
-  height: 10px;
-  background-color: #000;
-}
 /* #username-field {
     font-size: x-large;
     width: 200px;
@@ -373,6 +365,25 @@ body {
     top: 58px;
     left:58px;
   }
+
+.player {
+    position: absolute;
+
+    width: 58px;
+    height: 58px;
+    background-image: url('./assets/front.png');
+    background-size: cover;
+}
+
+#player1 {
+  left: 116px; /* magic */
+  top: 58px; /* magic */
+}
+
+#player2 {
+  left: 58px; /* magic */
+  top: 58px; /* magic */
+}
 
 .box-1 { /* in-desctructible */
     width: 58px;

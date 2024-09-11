@@ -1,13 +1,22 @@
 import { LAR } from "../framework"
 import { StartClientWebsocket } from '../websocket.js'
+import { initControls } from "../script/controls.js"
 
 
-const Lobby = () => {
 
-    const [players, updatePlayers] = LAR.useState([])
+const Lobby = (prop) => {
+
+    initControls();
+
+    // console.log("gamestate state", prop.gameState)
 
     function sendJoinRequest(event) {
         event.preventDefault();
+
+        // temporary hack hide after submit
+        document.getElementById('lobby').style.display = "none";
+
+
         const formData = new FormData(event.target);
         fetch('http://localhost:8080/newPlayer', {
             method: 'POST',
@@ -16,7 +25,7 @@ const Lobby = () => {
             .then(response => response.text())
             .then(data => {
                 // Connect ws
-                StartClientWebsocket(event.target.text.value, event.target.color.value, updatePlayers)
+                StartClientWebsocket(event.target.text.value, event.target.color.value, prop.updatePlayers, prop.updateGameState)
             })
             .catch(error => {
                 console.log("Error:", error);
@@ -25,7 +34,7 @@ const Lobby = () => {
 
     return (
         <div>
-            <div>{players}</div>
+            <div>{prop.players}</div>
             <form onSubmit={(event) => sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="input-container">
                     <input class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />

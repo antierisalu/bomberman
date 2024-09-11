@@ -23,10 +23,7 @@ body {
     border: 5px green inset;
 }
 
-.player {
-    background-color: red;
-    border-radius: 50%;
-}
+
 .name {
     position: relative;
     width: max-content;
@@ -49,6 +46,23 @@ body {
     background-color: rgb(62, 62, 62);
     border: 3px solid gray;
 }
+
+#game {
+  z-index: 3;
+}
+
+#level {
+  z-index: 4;
+  display: grid;
+}
+
+#fps {
+  position: absolute;
+  left: 999;
+  right: 0;
+  top: 0;
+}
+
 /* #username-field {
     font-size: x-large;
     width: 200px;
@@ -82,32 +96,32 @@ body {
       vertical-align: middle;
       white-space: nowrap;
     }
-    
+
     .button-50:focus {
       text-decoration: none;
     }
-    
+
     .button-50:hover {
       text-decoration: none;
     }
-    
+
     .button-50:active {
       box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
       outline: 0;
     }
-    
+
     .button-50:not([disabled]):active {
       box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
       transform: translate(2px, 2px);
     }
-    
+
     @media (min-width: 768px) {
       .button-50 {
         padding: 12px 50px;
       }
     }
 
-/* From Uiverse.io by 0xnihilism */ 
+/* From Uiverse.io by 0xnihilism */
 .input {
     width: 100%;
     max-width: 200px;
@@ -123,26 +137,26 @@ body {
     transition: all 0.3s ease;
     box-shadow: 8px 8px 0 #000;
   }
-  
+
   .input::placeholder {
     color: #888;
   }
-  
+
   .input:hover {
     transform: translate(-4px, -4px);
     box-shadow: 12px 12px 0 #000;
   }
-  
+
   .input:focus {
     background-color: #000;
     color: #fff;
     border-color: #ffffff;
   }
-  
+
   .input:focus::placeholder {
     color: #fff;
   }
-  
+
   @keyframes typing {
     from {
       width: 0;
@@ -151,20 +165,20 @@ body {
       width: 100%;
     }
   }
-  
+
   @keyframes blink {
     50% {
       border-color: transparent;
     }
   }
-  
+
   .input:focus::after {
     content: "|";
     position: absolute;
     right: 10px;
     animation: blink 0.7s step-end infinite;
   }
-  
+
   .input:valid {
     animation: typing 2s steps(30, end);
   }
@@ -173,7 +187,7 @@ body {
     width: 100%;
     max-width: 270px;
   }
-  
+
   .input {
     width: 100%;
     height: 60px;
@@ -188,26 +202,26 @@ body {
     transition: all 0.3s ease;
     box-shadow: 8px 8px 0 #000;
   }
-  
+
   .input::placeholder {
     color: #888;
   }
-  
+
   .input:hover {
     transform: translate(-4px, -4px);
     box-shadow: 12px 12px 0 #000;
   }
-  
+
   .input:focus {
     background-color: #010101;
     color: #fff;
     border-color: #d6d9dd;
   }
-  
+
   .input:focus::placeholder {
     color: #fff;
   }
-  
+
   @keyframes shake {
     0% {
       transform: translateX(0);
@@ -225,11 +239,11 @@ body {
       transform: translateX(0);
     }
   }
-  
+
   .input:focus {
     animation: shake 0.5s ease-in-out;
   }
-  
+
   @keyframes glitch {
     0% {
       transform: none;
@@ -284,11 +298,11 @@ body {
       opacity: 1;
     }
   }
-  
+
   .input:not(:placeholder-shown) {
     animation: glitch 1s linear infinite;
   }
-  
+
 /*   .input-container::after {
     content: "|";
     position: absolute;
@@ -298,20 +312,103 @@ body {
     color: #000;
     animation: blink 0.7s step-end infinite;
   } */
-  
+
   @keyframes blink {
     50% {
       opacity: 0;
     }
   }
-  
+
   .input:focus + .input-container::after {
     color: #fff;
   }
-  
+
   .input:not(:placeholder-shown) {
     font-weight: bold;
     letter-spacing: 1px;
     text-shadow: 0px 0px 0 #000;
   }
-  
+
+
+  #level{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hud {
+    width: 100%;
+    display: flex;
+  }
+
+  .hudPlayers {
+    font-size: x-small;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px
+    ;
+  }
+
+  .gameArea {
+    position: relative;
+    height: 638px;
+    width: 754px;
+    border: solid 1px;
+    flex-direction: column;
+    background-color: #888;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+  }
+
+  .inGame {
+    position: absolute;
+    top: 58px;
+    left:58px;
+  }
+
+.player {
+    position: absolute;
+
+    width: 58px;
+    height: 58px;
+    background-image: url('./assets/front.png');
+    background-size: cover;
+}
+
+#player1 {
+  left: 116px; /* magic */
+  top: 58px; /* magic */
+}
+
+#player2 {
+  left: 58px; /* magic */
+  top: 58px; /* magic */
+}
+
+.box-1 { /* in-desctructible */
+    width: 58px;
+    height: 58px;
+    background-image: url('./assets/hardbrick.png');
+    background-size: cover;
+}
+
+.box-2 { /* desctructible */
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/softbrick.png');
+  background-size: cover;
+}
+
+.box-0 { /* empty */
+  width: 58px;
+  height: 58px;
+}
+
+.topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
+  position:absolute;
+  display: flex;
+}
+
+.leftBoxes, .rightBoxes {
+  flex-direction: column;
+}

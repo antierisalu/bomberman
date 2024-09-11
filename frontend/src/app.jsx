@@ -1,9 +1,14 @@
 import { LAR } from './framework';
 import Lobby from './components/lobby';
 import Chat from './components/chat';
+import Game from './components/game';
+import Level from './components/level';
+    const [messages, setMessages] = LAR.useState([]);
 
 const App = () => {
-    const [messages, setMessages] = LAR.useState([]);
+    const [players, updatePlayers] = LAR.useState([])
+    const [gameState, updateGameState] = LAR.useState([])
+
     
     return (
         <body>
@@ -11,9 +16,17 @@ const App = () => {
                 <Chat messages={messages} setMessages={setMessages} /> 
             </div>
           {/*   <div id="lobby">
-                <Lobby />
+                <Lobby players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
+            </div>
+            <div id="game">
+                <Game players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
+            </div>
+            <div id="level">
+                <Level players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div> */}
-            <div id="game"></div>
+            {/* <div id="waitingScreen">
+                <WaitingScreen />
+            </div> */}
         </body>
     )
 };

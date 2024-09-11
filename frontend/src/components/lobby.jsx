@@ -2,11 +2,9 @@ import { LAR } from "../framework"
 import { StartClientWebsocket } from '../websocket.js'
 
 
-
 const Lobby = () => {
 
     const [players, updatePlayers] = LAR.useState([])
-
 
     function sendJoinRequest(event) {
         event.preventDefault();

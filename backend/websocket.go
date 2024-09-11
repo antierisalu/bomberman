@@ -27,7 +27,8 @@ type Message struct {
 	Player    Player   `json:"player"`
 	Direction string   `json:"direction"`
 	Position  Position `json:"position"`
-	//tee siia väljad chat jaoks
+	Messages  string   `json:"messages"`
+	//kasuta seda strukti ja salvesta frontendis tulev asi variabli ja saada kõikidele klientidele edasi fronti
 }
 
 type Position struct {
@@ -81,6 +82,18 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
+			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
+			conns.Unlock()
+		case "chat_message":
+			for usrConn := range conns.m {
+				err := usrConn.WriteMessage(1, Messages)
+				if err != nil {
+					log.Println("writemessage:", err)
+				}
+			}
+			conns.Lock()
+			conns.m[conn] = msg.Messages
+			conns.rm[msg.Messages] = conn
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
 			conns.Unlock()
 		}

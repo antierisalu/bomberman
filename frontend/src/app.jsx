@@ -3,11 +3,12 @@ import Lobby from './components/lobby';
 import Chat from './components/chat';
 
 const App = () => {
-
+    const [messages, setMessages] = LAR.useState([]);
+    
     return (
         <body>
             <div id="chat">
-                <Chat /> 
+                <Chat messages={messages} setMessages={setMessages} /> 
             </div>
           {/*   <div id="lobby">
                 <Lobby />

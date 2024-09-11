@@ -1,32 +1,25 @@
 import { LAR } from "../framework";
-import { StartClientWebsocket } from '../websocket.js'
+import { StartClientWebsocket, ws } from '../websocket.js'
 
 const Chat = () => {
     console.log("türakott")
-    // Step 1: Create state for messages and current input message
-    const [messages, setMessages] = LAR.useState([]);   // Holds all received chat messages
-    const [currentMessage, setCurrentMessage] = LAR.useState(""); // Stores the current input message
+    const [messages, setMessages] = LAR.useState([]);  
+    // const [currentMessage, setCurrentMessage] = LAR.useState(""); 
 
-    // Step 2: WebSocket connection (on mount)
-    const ws = new WebSocket("ws://localhost:8080/ws");
 
-    ws.onmessage = () => {
-        console.log("vanavitt")
-    }
-    
-    // Step 3: Listen to incoming messages
-    ws.onmessage = (event) => {
+/*     ws.onmessage = (event) => {
         console.log("Received message:", event.data);
         try{
         const messageData = JSON.parse(event.data);
+        console.log('loll',messageData)
         // Update messages array with the new message
         setMessages((prevMessages) => [...prevMessages, messageData]);
         } catch (e) {
             console.error("Error parsing message data:", e)
         }
-    };
+    }; */
 
-    // Step 4: Handle sending messages
+    // Handle sending messages
     const sendMessage = (event) => {
         event.preventDefault(); // Prevent form reload
         const message = {
@@ -38,7 +31,6 @@ const Chat = () => {
         setCurrentMessage(""); // Clear input after sending
     };
 
-    // Step 5: Render UI
     return (
         <div style="padding: 10px; border: 1px solid black; width: 300px;">
             <div style="height: 300px; width: overflow-y: scroll; background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc;"> 

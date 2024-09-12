@@ -336,9 +336,6 @@ function useEffect(effect, deps) {
 function updateHostComponent(fiber) {
     if (!fiber.dom) {
         fiber.dom = createDom(fiber)
-        if (fiber.props.ref){
-            fiber.props.ref.current = fiber.dom
-        }
     }
     reconcileChildren(fiber, fiber.props.children)
 }

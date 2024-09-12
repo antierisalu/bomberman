@@ -7,8 +7,13 @@ const App = () => {
     
     const [players, updatePlayers] = LAR.useState([])
     LAR.useEffect(()=>{
-        console.log("teretere")
-    })
+        fetch('https://jsonplaceholder.typicode.com/todos/1')
+      .then(response => response.json())
+      .then(json => updatePlayers(()=>{    
+        players.push(json.title);
+        return players
+      }))
+    },[])
     
 
     function sendJoinRequest(event) {

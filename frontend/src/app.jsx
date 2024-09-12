@@ -6,6 +6,9 @@ const App = () => {
 
     
     const [players, updatePlayers] = LAR.useState([])
+    LAR.useEffect(()=>{
+        console.log("teretere")
+    })
     
 
     function sendJoinRequest(event) {

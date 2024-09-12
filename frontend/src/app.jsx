@@ -3,11 +3,12 @@ import Lobby from './components/lobby';
 import Chat from './components/chat';
 import Game from './components/game';
 import Level from './components/level';
-    const [messages, setMessages] = LAR.useState([]);
+
 
 const App = () => {
     const [players, updatePlayers] = LAR.useState([])
     const [gameState, updateGameState] = LAR.useState([])
+    const [messages, setMessages] = LAR.useState([]);
 
     
     return (
@@ -15,7 +16,7 @@ const App = () => {
             <div id="chat">
                 <Chat messages={messages} setMessages={setMessages} /> 
             </div>
-          {/*   <div id="lobby">
+           {/*  <div id="lobby">
                 <Lobby players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div>
             <div id="game">
@@ -23,8 +24,8 @@ const App = () => {
             </div>
             <div id="level">
                 <Level players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
-            </div> */}
-            {/* <div id="waitingScreen">
+            </div>
+            <div id="waitingScreen">
                 <WaitingScreen />
             </div> */}
         </body>

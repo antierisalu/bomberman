@@ -4,24 +4,13 @@ import { StartClientWebsocket, ws } from '../websocket.js'
 const Chat = () => {
     console.log("türakott")
     const [messages, setMessages] = LAR.useState([]);  
-    // const [currentMessage, setCurrentMessage] = LAR.useState(""); 
-
-
-/*     ws.onmessage = (event) => {
-        console.log("Received message:", event.data);
-        try{
-        const messageData = JSON.parse(event.data);
-        console.log('loll',messageData)
-        // Update messages array with the new message
-        setMessages((prevMessages) => [...prevMessages, messageData]);
-        } catch (e) {
-            console.error("Error parsing message data:", e)
-        }
-    }; */
+    const [currentMessage, setCurrentMessage] = LAR.useState(""); 
 
     // Handle sending messages
     const sendMessage = (event) => {
         event.preventDefault(); // Prevent form reload
+
+        if (ws && currentMessage) {
         const message = {
             type: "chat_message", 
             content: currentMessage // current message input by the user
@@ -29,7 +18,20 @@ const Chat = () => {
         ws.send(JSON.stringify(message)); // Send message over WebSocket
 
         setCurrentMessage(""); // Clear input after sending
+        }   
     };
+
+    if (ws) {
+        //gets triggered whenever a message is received from websocket server
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            // Handle chat messages from the server
+            if (data.type === "chat_message") {
+                setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+            }
+        };
+    }
 
     return (
         <div style="padding: 10px; border: 1px solid black; width: 300px;">
@@ -38,7 +40,7 @@ const Chat = () => {
                     <div key={index} style="padding: 5px; border-bottom: 1px solid #ddd;">
                         {msg.content}
                     </div>
-                ))} {/* Render chat messages */}
+                ))}
             </div>
             <form onSubmit={sendMessage} style="margin-top: 10px;">
                 <input 

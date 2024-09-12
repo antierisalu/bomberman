@@ -1,8 +1,7 @@
 import { LAR } from './framework';
 
 
-
-export const ws = '';
+export let ws = null;
 
 export function StartClientWebsocket(username, color, updatePlayers, updateGameState, ) {
     console.log("test")
@@ -25,7 +24,8 @@ export function StartClientWebsocket(username, color, updatePlayers, updateGameS
                 updateGameState(gameState => gameState = data.gameState)
                 break;
             case "chat_message":
-                setMessages((prevMessages) => [...prevMessages, data.]);    
+                console.log('nahui')
+                setMessages((prevMessages) => [...prevMessages, { content: data.content, sender: data.sender}]);
         }
     }
 }

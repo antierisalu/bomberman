@@ -87,7 +87,7 @@ func reader(conn *websocket.Conn) {
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
 			gameStateUpdate(conn, gameState)  // saada initial gamestate (to client)
 			conns.Unlock()
-		case "chat_message":
+			/* case "chat_message":
 			for usrConn := range conns.m {
 				err := usrConn.WriteMessage(1, Messages)
 				if err != nil {
@@ -97,21 +97,9 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 			conns.m[conn] = msg.Messages
 			conns.rm[msg.Messages] = conn
-			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
-			gameStateUpdate(conn, gameState)  // saada initial gamestate (to client)
-			conns.Unlock()
-		case "chat_message":
-			for usrConn := range conns.m {
-				err := usrConn.WriteMessage(1, Messages)
-				if err != nil {
-					log.Println("writemessage:", err)
-				}
-			}
-			conns.Lock()
-			conns.m[conn] = msg.Messages
-			conns.rm[msg.Messages] = conn
-			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
-			conns.Unlock()
+			broadcast(conn, messageType, msg)
+			gameStateUpdate(conn, gameState)
+			conns.Unlock() */
 		}
 	}
 }
@@ -132,20 +120,6 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 		//saadab välja sõnumid kõikidele slice of baitidena
 		conn.WriteMessage(messageType, json)
 	}
-}
-
-// Sends current gamestate to specified client (ws conn)
-func gameStateUpdate(conn *websocket.Conn, gameState GameState) {
-	var newMessage Message
-	newMessage.Type = "gameStateUpdate"
-	newMessage.GameState = gameState
-
-	r, err := json.Marshal(newMessage)
-	if err != nil {
-		log.Println("gamestate update error:", err)
-	}
-
-	conn.WriteMessage(1, r)
 }
 
 // Sends current gamestate to specified client (ws conn)

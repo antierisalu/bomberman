@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -28,7 +29,7 @@ type Message struct {
 	Direction string    `json:"direction"`
 	Position  Position  `json:"position"`
 	GameState GameState `json:"gameState"`
-	Messages  string    `json:"messages"`
+	Content   string    `json:"content"`
 	//kasuta seda strukti ja salvesta frontendis tulev asi variabli ja saada kõikidele klientidele edasi fronti
 }
 
@@ -87,19 +88,9 @@ func reader(conn *websocket.Conn) {
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
 			gameStateUpdate(conn, gameState)  // saada initial gamestate (to client)
 			conns.Unlock()
-			/* case "chat_message":
-			for usrConn := range conns.m {
-				err := usrConn.WriteMessage(1, Messages)
-				if err != nil {
-					log.Println("writemessage:", err)
-				}
-			}
-			conns.Lock()
-			conns.m[conn] = msg.Messages
-			conns.rm[msg.Messages] = conn
+		case "chat_message":
+			fmt.Println("received chat message", msg.Content)
 			broadcast(conn, messageType, msg)
-			gameStateUpdate(conn, gameState)
-			conns.Unlock() */
 		}
 	}
 }

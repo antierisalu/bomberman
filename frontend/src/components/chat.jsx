@@ -2,7 +2,6 @@ import { LAR } from "../framework";
 import { StartClientWebsocket, ws } from '../websocket.js'
 
 const Chat = () => {
-    console.log("türakott")
     const [messages, setMessages] = LAR.useState([]);  
     const [currentMessage, setCurrentMessage] = LAR.useState(""); 
 
@@ -10,14 +9,20 @@ const Chat = () => {
     const sendMessage = (event) => {
         event.preventDefault(); // Prevent form reload
 
-        if (ws && currentMessage) {
+        console.log('WebSocket readyState:', ws.readyState);
+        console.log('Current Message:', currentMessage);
+
+        if (ws && ws.readyState === 1 && currentMessage) {
         const message = {
             type: "chat_message", 
             content: currentMessage // current message input by the user
         };
         ws.send(JSON.stringify(message)); // Send message over WebSocket
+        console.log('message sent:',message)
 
         setCurrentMessage(""); // Clear input after sending
+        }else {
+            console.log('websoket katki või sõnum tühi')
         }   
     };
 
@@ -25,9 +30,9 @@ const Chat = () => {
         //gets triggered whenever a message is received from websocket server
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            
             // Handle chat messages from the server
             if (data.type === "chat_message") {
+                console.log('receiced chat_message', data)
                 setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
             }
         };

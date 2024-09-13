@@ -16,7 +16,6 @@ const Lobby = (prop) => {
         // temporary hack hide after submit
         document.getElementById('lobby').style.display = "none";
 
-
         const formData = new FormData(event.target);
         fetch('http://localhost:8080/newPlayer', {
             method: 'POST',

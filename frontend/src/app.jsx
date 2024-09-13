@@ -3,13 +3,9 @@ import Lobby from './components/lobby';
 import Game from './components/game';
 import Level from './components/level';
 
-
-
-
 const App = () => {
     const [players, updatePlayers] = LAR.useState([])
     const [gameState, updateGameState] = LAR.useState([])
-
 
     return (
         <body>

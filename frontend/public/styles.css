@@ -368,28 +368,33 @@ body {
 
 .player {
     position: absolute;
-
-    width: 58px;
+    width: 50px;
     height: 58px;
-    background-image: url('./assets/front.png');
-    background-size: cover;
 }
 
 #player0 {
   left: 58px; /* magic */
   top: 58px; /* magic */
+  background-image: url('./assets/front.png');
+  background-size: cover;
 }
 #player1 {
   right: 58px; /* magic */
   top: 58px; /* magic */
+  background-image: url('./assets/left.png');
+  background-size: cover;
 }
 #player2 {
   left: 58px; /* magic */
   bottom: 58px; /* magic */
+  background-image: url('./assets/right.png');
+  background-size: cover;
 }
 #player3 {
   right: 58px; /* magic */
   bottom: 58px; /* magic */
+  background-image: url('./assets/back.png');
+  background-size: cover;
 }
 
 .box-1 { /* in-desctructible */

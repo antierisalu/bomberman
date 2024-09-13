@@ -2,14 +2,16 @@ package backend
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 )
 
 type GameState struct {
-	Timer    Timer
-	Players  []Player
-	GameGrid [][]Cell
+	Timer       Timer
+	Players     []Player
+	GameGrid    [][]Cell
+	SpawnPoints []Position
 }
 
 /* type Player struct { juba olemas websocket.gos
@@ -24,11 +26,18 @@ type Timer struct {
 }
 
 type Cell struct {
-	BlockType int //0-air 1-breakable 2-permanent
+	BlockType int //0-air 1-permanent 2-breakable
 	OnFire    bool
 	HasBomb   bool
 	X         int
 	Y         int
+	DropType  int //-1 = nothing
+	/*
+		 === DROP TYPES ===
+			0 - SPEED UP
+			1 - MORE BOMBS
+			2 - BLAST RADIUS
+	*/
 }
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
@@ -75,11 +84,49 @@ func (g *GameState) hasPlayerName(name string) bool {
 	return false
 }
 
+// Might be inefficient (Seperate to individual updates movement, lives, etc?) ***
 func (g *GameState) UpdatePlayer(p Player) {
-
+	for idx, player := range g.Players {
+		if player.Username == p.Username {
+			g.Players[idx] = p
+			return
+		}
+	}
 }
 
-func (g *GameState) GenerateGameGrid(worldTemplate [][]int) {
+func (g *GameState) GenerateGameGrid() {
+	/*
+	   === BLOCK TYPES ===
+	   0 - AIR
+	   1 - UNBREAKABLE
+	   2 - BREAKABLE
+	   8 - FREE SPACE *MUST BE TYPE 0*
+	   9 - SPAWN POINT
+	*/
+
+	worldTemplate := [][]int{
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 9, 8, 0, 0, 0, 0, 0, 0, 0, 8, 9, 1},
+		{1, 8, 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1},
+		{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+		{1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 8, 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1},
+		{1, 9, 8, 0, 0, 0, 0, 0, 0, 0, 8, 9, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	}
+	//
+
+	for i := 1; i < 10; i++ {
+		for j := 1; j < 12; j++ {
+			if worldTemplate[i][j] == 0 && rand.Intn(5) > 0 { // if air block and hits 80% chance, place breakable block
+				worldTemplate[i][j] = 2
+			}
+		}
+	}
+	//
 	rows := len(worldTemplate)
 	cols := len(worldTemplate[0])
 	g.GameGrid = make([][]Cell, rows)
@@ -92,6 +139,15 @@ func (g *GameState) GenerateGameGrid(worldTemplate [][]int) {
 				HasBomb:   false,
 				X:         i,
 				Y:         j,
+				DropType:  -1,
+			}
+			if g.GameGrid[i][j].BlockType == 2 { // if breakable block, roll a drop for that block
+				g.GameGrid[i][j].RollDrop()
+			}
+
+			// Append gamestate.Spawnpoint if spawnpoint is encountered
+			if worldTemplate[i][j] == 9 {
+				g.SpawnPoints = append(g.SpawnPoints, Position{X: float32(i), Y: float32(j)})
 			}
 		}
 	}
@@ -100,7 +156,7 @@ func (g *GameState) GenerateGameGrid(worldTemplate [][]int) {
 // For debugging
 func (g *GameState) DisplayGameBoard() {
 	var builder strings.Builder
-	builder.WriteString((fmt.Sprint(" -------------------------\n")))
+	builder.WriteString((" -------------------------\n"))
 	for i := range g.GameGrid {
 		for j := range g.GameGrid[i] {
 			if g.GameGrid[i][j].HasBomb {
@@ -115,7 +171,7 @@ func (g *GameState) DisplayGameBoard() {
 		}
 		builder.WriteString("\n")
 	}
-	builder.WriteString((fmt.Sprint(" -------------------------\n")))
+	builder.WriteString((" -------------------------\n"))
 	fmt.Print(builder.String())
 }
 
@@ -152,6 +208,9 @@ func (g *GameState) Explosion(c *Cell, r int) {
 }
 
 func (g *GameState) LightCell(c *Cell) {
+	if c.BlockType == 1 { // dont light unbreakable blocks
+		return
+	}
 	c.OnFire = true
 	fmt.Println("Fire started at:", c.X, c.Y)
 
@@ -159,6 +218,22 @@ func (g *GameState) LightCell(c *Cell) {
 	go func() {
 		<-timer.C
 		c.OnFire = false
+		if c.BlockType == 2 { // if breakable block, turn it into air
+			c.BlockType = 0
+		}
 		fmt.Println("Fire ended at:", c.X, c.Y)
 	}()
+}
+
+/*
+	 === DROP TYPES ===
+		0 - SPEED UP
+		1 - MORE BOMBS
+		2 - BLAST RADIUS
+*/
+func (c *Cell) RollDrop() {
+
+	if rand.Intn(3) == 0 {
+		c.DropType = rand.Intn(3)
+	}
 }

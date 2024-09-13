@@ -36,10 +36,18 @@ type Position struct {
 }
 
 type Player struct {
-	Username string   `json:"username"`
-	Color    string   `json:"color"`
-	Position Position `json:"position"`
-	Lives    int      `json:"lives"`
+	Username     string       `json:"username"`
+	Color        string       `json:"color"`
+	Position     Position     `json:"position"`
+	Lives        int          `json:"lives"`
+	Speed        float32      `json:"speed"`
+	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
+}
+
+type PowerUpLevel struct {
+	Speed  int `json:"speed"`
+	Bombs  int `json:"bombs"`
+	Flames int `json:"flames"`
 }
 
 // WS

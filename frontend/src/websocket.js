@@ -1,7 +1,6 @@
 import { LAR } from './framework';
 
 
-
 export function StartClientWebsocket(username, color, updatePlayers, updateGameState) {
     console.log("test")
     const ws = new WebSocket("ws://localhost:8080/ws")

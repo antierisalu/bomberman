@@ -375,14 +375,21 @@ body {
     background-size: cover;
 }
 
-#player1 {
-  left: 116px; /* magic */
-  top: 58px; /* magic */
-}
-
-#player2 {
+#player0 {
   left: 58px; /* magic */
   top: 58px; /* magic */
+}
+#player1 {
+  right: 58px; /* magic */
+  top: 58px; /* magic */
+}
+#player2 {
+  left: 58px; /* magic */
+  bottom: 58px; /* magic */
+}
+#player3 {
+  right: 58px; /* magic */
+  bottom: 58px; /* magic */
 }
 
 .box-1 { /* in-desctructible */

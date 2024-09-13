@@ -1,20 +1,12 @@
 import { LAR } from "../framework";
 import { Player } from "../script/player";
 
+
 // cell class ( X Y blocktype onfire, hasbomb )
 
 // initialize level (box class, loopib need labi, genereerib divid)
 
-
 const Level = (prop) => {
-
-  // let players = [
-  //   { name: "Neo", eliminations: 0 },
-  //   { name: "Smith", eliminations: 0 },
-  //   { name: "Mr. Reagan", eliminations: 2 },
-  //   { name: "Trinity", eliminations: 0 },
-  // ];
-
 
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
@@ -39,7 +31,6 @@ const Level = (prop) => {
       return []
     }
     let cells = [];
-
 
     for (let row = 0; row < GRID_LENGTH; row++) {
       for (let column = 0; column < GRID_WIDTH; column++) {
@@ -70,31 +61,55 @@ const Level = (prop) => {
     return cells;
   };
 
+  // const initializePlayers = () => {
+  //   // TODO create instances of class Player
+
+  //   console.log(prop.players)
+
+  //   const gameWorldDiv = document.getElementById("gameArea");
+  //   const element1 = <div className="player" id="player1"></div>
+  //   const element2 = <div className="player" id="player2"></div>
+  //   const socket = "??";
+  //   const player1 = new Player(element1, gameWorldDiv, "Neo", socket);
+  //   const player2 = new Player(element2, gameWorldDiv, "Anti", socket);
+
+  //   let players = [];
+  //   players.push(player1);
+  //   players.push(player2);
+
+  //   return players
+
+  // };
+
   const initializePlayers = () => {
-    // TODO create instances of class Player
+
+    const playerNames = prop.players;
+
+    console.log("initPlayers", playerNames);
 
     const gameWorldDiv = document.getElementById("gameArea");
-    const element1 = <div className="player" id="player1"></div>
-    const element2 = <div className="player" id="player2"></div>
-    const socket = "??";
-    const player1 = new Player(element1, gameWorldDiv, "Neo", socket);
-    const player2 = new Player(element2, gameWorldDiv, "Anti", socket);
+    // let players = [];
 
-    let players = [];
-    players.push(player1);
-    players.push(player2);
+    playerNames.forEach((playerName, index) => {
+        const element = <div className="player" id={"player" + index}></div> // id from 0-3 places the players to separate corners in css
+        const socket = "??"; 
+        const player = new Player(element, gameWorldDiv, playerName, socket);
+        players.push(player);
+    });
 
-    return players
-  };
+    console.log("initPlayers2", playerNames);
+
+    return players;
+};
 
   let cells = [];
-  let players = [];
+  let players = []
 
   if (gameGrid) {
     cells = initializeGrid();
     players = initializePlayers();
   }
-
+    
     return (
       <div id="level">
         <div className="hud">

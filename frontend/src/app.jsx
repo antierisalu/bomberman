@@ -19,9 +19,7 @@ const App = () => {
             <div id="game">
                 <Game players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
             </div>
-            <div id="level">
-                <Level players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/>
-            </div>
+
             {/* <div id="waitingScreen">
                 <WaitingScreen />
             </div> */}

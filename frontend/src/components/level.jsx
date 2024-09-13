@@ -1,6 +1,4 @@
 import { LAR } from "../framework";
-import { Player } from "../script/player";
-
 
 // cell class ( X Y blocktype onfire, hasbomb )
 
@@ -25,6 +23,8 @@ const Level = (prop) => {
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
+
+  let cells = []; // why duplicates
 
   const initializeGrid = () => {
     if (gameGrid === undefined) {
@@ -61,54 +61,16 @@ const Level = (prop) => {
     return cells;
   };
 
-
-  const initializePlayers = () => {
-
-    const playerNames = prop.players;
-
-    console.log("initPlayers", playerNames);
-
-    const gameWorldDiv = document.getElementById("gameArea");
-    // let players = [];
-
-    playerNames.forEach((playerName, index) => {
-        const element = <div className="player" id={"player" + index}></div> // id from 0-3 places the players to separate corners in css
-        const socket = "??"; 
-        const player = new Player(element, gameWorldDiv, playerName, socket);
-        players.push(player);
-    });
-
-    return players;
-};
-
-  let cells = [];
-  let players = []
-
   if (gameGrid) {
     cells = initializeGrid();
-    players = initializePlayers();
   }
     
     return (
       <div id="level">
-        <div className="hud">
-          <div className="hudPlayers">
-            {players.map((player, index) => (
-              <div key={index} className="hudPlayer">
-                <span>{player.name}</span>: <span>{player.eliminations}</span>
-              </div>
-            ))}
-          </div>
-        </div>
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>
               {cell.element}
-            </div>
-          ))}
-          {players.map((player, index) => (
-            <div key={index}>
-              {player.element}
             </div>
           ))}
         </div>

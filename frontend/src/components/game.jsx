@@ -3,6 +3,7 @@ import Level from "./level";
 import { renderGame } from "../script/render";
 import { updateGame } from "../script/update";
 import { initControls } from "../script/controls";
+import Players from "./players";
 
 const Game = (prop) => {
 
@@ -36,6 +37,10 @@ const Game = (prop) => {
     return (
         <div>
             <h1 id="fps">FPS: {FPS}</h1>
+            <div id="level">
+                <Level gameState={prop.gameState} updateGameState={prop.updateGameState}/>
+                <Players players={prop.players} updatePlayers={prop.updatePlayers}/>
+            </div>
         </div>
     )
 }

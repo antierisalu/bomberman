@@ -61,25 +61,6 @@ const Level = (prop) => {
     return cells;
   };
 
-  // const initializePlayers = () => {
-  //   // TODO create instances of class Player
-
-  //   console.log(prop.players)
-
-  //   const gameWorldDiv = document.getElementById("gameArea");
-  //   const element1 = <div className="player" id="player1"></div>
-  //   const element2 = <div className="player" id="player2"></div>
-  //   const socket = "??";
-  //   const player1 = new Player(element1, gameWorldDiv, "Neo", socket);
-  //   const player2 = new Player(element2, gameWorldDiv, "Anti", socket);
-
-  //   let players = [];
-  //   players.push(player1);
-  //   players.push(player2);
-
-  //   return players
-
-  // };
 
   const initializePlayers = () => {
 
@@ -96,8 +77,6 @@ const Level = (prop) => {
         const player = new Player(element, gameWorldDiv, playerName, socket);
         players.push(player);
     });
-
-    console.log("initPlayers2", playerNames);
 
     return players;
 };

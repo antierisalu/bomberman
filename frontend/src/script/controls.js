@@ -37,7 +37,7 @@ export const initControls = () => {
                 break;
             case 'Space':
             case 'KeyE':
-            case 'Enter':
+            // case 'Enter':
                 plantBomb();
                 break;
             default:

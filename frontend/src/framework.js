@@ -6,6 +6,20 @@ function createElement(type, props, ...children) {
         }
         return [...acc, child];
     }, []);
+
+    //validate children
+    flattenedChildren.forEach(child=>{
+
+        if (child && !child.type && typeof child === 'object'){
+            const propsString = Object.entries(props).map(([key, value]) => {
+                return `${key}="${value}"`;
+            }).join(' '); // Join them with spaces between each pair
+            let errormessage=(`<${type} ${propsString} >${children}</${type}>`)
+            console.error(flattenedChildren)
+            throw new Error("Te ei tohi panna objecteid JSXi sisse textina! "+errormessage+" object on konsoolis ka");
+        }
+    })
+
     return {
         type,
         props: {
@@ -290,6 +304,8 @@ function useEffect(effect, deps) {
     hookIndex++
 }
 function updateHostComponent(fiber) {
+    if (fiber.props === undefined){
+    }
     if (!fiber.dom) {
         fiber.dom = createDom(fiber)
     }

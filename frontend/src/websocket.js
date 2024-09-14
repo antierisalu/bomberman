@@ -9,26 +9,19 @@ export function StartClientWebsocket(username, color, updatePlayers) {
         console.log("Websocket connected!");
     }
 
-    ws.onmessage = function (event) { //see kirjutatakse arena.jsxis yle
-        console.log('ws.js')
+    ws.onmessage = function (event) { //see method kirjutatakse lobby.jsxis yle kui inimene vajutab play 
         const data = JSON.parse(event.data);
-            console.log(data)
         switch (data.type) {
-            case "join":
-                console.log("YOU JOINED")
-                updatePlayers((arr =>{arr.push(data.player.username); return arr}))
-                break;
-            case "player_list":
-                console.log("Updating players with:", data.players);
+            case "player_list"://backendilt saadud player list. clienti info on clientInfo stateis App tasemel
+                console.log("Initial player list:", data.players);
+                updatePlayers(data.players);
                 break;
         }
     }
 }
-
+//laseb teistel componentitel ws sonumeid saata
 export const sendMessage = (message) => {
-    // message format { type: "type", data: "data", username:username }
     if (ws && ws.readyState === WebSocket.OPEN) {
-        // console.log("Sending message:", message);
         ws.send(message);
     }
 };

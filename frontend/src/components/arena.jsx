@@ -2,20 +2,18 @@ import { LAR } from "../framework"
 import { sendMessage, ws } from "../websocket";
 
 const Arena = (props) => {
-    console.log('statechange')
 
-    const [nuss, nussime] = LAR.useState(0)
+    const [nuss, nussime] = LAR.useState(0)//n2ide useStatest
 
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
         ws.onmessage = function (event) {
-            console.log('arena.jsx')
             const data = JSON.parse(event.data);
                 console.log(data)
         }
     }
     LAR.useEffect(()=>{
         console.log("init players")
-    },[])//tyhi [] teeb 
+    },[])//tyhi [] teeb ainult esimene kord
 
     return (
         <div>

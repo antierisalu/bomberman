@@ -80,8 +80,8 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
-			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
-			broadcastPlayerList()
+			conn.WriteMessage(messageType, message) //saada endale tagasi et joinisid
+			broadcastPlayerList()                   //saadab koigile playerlisti
 			conns.Unlock()
 		case "ping":
 			var reply Message

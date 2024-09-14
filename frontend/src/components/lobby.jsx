@@ -7,8 +7,6 @@ import { sendMessage, ws } from "../websocket";
 
 const Lobby = (props) => {
 
-    console.log('statechange')
-
     function sendJoinRequest(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -28,30 +26,21 @@ const Lobby = (props) => {
 
     if (ws){ // see kirjutab yle websocket.js'i ws.onmessage methodi
         ws.onmessage = function (event) {
-            console.log('lobby.jsx')
             const data = JSON.parse(event.data);
-            console.log(data)
             switch (data.type) {
-                case "join":
-                    console.log(data.player.username, "just joined")
-                    props.updatePlayers((arr =>{arr.push(data.player.username); return arr}))
-                    break;
-                case "player_list":
+                case "player_list": //backendilt saadud player list (saadab iga kord kui keegi joinib). clienti info on clientInfo stateis App tasemel
                     console.log("Updating players with:", data.players);
+                    props.updatePlayers(data.players)
                     break;
                 }
             }
         }
 
-    LAR.useEffect(()=>{
-        console.log(props.players)
-    },[props.players])
-
     return (
         <div>
             {props.isRegistered ? 
             <div>
-                <div className="players">{props.players}</div>
+                <div className="players">{props.players.map(elem=><div>{elem.username}</div>)}</div>
                 <button onClick={()=>props.sendToGame(true)}>GO TO GAME</button>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 

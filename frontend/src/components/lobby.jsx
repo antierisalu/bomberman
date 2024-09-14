@@ -40,7 +40,7 @@ const Lobby = (props) => {
         <div>
             {props.isRegistered ? 
             <div>
-                <div className="players">{props.players.map(elem=><div>{elem.username}</div>)}</div>
+                <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
                 <button onClick={()=>props.sendToGame(true)}>GO TO GAME</button>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 

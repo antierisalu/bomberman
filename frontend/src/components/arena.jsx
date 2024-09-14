@@ -1,40 +1,28 @@
 import { LAR } from "../framework"
+import { sendMessage, ws } from "../websocket";
 
-const Arena = () => {
+const Arena = (props) => {
+    console.log('statechange')
 
-    const deltaTime = 0;
+    const [nuss, nussime] = LAR.useState(0)
 
-    // game loop
-    // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
-    let lastFrameTime = 0;
-    function gameLoop(currentTime) {
-        // Calculate delta time
-        const deltaTime = (currentTime - lastFrameTime) / 1000; // Convert to seconds
-        lastFrameTime = currentTime;
-
-        // Update game logic based on delta time
-        updateGameLogic(deltaTime);
-        renderGame();
-
-        // Request the next frame
-        requestAnimationFrame(gameLoop);
+    if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
+        ws.onmessage = function (event) {
+            console.log('arena.jsx')
+            const data = JSON.parse(event.data);
+                console.log(data)
+        }
     }
-    function updateGameLogic(deltaTime) {
-        // Update game objects based on delta time
-        // e.g., move objects, change their properties, etc.
-        //   player.x += player.speed * deltaTime;
-    }
-    function renderGame() {
-        console.log("running")
-        LAR.render(<Arena />, document.body)
-
-    }
-    // Start the game loop
-    requestAnimationFrame(gameLoop);
+    LAR.useEffect(()=>{
+        console.log("init players")
+    },[])//tyhi [] teeb 
 
     return (
         <div>
-            <h1>DeltaTime: {deltaTime}</h1>
+            <h1>ARENA</h1>
+            <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
+            <button onClick={()=>nussime(nuss+1)}>Nussi</button>
+            {nuss}
         </div>
     )
 }

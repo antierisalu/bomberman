@@ -27,6 +27,7 @@ type Message struct {
 	Player    Player   `json:"player"`
 	Direction string   `json:"direction"`
 	Position  Position `json:"position"`
+	Players   []Player `json:"players"`
 }
 
 type Position struct {
@@ -73,14 +74,19 @@ func reader(conn *websocket.Conn) {
 			log.Println("unmarshal:", err)
 			continue
 		}
-
+		log.Println(msg)
 		switch msg.Type {
 		case "join":
 			conns.Lock()
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
 			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
+			broadcastPlayerList()
 			conns.Unlock()
+		case "ping":
+			var reply Message
+			reply.Type = "pong"
+			broadcast(conn, messageType, reply)
 		}
 	}
 }
@@ -97,5 +103,24 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 			continue
 		} */
 		conn.WriteMessage(messageType, r)
+	}
+}
+
+func broadcastPlayerList() {
+	var players []Player
+	for _, player := range conns.m {
+		players = append(players, player)
+	}
+	msg := Message{
+		Type:    "player_list",
+		Players: players,
+	}
+	r, err := json.Marshal(msg)
+	if err != nil {
+		log.Println("broadcastPlayerList error:", err)
+		return
+	}
+	for conn := range conns.m {
+		conn.WriteMessage(websocket.TextMessage, r)
 	}
 }

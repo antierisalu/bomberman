@@ -38,8 +38,7 @@ const Game = (prop) => {
         <div>
             <h1 id="fps">FPS: {FPS}</h1>
             <div id="level">
-                <Level gameState={prop.gameState} updateGameState={prop.updateGameState}/>
-                <Players players={prop.players} updatePlayers={prop.updatePlayers}/>
+                <Level players={prop.players} updatePlayers={prop.updatePlayers} gameState={prop.gameState} updateGameState={prop.updateGameState}/>
             </div>
         </div>
     )

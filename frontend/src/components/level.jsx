@@ -1,4 +1,5 @@
 import { LAR } from "../framework";
+import Players from "./players";
 
 // cell class ( X Y blocktype onfire, hasbomb )
 
@@ -67,13 +68,16 @@ const Level = (prop) => {
     
     return (
       <div id="level">
+        
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>
               {cell.element}
             </div>
           ))}
+          <Players players={prop.players} updatePlayers={prop.updatePlayers}/>
         </div>
+        
       </div>
     );
   };

@@ -16,6 +16,9 @@ export function StartClientWebsocket(username, color, updatePlayers) {
                 console.log("Initial player list:", data.players);
                 updatePlayers(data.players);
                 break;
+            case "gameStateUpdate":
+                console.log("GAMESTATE:", data.gameState)
+                break;
         }
     }
 }

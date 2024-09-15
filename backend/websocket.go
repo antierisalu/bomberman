@@ -22,12 +22,13 @@ type Connections struct {
 }
 
 type Message struct {
-	Type      string   `json:"type"`
-	Data      string   `json:"data"`
-	Player    Player   `json:"player"`
-	Direction string   `json:"direction"`
-	Position  Position `json:"position"`
-	Players   []Player `json:"players"`
+	Type      string    `json:"type"`
+	Data      string    `json:"data"`
+	Player    Player    `json:"player"`
+	Direction string    `json:"direction"`
+	Position  Position  `json:"position"`
+	Players   []Player  `json:"players"`
+	GameState GameState `json:"gameState"`
 }
 
 type Position struct {
@@ -36,9 +37,18 @@ type Position struct {
 }
 
 type Player struct {
-	Username string   `json:"username"`
-	Color    string   `json:"color"`
-	Position Position `json:"position"`
+	Username     string       `json:"username"`
+	Color        string       `json:"color"`
+	Position     Position     `json:"position"`
+	Lives        int          `json:"lives"`
+	Speed        float32      `json:"speed"`
+	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
+}
+
+type PowerUpLevel struct {
+	Speed  int `json:"speed"`
+	Bombs  int `json:"bombs"`
+	Flames int `json:"flames"`
 }
 
 // WS
@@ -97,7 +107,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
-	for conn, _ := range conns.m {
+	for conn := range conns.m {
 		/* uncomment siis endale ei saada
 		if conn == from{
 			continue

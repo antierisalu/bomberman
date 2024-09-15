@@ -22,11 +22,13 @@ type Connections struct {
 }
 
 type Message struct {
-	Type      string   `json:"type"`
-	Data      string   `json:"data"`
-	Player    Player   `json:"player"`
-	Direction string   `json:"direction"`
-	Position  Position `json:"position"`
+	Type      string    `json:"type"`
+	Data      string    `json:"data"`
+	Player    Player    `json:"player"`
+	Direction string    `json:"direction"`
+	Position  Position  `json:"position"`
+	Players   []Player  `json:"players"`
+	GameState GameState `json:"gameState"`
 }
 
 type Position struct {
@@ -35,9 +37,18 @@ type Position struct {
 }
 
 type Player struct {
-	Username string   `json:"username"`
-	Color    string   `json:"color"`
-	Position Position `json:"position"`
+	Username     string       `json:"username"`
+	Color        string       `json:"color"`
+	Position     Position     `json:"position"`
+	Lives        int          `json:"lives"`
+	Speed        float32      `json:"speed"`
+	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
+}
+
+type PowerUpLevel struct {
+	Speed  int `json:"speed"`
+	Bombs  int `json:"bombs"`
+	Flames int `json:"flames"`
 }
 
 // WS
@@ -73,14 +84,19 @@ func reader(conn *websocket.Conn) {
 			log.Println("unmarshal:", err)
 			continue
 		}
-
+		log.Println(msg)
 		switch msg.Type {
 		case "join":
 			conns.Lock()
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
-			broadcast(conn, messageType, msg) //saada teistele clientitele et joinisid
+			conn.WriteMessage(messageType, message) //saada endale tagasi et joinisid
+			broadcastPlayerList()                   //saadab koigile playerlisti
 			conns.Unlock()
+		case "ping":
+			var reply Message
+			reply.Type = "pong"
+			broadcast(conn, messageType, reply)
 		}
 	}
 }
@@ -91,11 +107,30 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 	if err != nil {
 		log.Println("broadcast error:", err)
 	}
-	for conn, _ := range conns.m {
+	for conn := range conns.m {
 		/* uncomment siis endale ei saada
 		if conn == from{
 			continue
 		} */
 		conn.WriteMessage(messageType, r)
+	}
+}
+
+func broadcastPlayerList() {
+	var players []Player
+	for _, player := range conns.m {
+		players = append(players, player)
+	}
+	msg := Message{
+		Type:    "player_list",
+		Players: players,
+	}
+	r, err := json.Marshal(msg)
+	if err != nil {
+		log.Println("broadcastPlayerList error:", err)
+		return
+	}
+	for conn := range conns.m {
+		conn.WriteMessage(websocket.TextMessage, r)
 	}
 }

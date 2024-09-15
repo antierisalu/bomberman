@@ -7,6 +7,19 @@ function createElement(type, props, ...children) {
         return [...acc, child];
     }, []);
 
+    //validate children
+    flattenedChildren.forEach(child=>{
+
+        if (child && !child.type && typeof child === 'object'){
+            const propsString = Object.entries(props).map(([key, value]) => {
+                return `${key}="${value}"`;
+            }).join(' '); // Join them with spaces between each pair
+            let errormessage=(`<${type} ${propsString} >${children}</${type}>`)
+            console.error(flattenedChildren)
+            throw new Error("Te ei tohi panna objecteid JSXi sisse textina! "+errormessage+" object on konsoolis ka");
+        }
+    })
+
     return {
         type,
         props: {
@@ -19,7 +32,6 @@ function createElement(type, props, ...children) {
         },
     }
 }
-
 function createTextElement(text) {
     return {
         type: "TEXT_ELEMENT",
@@ -29,18 +41,14 @@ function createTextElement(text) {
         },
     }
 }
-
 function createDom(fiber) {
     const dom =
         fiber.type == "TEXT_ELEMENT"
             ? document.createTextNode("")
             : document.createElement(fiber.type)
-
     updateDom(dom, {}, fiber.props || {})
-
     return dom
 }
-
 const isEvent = key => key.startsWith("on")
 const isProperty = key =>
     key !== "children" && !isEvent(key)
@@ -65,7 +73,6 @@ function updateDom(dom, prevProps, nextProps) {
                 prevProps[name]
             )
         })
-
     // Remove old properties
     Object.keys(prevProps)
         .filter(isProperty)
@@ -79,7 +86,6 @@ function updateDom(dom, prevProps, nextProps) {
                 dom.removeAttribute(name)
             }
         })
-
     // Set new or changed properties
     Object.keys(nextProps)
         .filter(isProperty)
@@ -97,7 +103,6 @@ function updateDom(dom, prevProps, nextProps) {
                 dom.setAttribute(name, nextProps[name])
             }
         })
-
     // Add event listeners
     Object.keys(nextProps)
         .filter(isEvent)
@@ -112,49 +117,45 @@ function updateDom(dom, prevProps, nextProps) {
             )
         })
 }
-
 function commitRoot() {
     deletions.forEach(commitWork)
     commitWork(wipRoot.child)
     currentRoot = wipRoot
     wipRoot = null
 }
-
 function commitWork(fiber) {
-
     if (!fiber) {
         return
     }
-
     let domParentFiber = fiber.parent
     while (!domParentFiber.dom) {
         domParentFiber = domParentFiber.parent
     }
     const domParent = domParentFiber.dom
-
     //the effect tags are added in the diffing algorithm
-    if (
-        fiber.effectTag === "PLACEMENT" &&
-        fiber.dom != null
-    ) {
-        domParent.appendChild(fiber.dom)
-    } else if (
-        fiber.effectTag === "UPDATE" &&
-        fiber.dom != null
-    ) {
-        updateDom(
+    if (fiber.effectTag === "PLACEMENT") {
+        if (fiber.dom != null) {
+          domParent.appendChild(fiber.dom)
+        }
+        runEffects(fiber)
+        
+      } else if (fiber.effectTag === "UPDATE") {
+        cancelEffects(fiber)
+        if (fiber.dom != null) {
+          updateDom(
             fiber.dom,
             fiber.alternate.props,
             fiber.props
-        )
+          )
+        }
+        runEffects(fiber)
     } else if (fiber.effectTag === "DELETION") {
+        cancelEffects(fiber)
         commitDeletion(fiber, domParent)
     }
-
     commitWork(fiber.child)
     commitWork(fiber.sibling)
 }
-
 function commitDeletion(fiber, domParent) {
     fiber.effectTag = ""
     if (fiber.dom) {
@@ -163,9 +164,7 @@ function commitDeletion(fiber, domParent) {
         commitDeletion(fiber.child, domParent)
     }
 }
-
 function render(element, container) {
-
     if (typeof element === "function") {
         element = element()
     }
@@ -179,12 +178,10 @@ function render(element, container) {
     deletions = []
     nextUnitOfWork = wipRoot
 }
-
 let nextUnitOfWork = null
 let currentRoot = null
 let wipRoot = null
 let deletions = null
-
 function workLoop(deadline) {
     let shouldYield = false
     while (nextUnitOfWork && !shouldYield) {
@@ -193,17 +190,13 @@ function workLoop(deadline) {
         )
         shouldYield = deadline.timeRemaining() < 1
     }
-
     if (!nextUnitOfWork && wipRoot) {
         commitRoot()
     }
-
     //requestIdleCallback is a javascript api function that allows you to schedule a function to be called on the next available idle time.
     requestIdleCallback(workLoop)
 }
-
 requestIdleCallback(workLoop)
-
 function performUnitOfWork(fiber) {
     const isFunctionComponent =
         fiber.type instanceof Function
@@ -218,16 +211,13 @@ function performUnitOfWork(fiber) {
     let nextFiber = fiber
     while (nextFiber) {
         if (nextFiber.sibling) {
-
             return nextFiber.sibling
         }
         nextFiber = nextFiber.parent
     }
 }
-
 let wipFiber = null
 let hookIndex = null
-
 function updateFunctionComponent(fiber) {
     wipFiber = fiber
     hookIndex = 0
@@ -235,8 +225,6 @@ function updateFunctionComponent(fiber) {
     const children = [fiber.type(fiber.props)]
     reconcileChildren(fiber, children)
 }
-
-
 function useState(initial) {
     const oldHook =
         wipFiber.alternate &&
@@ -246,15 +234,12 @@ function useState(initial) {
         state: oldHook ? oldHook.state : initial,
         queue: [],
     }
-
     const actions = oldHook ? oldHook.queue : []
     actions.forEach(action => {
         hook.state = action(hook.state)
     })
-
     const setState = (action) => {
         const newState = typeof action === 'function' ? action(hook.state) : action // able to add non functions to state
-
         hook.queue.push(() => newState) //instead of push added new state
         wipRoot = {
             dom: currentRoot.dom,
@@ -263,45 +248,86 @@ function useState(initial) {
         }
         nextUnitOfWork = wipRoot
         deletions = []
-
     }
-
     wipFiber.hooks.push(hook)
     hookIndex++
-
     return [hook.state, setState]
 }
-
+function cancelEffects(fiber) {
+    if (fiber.hooks) {
+      fiber.hooks
+        .filter(
+          hook => hook.tag === "effect" && hook.cancel
+        )
+        .forEach(effectHook => {
+          effectHook.cancel()
+        })
+    }
+  }
+function runEffects(fiber) {
+if (fiber.hooks) {
+    fiber.hooks
+    .filter(
+        hook => hook.tag === "effect" && hook.effect
+    )
+    .forEach(effectHook => {
+        effectHook.cancel = effectHook.effect()
+    })
+}
+}
+const hasDepsChanged = (prevDeps, nextDeps) =>
+    !prevDeps ||
+    !nextDeps ||
+    prevDeps.length !== nextDeps.length ||
+    prevDeps.some(
+        (dep, index) => dep !== nextDeps[index]
+    )
+function useEffect(effect, deps) {
+    if (deps){//create deep copy of deps so when state is changed it doesn't change dependencies
+    deps = JSON.parse(JSON.stringify(deps));
+    }
+    const oldHook =
+        wipFiber.alternate &&
+        wipFiber.alternate.hooks &&
+        wipFiber.alternate.hooks[hookIndex]
+    const hasChanged = hasDepsChanged(
+        oldHook ? oldHook.deps : undefined,
+        deps
+    )
+    const hook = {
+        tag: "effect",
+        effect: hasChanged ? effect : null,
+        cancel: hasChanged && oldHook && oldHook.cancel,
+        deps,
+    }
+    wipFiber.hooks.push(hook)
+    hookIndex++
+}
 function updateHostComponent(fiber) {
+    if (fiber.props === undefined){
+    }
     if (!fiber.dom) {
         fiber.dom = createDom(fiber)
-        if (fiber.props.ref){
-            fiber.props.ref.current = fiber.dom
-        }
     }
     reconcileChildren(fiber, fiber.props.children)
 }
-
 //diffing algorithm, checks differences between old dom fiber tree and the new one
 function reconcileChildren(wipFiber, elements) {
     let index = 0
     let oldFiber =
         wipFiber.alternate && wipFiber.alternate.child
     let prevSibling = null
-
     while (
         index < elements.length ||
         oldFiber != null
     ) {
         const element = elements[index]
         let newFiber = null
-
         //are the types (tags) the same
         const sameType =
             oldFiber &&
             element &&
             element.type == oldFiber.type
-
         //if they are the same type, only change props
         if (sameType) {
             newFiber = {
@@ -313,7 +339,6 @@ function reconcileChildren(wipFiber, elements) {
                 effectTag: "UPDATE",
             }
         }
-
         //if the types are different and there is an element (new dom), we need to add a new fiber
         if (element && !sameType) {
             newFiber = {
@@ -325,47 +350,38 @@ function reconcileChildren(wipFiber, elements) {
                 effectTag: "PLACEMENT",
             }
         }
-
         //if the types are different and there is an old fiber, we need to delete the old one
         if (oldFiber && !sameType) {
             oldFiber.effectTag = "DELETION"
             deletions.push(oldFiber)
         }
-
         if (oldFiber) {
             oldFiber = oldFiber.sibling
         }
-
         if (index === 0) {
             wipFiber.child = newFiber
         } else if (element) {
             prevSibling.sibling = newFiber
         }
-
         prevSibling = newFiber
         index++
     }
 }
-
 // Routing
 function Router(props) {
-
     const [currentPath, setCurrentPath] = useState(window.location.hash.slice(1) || "/");
-
     const handleHashChange = () => {
         setCurrentPath(c => c = window.location.hash.slice(1) || "/");
         window.removeEventListener("hashchange", handleHashChange);
     };
-
     window.addEventListener("hashchange", handleHashChange);
-
     const route = props.routes.find(route => route.path === currentPath);
     return route ? <div>{route.component.type(route.prop ? route.prop || {} : {})}</div> : "Not Found";
 }
-
 export const LAR = {
     createElement,
     render,
     useState,
+    useEffect,
     Router,
 }

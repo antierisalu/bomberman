@@ -1,8 +1,11 @@
 import { LAR } from "../framework"
 import { sendMessage, ws } from "../websocket";
+import Level from "./level";
 import Players from "./players";
 
 const Arena = (props) => {
+
+    console.log("GGG", props.gameState)
 
     const [nuss, nussime] = LAR.useState(0)//n2ide useStatest
 
@@ -12,6 +15,7 @@ const Arena = (props) => {
                 console.log(data)
         }
     }
+
     LAR.useEffect(()=>{
         console.log("init players")
     },[])//tyhi [] teeb ainult esimene kord
@@ -22,6 +26,8 @@ const Arena = (props) => {
             <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
             <Players players={props.players} updatePlayers={props.updatePlayers}/>
+            {/* <Level players={props.players} updatePlayers={props.updatePlayers} gameState={props.gameState} updateGameState={props.updateGameState}/> */}
+
         </div>
     )
 }

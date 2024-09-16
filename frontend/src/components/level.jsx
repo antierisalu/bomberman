@@ -19,8 +19,9 @@ const Level = (prop) => {
     }
   }
 
-  const gameState = prop.gameState;
-  const gameGrid = gameState.GameGrid;
+  // const gameState = prop.gameState;
+  const gameGrid = prop.gameState.GameGrid;
+  console.log(gameGrid)
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -67,8 +68,7 @@ const Level = (prop) => {
   }
     
     return (
-      <div id="level">
-        
+      <div>
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>
@@ -77,7 +77,6 @@ const Level = (prop) => {
           ))}
           <Players players={prop.players} updatePlayers={prop.updatePlayers}/>
         </div>
-        
       </div>
     );
   };

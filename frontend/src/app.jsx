@@ -10,6 +10,8 @@ const App = () => {
     const [players, updatePlayers] = LAR.useState([]) //k6ik m2ngijad ja nende info
     const [clientInfo, changeClientInfo] = LAR.useState({}) //client m2ngija v2rv ja nimi mis s2ttitakse lobbys yhe korra
     
+    const [gameState, updateGameState] = LAR.useState([]) // Can i get the grid? 
+
     LAR.useEffect(()=>{
         if (isRegistered){//alusta ws kui lobbys vajutatakse play
             console.log("registered")
@@ -21,7 +23,7 @@ const App = () => {
     return (
         <body>
             {isInGame ? 
-            <div id="game"><Arena players={players} updatePlayers={updatePlayers}/></div> : 
+            <div id="game"><Arena players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/></div> : 
             <div id="lobby">
                 <Lobby sendToGame={sendToGame} isRegistered={isRegistered} registerPlayer={registerPlayer} players={players} updatePlayers={updatePlayers} changeClientInfo={changeClientInfo} />
             </div>}

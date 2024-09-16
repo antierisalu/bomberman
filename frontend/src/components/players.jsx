@@ -7,17 +7,16 @@ const Players = (prop) => {
 
     let players = prop.players
     
-      if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
-        ws.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            switch (data.type) {
-              case "player_list":
-                  prop.updatePlayers(data.players)
-                  break;
-              }
-          }
+    if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
+      ws.onmessage = function (event) {
+          const data = JSON.parse(event.data);
+          switch (data.type) {
+            case "player_list":
+                prop.updatePlayers(data.players)
+                break;
+            }
+        }
     }
-    
 
   return (
     <div id="level">

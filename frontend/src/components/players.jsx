@@ -11,9 +11,6 @@ const Players = (prop) => {
     InitPlayers()
     */
 console.log("*******RENDERING PLAYERS**********")
-
-
-
     
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {

@@ -1,10 +1,13 @@
 import { LAR } from "../framework";
 import Players from "./players";
+import { sendMessage, ws } from "../websocket";
+
 
 const Level = (prop) => {
   console.log("*******RENDERING LEVEL**********")
 
   const [gameState, updateGameState] = LAR.useState([])
+  const [nuss, nussime] = LAR.useState(0)
 
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
@@ -18,7 +21,6 @@ const Level = (prop) => {
     }
   }
 
-  // const gameState = prop.gameState;
   const gameGrid = gameState.GameGrid;
 
   const GRID_LENGTH = 11;
@@ -67,7 +69,10 @@ const Level = (prop) => {
   }
     
     return (
+      
       <div id="level">
+            <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
+            <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>

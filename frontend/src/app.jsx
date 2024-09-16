@@ -4,6 +4,9 @@ import Arena from './components/arena';
 import { StartClientWebsocket } from './websocket';
 
 const App = () => {
+    const [players, updatePlayers] = LAR.useState([])
+    const [gameState, updateGameState] = LAR.useState([])
+    const [messages, setMessages] = LAR.useState([]);
 
     const [isRegistered, registerPlayer] = LAR.useState(false) //kas client on registreeritud
     const [isInGame, sendToGame] = LAR.useState(false) //kas m2ng on alanud
@@ -16,16 +19,58 @@ const App = () => {
         }
     },[isRegistered])
 
-
+    
     return (
         <body>
-            {isInGame ? 
-            <div id="game"><Arena players={players}/></div> : 
             <div id="lobby">
-                <Lobby sendToGame={sendToGame} isRegistered={isRegistered} registerPlayer={registerPlayer} players={players} updatePlayers={updatePlayers} changeClientInfo={changeClientInfo} />
-            </div>}
-            
-            
+                <Lobby />
+=========    <div id="chat">
+                <Chat messages={messages} setMessages={setMessages} /> 
+            </div>
+
+    
+    const [players, updatePlayers] = LAR.useState([])
+    
+
+    function sendJoinRequest(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        fetch('http://localhost:8080/newPlayer', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.status === 451) {
+                return response.text().then(errMsg => {
+                    throw new Error(errMsg);
+                });
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data);
+            // Connect ws 
+            StartClientWebsocket(event.target.text.value, event.target.color.value, updatePlayers)
+        })
+        .catch(error => {
+            console.log("Error:", error);
+        })
+    }
+
+    // let amogus = <Lol></Lol>
+    // const [lobbyBool, changeLobby] = LAR.useState(true)
+
+
+
+return (<div>
+
+    <div>{players}</div>
+    <form onSubmit={(event)=>sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="input-container">
+                <input class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />
+>>>>>>>>> Temporary merge branch 2
+            </div>
+            <div id="game"></div>
         </body>
     )
 };

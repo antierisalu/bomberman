@@ -143,13 +143,27 @@ function commitWork(fiber) {
         cancelEffects(fiber)
         if (fiber.dom != null) {
           updateDom(
+    if (fiber.effectTag === "PLACEMENT") {
+        if (fiber.dom != null) {
+          domParent.appendChild(fiber.dom)
+        }
+        runEffects(fiber)
+        
+      } else if (fiber.effectTag === "UPDATE") {
+        cancelEffects(fiber)
+        if (fiber.dom != null) {
+          updateDom(
             fiber.dom,
             fiber.alternate.props,
             fiber.props
           )
         }
         runEffects(fiber)
+          )
+        }
+        runEffects(fiber)
     } else if (fiber.effectTag === "DELETION") {
+        cancelEffects(fiber)
         cancelEffects(fiber)
         commitDeletion(fiber, domParent)
     }
@@ -252,6 +266,56 @@ function useState(initial) {
     wipFiber.hooks.push(hook)
     hookIndex++
     return [hook.state, setState]
+}
+function cancelEffects(fiber) {
+    if (fiber.hooks) {
+      fiber.hooks
+        .filter(
+          hook => hook.tag === "effect" && hook.cancel
+        )
+        .forEach(effectHook => {
+          effectHook.cancel()
+        })
+    }
+  }
+function runEffects(fiber) {
+if (fiber.hooks) {
+    fiber.hooks
+    .filter(
+        hook => hook.tag === "effect" && hook.effect
+    )
+    .forEach(effectHook => {
+        effectHook.cancel = effectHook.effect()
+    })
+}
+}
+const hasDepsChanged = (prevDeps, nextDeps) =>
+    !prevDeps ||
+    !nextDeps ||
+    prevDeps.length !== nextDeps.length ||
+    prevDeps.some(
+        (dep, index) => dep !== nextDeps[index]
+    )
+function useEffect(effect, deps) {
+    if (deps){//create deep copy of deps so when state is changed it doesn't change dependencies
+    deps = JSON.parse(JSON.stringify(deps));
+    }
+    const oldHook =
+        wipFiber.alternate &&
+        wipFiber.alternate.hooks &&
+        wipFiber.alternate.hooks[hookIndex]
+    const hasChanged = hasDepsChanged(
+        oldHook ? oldHook.deps : undefined,
+        deps
+    )
+    const hook = {
+        tag: "effect",
+        effect: hasChanged ? effect : null,
+        cancel: hasChanged && oldHook && oldHook.cancel,
+        deps,
+    }
+    wipFiber.hooks.push(hook)
+    hookIndex++
 }
 function cancelEffects(fiber) {
     if (fiber.hooks) {

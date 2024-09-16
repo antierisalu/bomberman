@@ -17,8 +17,11 @@ export function StartClientWebsocket(username, color, updatePlayers) {
                 updatePlayers(data.players);
                 break;
             case "gameStateUpdate":
-                console.log("GAMESTATE:", data.gameState)
+                updateGameState(gameState => gameState = data.gameState)
                 break;
+            case "chat_message":
+                console.log('nahui')
+                setMessages((prevMessages) => [...prevMessages, { content: data.content, sender: data.sender}]);
         }
     }
 }

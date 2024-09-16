@@ -1,8 +1,7 @@
 import { LAR } from "../framework"
 import { StartClientWebsocket } from '../websocket.js'
 import { sendMessage, ws } from "../websocket";
-
-
+import  Chat  from "./chat"
 
 
 const Lobby = (props) => {
@@ -11,7 +10,7 @@ const Lobby = (props) => {
         event.preventDefault();
 
         // temporary hack hide after submit
-        document.getElementById('lobby').style.display = "none";
+        // document.getElementById('lobby').style.display = "none";
 
 
         const formData = new FormData(event.target);
@@ -37,6 +36,10 @@ const Lobby = (props) => {
                     console.log("Updating players with:", data.players);
                     props.updatePlayers(data.players)
                     break;
+                case "chat_message":
+                    console.log('receiced chat_message', data)
+                    props.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+                    break;
                 }
             }
         }
@@ -45,6 +48,9 @@ const Lobby = (props) => {
         <div>
             {props.isRegistered ? 
             <div>
+                <div id="chat">
+                <Chat messages={props.messages} setMessages={props.setMessages}/> 
+                </div>
                 <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
                 <button onClick={()=>props.sendToGame(true)}>GO TO GAME</button>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>

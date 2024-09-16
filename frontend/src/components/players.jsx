@@ -1,29 +1,27 @@
 import { Player } from "../script/player";
 import { LAR } from "../framework";
+import { sendMessage, ws } from "../websocket";
+
 
 const Players = (prop) => {
 
-    const playerNames = prop.players;
+    let players = prop.players
+    
+      if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
+        ws.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+                console.log(data.players)
+                players = data.player
+        }
+    }
+    
 
-    const initializePlayers = () => {
+  //   LAR.useEffect(()=>{
+  //     console.log("new players")
+  //     players = prop.players
+  // },[prop.players])
 
-        console.log("initPlayers", playerNames);
-    
-        const gameWorldDiv = document.getElementById("gameArea");
-        // let players = [];
-    
-        playerNames.forEach((playerName, index) => {
-            const element = <div className="player" id={"player" + index}></div> // id from 0-3 places the players to separate corners in css
-            const socket = "??"; 
-            const player = new Player(element, gameWorldDiv, playerName, socket);
-            players.push(player);
-        });
-    
-        return players;
-    };
-    
-    let players = []
-    players = initializePlayers();
+
 
   return (
     <div id="level">
@@ -31,14 +29,14 @@ const Players = (prop) => {
         <div className="hudPlayers">
           {players.map((player, index) => (
             <div key={index} className="hudPlayer">
-              <span>{player.name}</span>: <span>{player.eliminations}</span>
+              <span>{player.username}</span> - <span>{player.color}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="gameArea" id="gameArea">
         {players.map((player, index) => (
-          <div key={index}>{player.element}</div>
+          <span className="player" id={`player${index}`} key={player.id}></span>
         ))}
       </div>
     </div>

@@ -2,9 +2,6 @@ import { LAR } from "../framework"
 import { StartClientWebsocket } from '../websocket.js'
 import { sendMessage, ws } from "../websocket";
 
-
-
-
 const Lobby = (props) => {
 
     function sendJoinRequest(event) {

@@ -9,8 +9,7 @@ const App = () => {
     const [isInGame, sendToGame] = LAR.useState(false) //kas m2ng on alanud
     const [players, updatePlayers] = LAR.useState([]) //k6ik m2ngijad ja nende info
     const [clientInfo, changeClientInfo] = LAR.useState({}) //client m2ngija v2rv ja nimi mis s2ttitakse lobbys yhe korra
-    
-    const [gameState, updateGameState] = LAR.useState([]) // Can i get the grid? no
+
 
     // console.log("GameState", gameState)
   
@@ -26,7 +25,7 @@ const App = () => {
     return (
         <body>
             {isInGame ? 
-            <div id="game"><Arena players={players} updatePlayers={updatePlayers} gameState={gameState} updateGameState={updateGameState}/></div> : 
+            <div id="game"><Arena players={players} updatePlayers={updatePlayers}/></div> : 
             <div id="lobby">
                 <Lobby sendToGame={sendToGame} isRegistered={isRegistered} registerPlayer={registerPlayer} players={players} updatePlayers={updatePlayers} changeClientInfo={changeClientInfo} />
             </div>}

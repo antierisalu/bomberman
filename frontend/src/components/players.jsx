@@ -7,26 +7,35 @@ const Players = (prop) => {
 
     let players = prop.players
     
+    /* TODO
+    InitPlayers()
+    */
+console.log("*******RENDERING PLAYERS**********")
+
+
+
+    
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {
           const data = JSON.parse(event.data);
           console.log('ws on message data: ', data);
           switch (data.type) {
             case "player_list":
-                prop.updatePlayers(data.players)
-                break;
-            case 'pong':
+              prop.updatePlayers(data.players)
               break;
             case "gameState":
-              console.log("updated gamestate?");
               prop.updateGameState(data.gameState);
-            break;
+              break;
             }
         }
     }
   
+  // millegiprst kutsub kaks korda. dunno miks. norm bandage see prg
   LAR.useEffect(()=>{
-    console.log("hm")
+    console.log(prop.gameState)
+    if (prop.gameState.GameGrid){
+      console.log("ALUSTA GAMELOOP")
+    }
     sendMessage(JSON.stringify({ type:'gameState'}));
   },[])
 

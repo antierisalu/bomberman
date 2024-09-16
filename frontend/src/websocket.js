@@ -17,7 +17,7 @@ export function StartClientWebsocket(username, color, updatePlayers) {
                 updatePlayers(data.players);
                 break;
             case "gameStateUpdate":
-                console.log("GAMESTATE:", data.gameState)
+                // console.log("GAMESTATE:", data.gameState)
                 break;
             case "pong":
 

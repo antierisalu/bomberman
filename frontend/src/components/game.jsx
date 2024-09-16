@@ -6,7 +6,7 @@ import { initControls } from "../script/controls";
 import Players from "./players";
 
 const Game = (prop) => {
-
+    console.log("GAME ON SIIN &&&**&*&*&*&*&*&*&")
     const [FPS, updateFPS] = LAR.useState(0);
     // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
     // https://codepen.io/lnfnunes/pen/Qjeeyg - fps counter
@@ -37,9 +37,6 @@ const Game = (prop) => {
     return (
         <div>
             <h1 id="fps">FPS: {FPS}</h1>
-            <div id="level">
-                <Level players={prop.players} updatePlayers={prop.updatePlayers} gameState={prop.gameState} updateGameState={prop.updateGameState}/>
-            </div>
         </div>
     )
 }

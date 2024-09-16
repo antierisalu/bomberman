@@ -95,11 +95,12 @@ func reader(conn *websocket.Conn) {
 			conns.Unlock()
 		case "ping":
 			var reply Message
-			reply.Type = "pong"
-			reply.GameState = gameState
+			reply.Type = "gameState"
+			// reply.GameState = gameState
 			// broadcast(conn, messageType, reply)
-			respond(conn, messageType, reply)
-
+			gameState.GameGrid[0][0].BlockType = 0
+			reply.GameState = gameState
+			broadcast(conn, messageType, reply)
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"

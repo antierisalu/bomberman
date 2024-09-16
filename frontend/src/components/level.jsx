@@ -2,6 +2,9 @@ import { LAR } from "../framework";
 import Players from "./players";
 
 const Level = (prop) => {
+  console.log("*******RENDERING LEVEL**********")
+
+  const [gameState, updateGameState] = LAR.useState([])
 
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
@@ -16,8 +19,7 @@ const Level = (prop) => {
   }
 
   // const gameState = prop.gameState;
-  const gameGrid = prop.gameState.GameGrid;
-  console.log("level gamegrid", gameGrid)
+  const gameGrid = gameState.GameGrid;
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -59,6 +61,7 @@ const Level = (prop) => {
     return cells;
   };
 
+
   if (gameGrid) {
     cells = initializeGrid();
   }
@@ -71,7 +74,7 @@ const Level = (prop) => {
               {cell.element}
             </div>
           ))}
-          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={prop.updateGameState} gameState={prop.gameState}/>
+          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={updateGameState} gameState={gameState}/>
         </div>
       </div>
     );

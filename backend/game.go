@@ -26,7 +26,7 @@ type Timer struct {
 }
 
 type Cell struct {
-	BlockType int //0-air 1-permanent 2-breakable
+	BlockType int // 0-air 1-permanent 2-breakable
 	OnFire    bool
 	HasBomb   bool
 	X         int
@@ -42,7 +42,7 @@ type Cell struct {
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
 	// g.GenerateGameGrid()
-	g.SetBomb(&g.GameGrid[3][3], 2)
+	// g.SetBomb(&g.GameGrid[3][3], 2)
 
 	g.Timer = Timer{
 		Active:        true,
@@ -191,18 +191,17 @@ func (g *GameState) Explosion(c *Cell, r int) {
 	g.LightCell(c)
 
 	for i := 1; i <= r; i++ {
-		if c.X-i >= 0 { //left
+		if c.X-i >= 0 { // left
 			g.LightCell(&g.GameGrid[c.X-i][c.Y])
 		}
-		if c.X+i < len(g.GameGrid) { //right
+		if c.X+i < len(g.GameGrid) { // right
 			g.LightCell(&g.GameGrid[c.X+i][c.Y])
 		}
-		if c.Y-i >= 0 { //up
+		if c.Y-i >= 0 { // up
 			g.LightCell(&g.GameGrid[c.X][c.Y-i])
 		}
-		if c.Y+i < len(g.GameGrid[0]) { //down
+		if c.Y+i < len(g.GameGrid[0]) { // down
 			g.LightCell(&g.GameGrid[c.X][c.Y+i])
-
 		}
 	}
 }
@@ -232,7 +231,6 @@ func (g *GameState) LightCell(c *Cell) {
 		2 - BLAST RADIUS
 */
 func (c *Cell) RollDrop() {
-
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
 	}

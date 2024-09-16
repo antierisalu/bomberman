@@ -21,7 +21,7 @@ const App = () => {
     return (
         <body>
             {isInGame ? 
-            <div id="game"><Arena players={players}/></div> : 
+            <div id="game"><Arena players={players} updatePlayers={updatePlayers}/></div> : 
             <div id="lobby">
                 <Lobby sendToGame={sendToGame} isRegistered={isRegistered} registerPlayer={registerPlayer} players={players} updatePlayers={updatePlayers} changeClientInfo={changeClientInfo} />
             </div>}

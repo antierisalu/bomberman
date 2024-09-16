@@ -10,18 +10,14 @@ const Players = (prop) => {
       if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
         ws.onmessage = function (event) {
             const data = JSON.parse(event.data);
-                console.log(data.players)
-                players = data.player
-        }
+            switch (data.type) {
+              case "player_list":
+                  prop.updatePlayers(data.players)
+                  break;
+              }
+          }
     }
     
-
-  //   LAR.useEffect(()=>{
-  //     console.log("new players")
-  //     players = prop.players
-  // },[prop.players])
-
-
 
   return (
     <div id="level">
@@ -36,7 +32,7 @@ const Players = (prop) => {
       </div>
       <div className="gameArea" id="gameArea">
         {players.map((player, index) => (
-          <span className="player" id={`player${index}`} key={player.id}></span>
+          <span className="player" id={`player${index}`}></span>
         ))}
       </div>
     </div>

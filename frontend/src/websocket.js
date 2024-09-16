@@ -17,11 +17,14 @@ export function StartClientWebsocket(username, color, updatePlayers) {
                 updatePlayers(data.players);
                 break;
             case "gameStateUpdate":
-                updateGameState(gameState => gameState = data.gameState)
+                console.log("GAMESTATE:", data.gameState)
                 break;
+            case "pong":
+
         }
     }
 }
+
 //laseb teistel componentitel ws sonumeid saata
 export const sendMessage = (message) => {
     if (ws && ws.readyState === WebSocket.OPEN) {

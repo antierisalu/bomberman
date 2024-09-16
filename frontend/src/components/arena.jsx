@@ -5,16 +5,22 @@ import Players from "./players";
 
 const Arena = (props) => {
 
-    console.log("GGG", props.gameState)
+    // console.log("GGG", props.gameState)
 
     const [nuss, nussime] = LAR.useState(0)//n2ide useStatest
 
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
         ws.onmessage = function (event) {
             const data = JSON.parse(event.data);
-                console.log(data)
+                switch (data.type) {
+                }
+
         }
     }
+
+
+    
+    
 
     LAR.useEffect(()=>{
         console.log("init players")
@@ -25,11 +31,11 @@ const Arena = (props) => {
             <h1>ARENA</h1>
             <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
-            <Players players={props.players} updatePlayers={props.updatePlayers}/>
-            {/* <Level players={props.players} updatePlayers={props.updatePlayers} gameState={props.gameState} updateGameState={props.updateGameState}/> */}
+            {/* <Players players={props.players} updatePlayers={props.updatePlayers}/> */}
+            <Level players={props.players} updatePlayers={props.updatePlayers} gameState={props.gameState} updateGameState={props.updateGameState}/>
 
         </div>
-    )
+    ) 
 }
 
 export default Arena;

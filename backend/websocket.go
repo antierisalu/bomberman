@@ -90,15 +90,31 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 			conns.m[conn] = msg.Player
 			conns.rm[msg.Player] = conn
-			conn.WriteMessage(messageType, message) //saada endale tagasi et joinisid
-			broadcastPlayerList()                   //saadab koigile playerlisti
+			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
+			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
 		case "ping":
 			var reply Message
 			reply.Type = "pong"
-			broadcast(conn, messageType, reply)
+			reply.GameState = gameState
+			// broadcast(conn, messageType, reply)
+			respond(conn, messageType, reply)
+
+		case "gameState":
+			var reply Message
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			respond(conn, messageType, reply)
 		}
 	}
+}
+
+func respond(from *websocket.Conn, messageType int, message Message) {
+	r, err := json.Marshal(message)
+	if err != nil {
+		log.Println("respond error:", err)
+	}
+	from.WriteMessage(messageType, r)
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {

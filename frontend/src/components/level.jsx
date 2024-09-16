@@ -1,10 +1,6 @@
 import { LAR } from "../framework";
 import Players from "./players";
 
-// cell class ( X Y blocktype onfire, hasbomb )
-
-// initialize level (box class, loopib need labi, genereerib divid)
-
 const Level = (prop) => {
 
   class Cell {
@@ -21,7 +17,7 @@ const Level = (prop) => {
 
   // const gameState = prop.gameState;
   const gameGrid = prop.gameState.GameGrid;
-  console.log(gameGrid)
+  console.log("level gamegrid", gameGrid)
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -68,14 +64,14 @@ const Level = (prop) => {
   }
     
     return (
-      <div>
+      <div id="level">
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>
               {cell.element}
             </div>
           ))}
-          <Players players={prop.players} updatePlayers={prop.updatePlayers}/>
+          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={prop.updateGameState} gameState={prop.gameState}/>
         </div>
       </div>
     );

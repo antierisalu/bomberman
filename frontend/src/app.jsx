@@ -13,11 +13,10 @@ const App = () => {
     const [gameState, updateGameState] = LAR.useState([]) // Can i get the grid? no
 
     // console.log("GameState", gameState)
-
-    sendMessage(JSON.stringify({ type:'gameState'}));
-
+  
+    
     LAR.useEffect(()=>{
-        if (isRegistered){//alusta ws kui lobbys vajutatakse play
+        if (isRegistered){ //alusta ws kui lobbys vajutatakse play
             console.log("registered")
             StartClientWebsocket(clientInfo.name, clientInfo.color, updatePlayers)
         }

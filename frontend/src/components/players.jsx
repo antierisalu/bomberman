@@ -6,8 +6,6 @@ import { sendMessage, ws } from "../websocket";
 const Players = (prop) => {
 
     let players = prop.players
-
-   
     
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {
@@ -26,10 +24,12 @@ const Players = (prop) => {
             }
         }
     }
+  
+  LAR.useEffect(()=>{
+    console.log("hm")
+    sendMessage(JSON.stringify({ type:'gameState'}));
+  },[])
 
-    LAR.useEffect(()=>{
-      console.log("22222")
-  },[prop.gameState])
 
   return (
     <div>
@@ -42,11 +42,9 @@ const Players = (prop) => {
           ))}
         </div>
       </div>
-      <div className="gameArea" id="gameArea">
         {players.map((player, index) => (
           <span className="player" id={`player${index}`}></span>
         ))}
-      </div>
     </div>
   );
 };

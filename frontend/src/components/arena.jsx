@@ -31,7 +31,6 @@ const Arena = (props) => {
             <h1>ARENA</h1>
             <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
-            {/* <Players players={props.players} updatePlayers={props.updatePlayers}/> */}
             <Level players={props.players} updatePlayers={props.updatePlayers} gameState={props.gameState} updateGameState={props.updateGameState}/>
 
         </div>

@@ -8,19 +8,15 @@ import { InputHandler } from "../script/controls";
 const Players = (prop) => {
 
     let playersNames = prop.players
-  
     let players = [];//not state but game class entities
     let input;
-
     let client = prop.clientInfo;
 
-    const initPlayers = (doms) => {
+    const initPlayers = () => {
         const gameWorldDiv = document.getElementById("gameArea");
-        console.log(gameWorldDiv)
         playersNames.forEach((playerName, index) => {
           let ele = document.getElementById(`player${index}`)
           const player = new Player(ele, gameWorldDiv, playerName.username);
-          console.log(player.playerRect, player.clientGameRect)
           players.push(player); 
       });
       return players;
@@ -30,7 +26,6 @@ const Players = (prop) => {
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {
           const data = JSON.parse(event.data);
-          //console.log('ws on message data: ', data);
           switch (data.type) {
             case "player_list":
               prop.updatePlayers(data.players)
@@ -44,13 +39,12 @@ const Players = (prop) => {
               GameLoop();
               break;
             case "updateXY":
+              //update player positions
               players.forEach(player => {
                 data.players.forEach(serverPlayer =>{
-                  //console.log(player, serverPlayer)
                   if (player.name !== client.name && player.name == serverPlayer.username){
                     player.x = serverPlayer.position.x
                     player.y = serverPlayer.position.y
-                    //console.log(player.x, player.y, player.name)
                   }
                 })
               })
@@ -62,14 +56,12 @@ const Players = (prop) => {
     let frame = 0;
     let startTime = performance.now();
     
-
+    // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
+    // https://codepen.io/lnfnunes/pen/Qjeeyg - fps counter
     function GameLoop(currentFrameTime) {
         const deltaTime = (currentFrameTime - lastFrameTime) / 1000; // Convert to seconds
         frame++;
         if (currentFrameTime - startTime > 1000) {
-            // updateFPS(FPS => FPS = Math.round((frame / ((currentFrameTime - startTime) / 1000))));
-            const FPS = Math.round((frame / ((currentFrameTime - startTime) / 1000)));
-            // console.log('FPS:', FPS)
             startTime = currentFrameTime;
             frame = 0;
         };

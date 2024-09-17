@@ -53,12 +53,15 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
+
+			//broadcastTimer
 			var msg Message
 			msg.Type = "timer"
 			msg.GameState = gameState
 			broadcast(nil, 1, msg)
-			// dbg
-			fmt.Println("Time remaining:", g.Timer.TimeRemaining)
+
+			// Uncomment to display game board in backend and time remaining
+			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
 			// g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
@@ -73,7 +76,7 @@ func (g *GameState) OnTimerEnd() {
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
-		g.Started = true
+		g.Started = true //start game
 		var msg Message
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
@@ -132,7 +135,7 @@ func (g *GameState) GenerateGameGrid() {
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	}
 	//
-
+	//randomly generate breakable blocks
 	for i := 1; i < 10; i++ {
 		for j := 1; j < 12; j++ {
 			if worldTemplate[i][j] == 0 && rand.Intn(5) > 0 { // if air block and hits 80% chance, place breakable block
@@ -250,6 +253,7 @@ func (c *Cell) RollDrop() {
 	}
 }
 
+// Update Player.Position
 func (g *GameState) MovePlayer(p Player, pos Position) {
 	// log.Println(p.Index, p.Username)
 	g.Players[p.Index].Position = pos

@@ -1,6 +1,3 @@
-import { LAR } from "../framework";
-
-
 function plantBomb() {
 
     let bombLocation = 'This place where user is. player.location vms'

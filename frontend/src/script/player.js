@@ -1,4 +1,3 @@
-import { movingDirection as direction} from "./controls";
 import { sendMessage } from "../websocket";
 
 export class Player {
@@ -14,7 +13,6 @@ export class Player {
         this.oldY = 0;
     }
     move(direction, dt) {
-        console.log(this.x, this.y)
         switch (direction) {
             case "up":
                 this.y -= this.speed * dt;
@@ -39,8 +37,9 @@ export class Player {
         this.element.style.top = this.y + 'px'
     }
     update(value, dt) {
+
+        //only send position info if client has moved
         if (this.oldX !== this.x || this.oldY !== this.y){
-            console.log('i mOVED')
             sendMessage(JSON.stringify({type: 'position', position:{x:this.x, y:this.y}}))
             this.oldX = this.x
             this.oldY = this.y
@@ -58,7 +57,5 @@ export class Player {
         if ((value.keys.indexOf("ArrowRight") > -1) || (value.keys.indexOf("d") > -1)) {
             this.move("right", dt);
         }
-        
-        //return this.x, this.y
     }
 }

@@ -22,7 +22,6 @@ const Lobby = (props) => {
                 return response.json(); 
             })
             .then(data => { 
-                console.log(data)
                 props.changeClientInfo({name:event.target.text.value, color:event.target.color.value, index: data})
                 props.registerPlayer(true)
             })
@@ -34,7 +33,6 @@ const Lobby = (props) => {
     if (ws){ // see kirjutab yle websocket.js'i ws.onmessage methodi
         ws.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            console.log(data)
             switch (data.type) {
                 case "player_list": //backendilt saadud player list (saadab iga kord kui keegi joinib). clienti info on clientInfo stateis App tasemel
                     console.log("Updating players with:", data.players);
@@ -60,7 +58,6 @@ const Lobby = (props) => {
             <div>
                 {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
                 <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
-                <button onClick={()=>props.sendToGame(true)}>GO TO GAME</button>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 
             <div>       

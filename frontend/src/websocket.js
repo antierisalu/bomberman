@@ -7,7 +7,6 @@ export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState)
     ws.onopen = function (event) {
         ws.send(JSON.stringify({ type:'join', player: {index: clientInfo.index, username: clientInfo.name, color: clientInfo.color}}));
         sendMessage(JSON.stringify({ type:'gameState'}));
-
         console.log("Websocket connected!");
     }
 

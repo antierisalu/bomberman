@@ -29,15 +29,13 @@ func InitGame() {
 
 	gameState.GenerateGameGrid()
 
-	fmt.Println("SPAWNPOINTS:")
+	/* fmt.Println("SPAWNPOINTS:")
 	for _, v := range gameState.SpawnPoints {
 		fmt.Printf("SpawnPoint: {CellX: %f; CellY: %f}]\n", v.X, v.Y)
-	}
-
+	} */
 }
 
 func StartServer() {
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/newPlayer", handleNewPlayer)
 	mux.HandleFunc("/ws", wsHandler)
@@ -55,7 +53,6 @@ func StartServer() {
 }
 
 func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
-
 	err := r.ParseMultipartForm(3200)
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
@@ -77,7 +74,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(gameState.Players)+1 >= 4 {
+	if len(gameState.Players) > 4 {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
 		fmt.Println("max players reached for this game, sorry.")
 		fmt.Fprintf(w, "max players reached for this game, sorry.")
@@ -103,9 +100,9 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		Speed:        1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
-	fmt.Println("STARTING TIMER")
 	if !gameState.Timer.Active {
-		gameState.StartTimer(15)
+		fmt.Println("STARTING TIMER")
+		gameState.StartTimer(5)
 	}
 
 	// -- STAGING --

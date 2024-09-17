@@ -52,9 +52,13 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
+			var msg Message
+			msg.Type = "timer"
+			msg.GameState = gameState
+			broadcast(nil, 1, msg)
 			// dbg
 			fmt.Println("Time remaining:", g.Timer.TimeRemaining)
-			g.DisplayGameBoard()
+			// g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
@@ -65,11 +69,21 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 
 func (g *GameState) OnTimerEnd() {
 	fmt.Println("Timer finished with end time:", g.Timer.TimeRemaining)
+	fmt.Println("ALUSTAME")
 	fmt.Println("Connected Players:")
+
+	timer := time.NewTimer(3 * time.Second)
+	go func() {
+		<-timer.C
+		var msg Message
+		msg.Type = "start"
+		broadcast(nil, 1, msg)
+	}()																																												
+
 	for _, p := range g.Players {
 		fmt.Printf("Player: %s [%s] at position (x:%f, y:%f)\n", p.Username, p.Color, p.Position.X, p.Position.Y)
 	}
-}
+}																																
 
 func (g *GameState) AddPlayer(p Player) {
 	g.Players = append(g.Players, p)

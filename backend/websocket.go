@@ -73,6 +73,11 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
+			/*  */
+			log.Println(gameState.Players)
+			gameState.Players = removePlayer(gameState.Players, conns.m[conn])
+			log.Println(gameState.Players)
+			/*  */
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
 			conns.Unlock()
@@ -94,18 +99,17 @@ func reader(conn *websocket.Conn) {
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
 		case "ping":
-			var reply Message
-			reply.Type = "gameState"
-			// reply.GameState = gameState
-			// broadcast(conn, messageType, reply)
-			gameState.GameGrid[0][0].BlockType = 0
-			reply.GameState = gameState
-			broadcast(conn, messageType, reply)
+			msg.Type = "pong"
+			msg.Player = conns.m[conn]
+			broadcast(conn, messageType, msg)
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"
 			reply.GameState = gameState
 			respond(conn, messageType, reply)
+		case "position":
+			log.Println(msg.Position, conns.m[conn].Username)
+			
 		}
 	}
 }
@@ -150,4 +154,13 @@ func broadcastPlayerList() {
 	for conn := range conns.m {
 		conn.WriteMessage(websocket.TextMessage, r)
 	}
+}
+
+func removePlayer(l []Player, item Player) []Player {
+	for i, other := range l {
+		if other.Username == item.Username {
+			return append(l[:i], l[i+1:]...)
+		}
+	}
+	return l
 }

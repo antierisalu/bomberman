@@ -22,10 +22,18 @@ const App = () => {
     return (
         <body>
             {isInGame ? 
-            <div id="game"><Level gameState={gameState} updateGameState={updateGameState} players={players} updatePlayers={updatePlayers}/></div> : 
+            <div id="game"><Level 
+                gameState={gameState} 
+                updateGameState={updateGameState} 
+                players={players} 
+                updatePlayers={updatePlayers}
+                clientInfo={clientInfo}
+                />
+            </div> : 
             <div id="lobby">
                 <Lobby sendToGame={sendToGame}
                 isRegistered={isRegistered}
+                updateGameState={updateGameState}
                 registerPlayer={registerPlayer}
                 players={players}
                 updatePlayers={updatePlayers}

@@ -7,6 +7,11 @@ html {
     width: 100%;
 }
 
+.timer{
+  background-color: red;
+  font-size: x-large;
+}
+
 body {
     background-color: beige;
     height: 100%;
@@ -373,27 +378,27 @@ body {
 }
 
 #player0 {
-  left: 58px; /* magic */
   top: 58px; /* magic */
-  background-image: url('./assets/front.png');
+  left: 58px; /* magic */
+  background-image: url('./assets/red.png');
   background-size: cover;
 }
 #player1 {
-  right: 58px; /* magic */
   top: 58px; /* magic */
-  background-image: url('./assets/left.png');
+  left: 638px; /* magic */
+  background-image: url('./assets/blue.png');
   background-size: cover;
 }
 #player2 {
+  top: 522px; /* magic */
   left: 58px; /* magic */
-  bottom: 58px; /* magic */
-  background-image: url('./assets/right.png');
+  background-image: url('./assets/purple.png');
   background-size: cover;
 }
 #player3 {
-  right: 58px; /* magic */
-  bottom: 58px; /* magic */
-  background-image: url('./assets/back.png');
+  top: 522px; /* magic */
+  left: 638px; /* magic */
+  background-image: url('./assets/green.png');
   background-size: cover;
 }
 

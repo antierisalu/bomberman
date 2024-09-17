@@ -3,24 +3,26 @@ import { LAR } from "../framework";
 import { sendMessage, ws } from "../websocket";
 import { updateGame } from "../script/update";
 import { renderGame } from "../script/render";
-import { initControls } from "../script/controls";
+import { InputHandler } from "../script/controls";
 
 const Players = (prop) => {
 
     let playersNames = prop.players
-
-    
   
     let players = [];//not state but game class entities
+    let input;
 
+    let client = prop.clientInfo;
 
-    const initPlayers = () => {
-      const gameWorldDiv = document.getElementById("gameArea");
-      playersNames.forEach((playerName, index) => {
-        let ele = document.getElementById(`player${index}`)
-        console.log(ele, "EI SAA KÄTTE")
-          const socket = "??"; 
-          const player = new Player(ele, gameWorldDiv, playerName.username, socket);
+    const initPlayers = (doms) => {
+        const gameWorldDiv = document.getElementById("gameArea");
+        console.log(gameWorldDiv)
+        playersNames.forEach((playerName, index) => {
+          let ele = document.getElementById(`player${index}`)
+          const player = new Player(ele, gameWorldDiv, playerName.username);
+          //console.log(player.x,player.y, player.name)
+          //console.log(player.element.style, player.element.style )
+          console.log(player.playerRect, player.clientGameRect)
           players.push(player); 
       });
 
@@ -42,6 +44,12 @@ const Players = (prop) => {
               prop.updateGameState(data.gameState);
               console.log("IM UPDATING GAMESTATE")
               break;
+            case "start":
+              initPlayers();
+              input = new InputHandler();
+              GameLoop();
+            case "updateXY":
+              
             }
         }
     }
@@ -63,26 +71,11 @@ const Players = (prop) => {
         lastFrameTime = currentFrameTime;
         // console.log('gameloop');
 
-        updateGame(deltaTime);
+        updateGame(deltaTime, input, players, client);
         renderGame();
 
         requestAnimationFrame(GameLoop);
     }
-    
-    
-    // millegiprst kutsub kaks korda. dunno miks. norm bandage see prg
-  LAR.useEffect(()=>{
-      if (prop.gameState.GameGrid){
-        GameLoop();
-        initControls();
-        let ele = document.getElementsByClassName(`player`)
-        console.log(ele, "useeffetct EI SAA KÄTTE")
-      }
-    },[])
-    
-    LAR.useEffect(()=>{
-    initPlayers();
-  },[prop.players])
 
   return (
     <div>

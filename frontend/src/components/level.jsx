@@ -5,7 +5,6 @@ import { sendMessage, ws } from "../websocket";
 
 const Level = (prop) => {
 
-
   const [nuss, nussime] = LAR.useState(0)
 
   class Cell {
@@ -19,9 +18,6 @@ const Level = (prop) => {
       this.element = element;
     }
   }
-  console.log(prop)
-
-  // const gameGrid = prop.gameState.GameGrid;
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -29,9 +25,7 @@ const Level = (prop) => {
   let cells = []; // why duplicates
 
   const initializeGrid = () => {
-    if (prop.gameState.GameGrid === undefined) {
-      return []
-    }
+
     let cells = [];
 
     for (let row = 0; row < GRID_LENGTH; row++) {
@@ -76,7 +70,13 @@ const Level = (prop) => {
               {cell.element}
             </div>
           ))}
-          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={prop.updateGameState} gameState={prop.gameState}/>
+          <Players 
+          players={prop.players} 
+          updatePlayers={prop.updatePlayers} 
+          updateGameState={prop.updateGameState} 
+          gameState={prop.gameState} 
+          clientInfo={prop.clientInfo}
+          />
         </div>
       </div>
     );

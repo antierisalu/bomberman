@@ -5,6 +5,7 @@ import { StartClientWebsocket, sendMessage } from './websocket';
 
 const App = () => {
 
+    const [gameState, updateGameState] = LAR.useState([])
     const [isRegistered, registerPlayer] = LAR.useState(false) //kas client on registreeritud
     const [isInGame, sendToGame] = LAR.useState(false) //kas m2ng on alanud
     const [players, updatePlayers] = LAR.useState([]) //k6ik m2ngijad ja nende info
@@ -13,16 +14,22 @@ const App = () => {
     LAR.useEffect(()=>{
         if (isRegistered){ //alusta ws kui lobbys vajutatakse play
             console.log("registered")
-            StartClientWebsocket(clientInfo.name, clientInfo.color, updatePlayers)
+            StartClientWebsocket(clientInfo.name, clientInfo.color, updatePlayers, updateGameState)
+            //sebi gamestate
         }
     },[isRegistered])
 
     return (
         <body>
             {isInGame ? 
-            <div id="game"><Level players={players} updatePlayers={updatePlayers}/></div> : 
+            <div id="game"><Level gameState={gameState} updateGameState={updateGameState} players={players} updatePlayers={updatePlayers}/></div> : 
             <div id="lobby">
-                <Lobby sendToGame={sendToGame} isRegistered={isRegistered} registerPlayer={registerPlayer} players={players} updatePlayers={updatePlayers} changeClientInfo={changeClientInfo} />
+                <Lobby sendToGame={sendToGame}
+                isRegistered={isRegistered}
+                registerPlayer={registerPlayer}
+                players={players}
+                updatePlayers={updatePlayers}
+                changeClientInfo={changeClientInfo}/>
             </div>}
         </body>
     )

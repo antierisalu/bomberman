@@ -2,7 +2,6 @@ import { LAR } from "../framework"
 import Level from "./level";
 import { renderGame } from "../script/render";
 import { updateGame } from "../script/update";
-import { initControls } from "../script/controls";
 import Players from "./players";
 
 const Game = (prop) => {

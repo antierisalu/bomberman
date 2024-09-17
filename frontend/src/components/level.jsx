@@ -4,9 +4,8 @@ import { sendMessage, ws } from "../websocket";
 
 
 const Level = (prop) => {
-  console.log("*******RENDERING LEVEL**********")
 
-  const [gameState, updateGameState] = LAR.useState([])
+
   const [nuss, nussime] = LAR.useState(0)
 
   class Cell {
@@ -20,8 +19,9 @@ const Level = (prop) => {
       this.element = element;
     }
   }
+  console.log(prop)
 
-  const gameGrid = gameState.GameGrid;
+  // const gameGrid = prop.gameState.GameGrid;
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
@@ -29,17 +29,17 @@ const Level = (prop) => {
   let cells = []; // why duplicates
 
   const initializeGrid = () => {
-    if (gameGrid === undefined) {
+    if (prop.gameState.GameGrid === undefined) {
       return []
     }
     let cells = [];
 
     for (let row = 0; row < GRID_LENGTH; row++) {
       for (let column = 0; column < GRID_WIDTH; column++) {
-        const blockType = gameGrid[row][column].BlockType;
-        const onFire = gameGrid[row][column].OnFire;
-        const hasBomb = gameGrid[row][column].HasBomb;
-        const dropType = gameGrid[row][column].dropType;
+        const blockType = prop.gameState.GameGrid[row][column].BlockType;
+        const onFire = prop.gameState.GameGrid[row][column].OnFire;
+        const hasBomb = prop.gameState.GameGrid[row][column].HasBomb;  
+        const dropType = prop.gameState.GameGrid[row][column].dropType;
         const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
         const xyID = row.toString() + '-' + column.toString()
 
@@ -63,11 +63,8 @@ const Level = (prop) => {
     return cells;
   };
 
-
-  if (gameGrid) {
-    cells = initializeGrid();
-  }
-    
+  cells = initializeGrid();
+  
     return (
       
       <div id="level">
@@ -79,7 +76,7 @@ const Level = (prop) => {
               {cell.element}
             </div>
           ))}
-          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={updateGameState} gameState={gameState}/>
+          <Players players={prop.players} updatePlayers={prop.updatePlayers} updateGameState={prop.updateGameState} gameState={prop.gameState}/>
         </div>
       </div>
     );

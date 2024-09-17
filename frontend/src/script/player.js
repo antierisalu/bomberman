@@ -30,4 +30,18 @@ export class Player {
                 break;
         }
     }
+    update(value, delta) {
+        if ((value.keys.indexOf("ArrowUp") > -1) || (value.keys.indexOf("w") > -1)) {
+            this.move("up");
+        }
+        if ((value.keys.indexOf("ArrowDown") > -1) || (value.keys.indexOf("s") > -1)) {
+            this.move("down");
+        }
+        if ((value.keys.indexOf("ArrowLeft") > -1) || (value.keys.indexOf("a") > -1)) {
+            this.move("left");
+        }
+        if ((value.keys.indexOf("ArrowRight") > -1) || (value.keys.indexOf("d") > -1)) {
+            this.move("right");
+        }
+    }
 }

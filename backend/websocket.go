@@ -37,6 +37,7 @@ type Position struct {
 }
 
 type Player struct {
+	Index        int          `json:"index"`
 	Username     string       `json:"username"`
 	Color        string       `json:"color"`
 	Position     Position     `json:"position"`
@@ -109,7 +110,11 @@ func reader(conn *websocket.Conn) {
 			respond(conn, messageType, reply)
 		case "position":
 			log.Println(msg.Position, conns.m[conn].Username)
-			
+			gameState.MovePlayer(conns.m[conn], msg.Position)
+			var reply Message
+			reply.Type = "updateXY"
+			reply.GameState = gameState
+			broadcast(conn, messageType, reply)
 		}
 	}
 }

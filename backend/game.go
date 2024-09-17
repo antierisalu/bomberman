@@ -86,6 +86,7 @@ func (g *GameState) OnTimerEnd() {
 }																																
 
 func (g *GameState) AddPlayer(p Player) {
+	p.Index = len(g.Players)//assign player index
 	g.Players = append(g.Players, p)
 }
 
@@ -248,4 +249,9 @@ func (c *Cell) RollDrop() {
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
 	}
+}
+
+
+func (g *GameState) MovePlayer(p Player, pos Position) {
+	g.Players[p.Index].Position = pos
 }

@@ -33,7 +33,7 @@ export class Player {
         }
     }
     update(value, dt) {
-        sendMessage(JSON.stringify({type:'position', position:{x:this.x,y:this.y}}));;
+        sendMessage(JSON.stringify({type:'position', position:{x:this.x,y:this.y}}));
         if ((value.keys.indexOf("ArrowUp") > -1) || (value.keys.indexOf("w") > -1)) {
             this.move("up", dt);
         }

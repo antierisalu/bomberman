@@ -2,7 +2,7 @@ import { Player } from "../script/player";
 import { LAR } from "../framework";
 import { sendMessage, ws } from "../websocket";
 import { updateGame } from "../script/update";
-import { renderGame } from "../script/render";
+// import { renderGame } from "../script/render";
 import { InputHandler } from "../script/controls";
 
 const Players = (prop) => {
@@ -35,21 +35,24 @@ const Players = (prop) => {
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {
           const data = JSON.parse(event.data);
-          console.log('ws on message data: ', data);
+          //console.log('ws on message data: ', data);
           switch (data.type) {
             case "player_list":
               prop.updatePlayers(data.players)
               break;
             case "gameState":
               prop.updateGameState(data.gameState);
-              console.log("IM UPDATING GAMESTATE")
               break;
             case "start":
               initPlayers();
               input = new InputHandler();
               GameLoop();
             case "updateXY":
-              
+              players.forEach(player => {
+                if (player.name !== client.name){
+                  
+                }
+              })
             }
         }
     }
@@ -69,11 +72,8 @@ const Players = (prop) => {
             frame = 0;
         };
         lastFrameTime = currentFrameTime;
-        // console.log('gameloop');
 
         updateGame(deltaTime, input, players, client);
-        renderGame();
-
         requestAnimationFrame(GameLoop);
     }
 

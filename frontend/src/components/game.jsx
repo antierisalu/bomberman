@@ -11,27 +11,7 @@ const Game = (prop) => {
     // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
     // https://codepen.io/lnfnunes/pen/Qjeeyg - fps counter
 
-    let lastFrameTime = 0;
-    let frame = 0;
-    let startTime = performance.now();
 
-    function GameLoop(currentFrameTime) {
-        const deltaTime = (currentFrameTime - lastFrameTime) / 1000; // Convert to seconds
-
-        frame++;
-        if (currentFrameTime - startTime > 1000) {
-            updateFPS(FPS => FPS = Math.round((frame / ((currentFrameTime - startTime) / 1000))));
-            startTime = currentFrameTime;
-            frame = 0;
-        };
-        lastFrameTime = currentFrameTime;
-
-        updateGame(deltaTime);
-        renderGame();
-
-        requestAnimationFrame(GameLoop);
-    }
-    GameLoop();
 
 
     return (

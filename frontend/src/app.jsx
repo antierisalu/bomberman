@@ -14,7 +14,7 @@ const App = () => {
     LAR.useEffect(()=>{
         if (isRegistered){ //alusta ws kui lobbys vajutatakse play
             console.log("registered")
-            StartClientWebsocket(clientInfo.name, clientInfo.color, updatePlayers, updateGameState)
+            StartClientWebsocket(clientInfo, updatePlayers, updateGameState)
             //sebi gamestate
         }
     },[isRegistered])

@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -28,11 +29,6 @@ func InitGame() {
 	}
 
 	gameState.GenerateGameGrid()
-
-	/* fmt.Println("SPAWNPOINTS:")
-	for _, v := range gameState.SpawnPoints {
-		fmt.Printf("SpawnPoint: {CellX: %f; CellY: %f}]\n", v.X, v.Y)
-	} */
 }
 
 func StartServer() {
@@ -53,6 +49,12 @@ func StartServer() {
 }
 
 func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
+	if gameState.Started {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Fprintf(w, "Game has already started")
+		return
+	}
+
 	err := r.ParseMultipartForm(3200)
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
@@ -81,18 +83,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Joiner:", name, "[", color, "]")
-	// -- STAGING --
-
-	fmt.Println("ADDING PLAYER:", Player{
-		Username:     name,
-		Color:        color,
-		Position:     Position{X: 0, Y: 0},
-		Lives:        3,
-		Speed:        1,
-		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
-	})
-	gameState.AddPlayer(Player{
+	playerIndex := gameState.AddPlayer(Player{
 		Username:     name,
 		Color:        color,
 		Position:     Position{X: 0, Y: 0},
@@ -102,11 +93,14 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 	})
 	if !gameState.Timer.Active {
 		fmt.Println("STARTING TIMER")
-		gameState.StartTimer(5)
+		gameState.StartTimer(15)
 	}
 
-	// -- STAGING --
+	jsonResponse, err := json.Marshal(playerIndex)
+	if err != nil {
+		fmt.Println("err marshaling ", err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "--- %v [%v]", name, color)
 }

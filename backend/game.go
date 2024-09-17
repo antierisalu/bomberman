@@ -8,6 +8,7 @@ import (
 )
 
 type GameState struct {
+	Started     bool
 	Timer       Timer
 	Players     []Player
 	GameGrid    [][]Cell
@@ -68,28 +69,26 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 }
 
 func (g *GameState) OnTimerEnd() {
-	fmt.Println("Timer finished with end time:", g.Timer.TimeRemaining)
-	fmt.Println("ALUSTAME")
-	fmt.Println("Connected Players:")
 
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
+		g.Started = true
 		var msg Message
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
-	}()																																												
+	}()
 
-	for _, p := range g.Players {
-		fmt.Printf("Player: %s [%s] at position (x:%f, y:%f)\n", p.Username, p.Color, p.Position.X, p.Position.Y)
-	}
-}																																
-
-func (g *GameState) AddPlayer(p Player) {
-	p.Index = len(g.Players)//assign player index
-	g.Players = append(g.Players, p)
 }
 
+// Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
+func (g *GameState) AddPlayer(p Player) int {
+	p.Index = len(g.Players) //assign player index
+	g.Players = append(g.Players, p)
+	return p.Index
+}
+
+// Check is playername is taken
 func (g *GameState) hasPlayerName(name string) bool {
 	for _, p := range g.Players {
 		if p.Username == name {
@@ -251,7 +250,7 @@ func (c *Cell) RollDrop() {
 	}
 }
 
-
 func (g *GameState) MovePlayer(p Player, pos Position) {
+	// log.Println(p.Index, p.Username)
 	g.Players[p.Index].Position = pos
 }

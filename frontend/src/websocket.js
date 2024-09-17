@@ -2,10 +2,10 @@ import { LAR } from './framework';
 
 export let ws;
 
-export function StartClientWebsocket(username, color, updatePlayers, updateGameState) {
+export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState) {
     ws = new WebSocket("ws://localhost:8080/ws")
     ws.onopen = function (event) {
-        ws.send(JSON.stringify({ type:'join', player: {username: username, color: color}}));
+        ws.send(JSON.stringify({ type:'join', player: {index: clientInfo.index, username: clientInfo.name, color: clientInfo.color}}));
         sendMessage(JSON.stringify({ type:'gameState'}));
 
         console.log("Websocket connected!");
@@ -20,7 +20,7 @@ export function StartClientWebsocket(username, color, updatePlayers, updateGameS
                 break;
             case "gameState":
                 updateGameState(data.gameState);
-                console.log("IM UPDATING GAMESTATE")
+                // console.log("IM UPDATING GAMESTATE")
                 break;
             case "pong":
         }

@@ -10,6 +10,8 @@ export class Player {
         this.x = this.playerRect.x - this.clientGameRect.x
         this.y = this.playerRect.y - this.clientGameRect.y
         this.speed = 200;
+        this.oldX = 0;
+        this.oldY = 0;
     }
     move(direction, dt) {
         console.log(this.x, this.y)
@@ -32,8 +34,18 @@ export class Player {
                 break;
         }
     }
+    moveOther(){
+        this.element.style.left = this.x + 'px'
+        this.element.style.top = this.y + 'px'
+    }
     update(value, dt) {
-        sendMessage(JSON.stringify({type:'position', position:{x:this.x,y:this.y}}));
+        if (this.oldX !== this.x || this.oldY !== this.y){
+            console.log('i mOVED')
+            sendMessage(JSON.stringify({type: 'position', position:{x:this.x, y:this.y}}))
+            this.oldX = this.x
+            this.oldY = this.y
+        }
+        
         if ((value.keys.indexOf("ArrowUp") > -1) || (value.keys.indexOf("w") > -1)) {
             this.move("up", dt);
         }
@@ -46,5 +58,7 @@ export class Player {
         if ((value.keys.indexOf("ArrowRight") > -1) || (value.keys.indexOf("d") > -1)) {
             this.move("right", dt);
         }
+        
+        //return this.x, this.y
     }
 }

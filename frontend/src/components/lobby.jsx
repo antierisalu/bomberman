@@ -8,10 +8,6 @@ const Lobby = (props) => {
 
     function sendJoinRequest(event) {
         event.preventDefault();
-
-        // temporary hack hide after submit
-        // document.getElementById('lobby').style.display = "none";
-
         const formData = new FormData(event.target);
         fetch('http://localhost:8080/newPlayer', {
             method: 'POST',
@@ -23,10 +19,11 @@ const Lobby = (props) => {
                         throw new Error(text); 
                     });
                 }
-                return response.text(); 
+                return response.json(); 
             })
             .then(data => { 
-                props.changeClientInfo({name:event.target.text.value, color:event.target.color.value})
+                console.log(data)
+                props.changeClientInfo({name:event.target.text.value, color:event.target.color.value, index: data})
                 props.registerPlayer(true)
             })
             .catch(error => {
@@ -45,10 +42,10 @@ const Lobby = (props) => {
                     break;
                 case "gameState":
                     props.updateGameState(data.gameState);
-                    console.log("IM UPDATING GAMESTATE")
+                    // console.log("IM UPDATING GAMESTATE")
                     break;
                 case "timer":
-                    console.log(data.gameState.Timer)
+                    // console.log(data.gameState.Timer)
                     setTimer(data.gameState.Timer.TimeRemaining/1000000000)
                     if (data.gameState.Timer.TimeRemaining < 1){
                         props.sendToGame(true)

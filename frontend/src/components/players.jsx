@@ -20,14 +20,9 @@ const Players = (prop) => {
         playersNames.forEach((playerName, index) => {
           let ele = document.getElementById(`player${index}`)
           const player = new Player(ele, gameWorldDiv, playerName.username);
-          //console.log(player.x,player.y, player.name)
-          //console.log(player.element.style, player.element.style )
           console.log(player.playerRect, player.clientGameRect)
           players.push(player); 
       });
-
-      console.log('players after inplayers')
-  
       return players;
   };
   
@@ -47,11 +42,17 @@ const Players = (prop) => {
               initPlayers();
               input = new InputHandler();
               GameLoop();
+              break;
             case "updateXY":
               players.forEach(player => {
-                if (player.name !== client.name){
-                  
-                }
+                data.players.forEach(serverPlayer =>{
+                  //console.log(player, serverPlayer)
+                  if (player.name !== client.name && player.name == serverPlayer.username){
+                    player.x = serverPlayer.position.x
+                    player.y = serverPlayer.position.y
+                    //console.log(player.x, player.y, player.name)
+                  }
+                })
               })
             }
         }
@@ -60,6 +61,7 @@ const Players = (prop) => {
     let lastFrameTime = 0;
     let frame = 0;
     let startTime = performance.now();
+    
 
     function GameLoop(currentFrameTime) {
         const deltaTime = (currentFrameTime - lastFrameTime) / 1000; // Convert to seconds
@@ -90,7 +92,8 @@ const Players = (prop) => {
       </div>
         {prop.players.map((player, index) => (
           <div>
-              <span className="player" id={`player${index}`}></span>
+              <span className="player" id={`player${index}`}>{player.username}</span>
+              
           </div>
         ))}
     </div>

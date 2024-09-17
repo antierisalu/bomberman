@@ -90,11 +90,11 @@ func reader(conn *websocket.Conn) {
 			log.Println("unmarshal:", err)
 			continue
 		}
-		log.Println(msg)
 		switch msg.Type {
 		case "join":
 			conns.Lock()
-			conns.m[conn] = msg.Player
+			log.Println("sent from frontend ws.js", msg)
+			conns.m[conn] = gameState.Players[msg.Player.Index]
 			conns.rm[msg.Player] = conn
 			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
 			broadcastPlayerList()                   // saadab koigile playerlisti
@@ -102,6 +102,8 @@ func reader(conn *websocket.Conn) {
 		case "ping":
 			msg.Type = "pong"
 			msg.Player = conns.m[conn]
+			log.Println(gameState.Players)
+			log.Println(conns.m)
 			broadcast(conn, messageType, msg)
 		case "gameState":
 			var reply Message
@@ -109,12 +111,14 @@ func reader(conn *websocket.Conn) {
 			reply.GameState = gameState
 			respond(conn, messageType, reply)
 		case "position":
-			log.Println(msg.Position, conns.m[conn].Username)
 			gameState.MovePlayer(conns.m[conn], msg.Position)
 			var reply Message
 			reply.Type = "updateXY"
-			reply.GameState = gameState
+			reply.Players = gameState.Players
+			conns.Lock()
 			broadcast(conn, messageType, reply)
+			conns.Unlock()
+
 		}
 	}
 }

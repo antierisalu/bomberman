@@ -73,23 +73,23 @@ func reader(conn *websocket.Conn) {
 	for {
 		messageType, message, err := conn.ReadMessage()
 		if err != nil {
-    	log.Println(conns.m[conn].Username, "is disconnecting", err)
-    	conns.Lock()
-    	gameState.Players = removePlayer(gameState.Players, conns.m[conn])
-    	log.Println(gameState.Players)
-    	delete(conns.m, conn)
-    	delete(conns.rm, conns.m[conn])
-    	broadcastPlayerList()
+			log.Println(conns.m[conn].Username, "is disconnecting", err)
+			conns.Lock()
+			gameState.Players = removePlayer(gameState.Players, conns.m[conn])
+			log.Println(gameState.Players)
+			delete(conns.m, conn)
+			delete(conns.rm, conns.m[conn])
+			broadcastPlayerList()
 
-    	if len(gameState.Players) < 2 && gameState.Timer.Active {
-       		gameState.StopTimer()
-        	log.Println("Timer stopped due to insufficient players")
-        	var msg Message
-        	msg.Type = "timer_stopped"
-        	msg.GameState = gameState
-        	broadcast(nil, websocket.TextMessage, msg)
-    	}
-    	conns.Unlock()
+			if len(gameState.Players) < 2 && gameState.Timer.Active {
+				gameState.StopTimer()
+				log.Println("Timer stopped due to insufficient players")
+				var msg Message
+				msg.Type = "timer_stopped"
+				msg.GameState = gameState
+				broadcast(nil, websocket.TextMessage, msg)
+			}
+			conns.Unlock()
     	return
 		}
 
@@ -146,7 +146,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
     if from != nil {
         message.Player = conns.m[from]
     } else {
-        message.Player = Player{} // or set to a default player if appropriate
+        message.Player = Player{}
     }
     r, err := json.Marshal(message)
     if err != nil {

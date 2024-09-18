@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -72,16 +73,24 @@ func reader(conn *websocket.Conn) {
 	for {
 		messageType, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Println(conns.m[conn].Username, "is disconnecting", err)
-			conns.Lock()
-			//kahtlane kas removePlayer yldse tootab, check later
-			gameState.Players = removePlayer(gameState.Players, conns.m[conn])
-			log.Println(gameState.Players)
-			delete(conns.m, conn)
-			delete(conns.rm, conns.m[conn])
-			broadcastPlayerList()
-			conns.Unlock()
-			return
+    	log.Println(conns.m[conn].Username, "is disconnecting", err)
+    	conns.Lock()
+    	gameState.Players = removePlayer(gameState.Players, conns.m[conn])
+    	log.Println(gameState.Players)
+    	delete(conns.m, conn)
+    	delete(conns.rm, conns.m[conn])
+    	broadcastPlayerList()
+
+    	if len(gameState.Players) < 2 && gameState.Timer.Active {
+       		gameState.StopTimer()
+        	log.Println("Timer stopped due to insufficient players")
+        	var msg Message
+        	msg.Type = "timer_stopped"
+        	msg.GameState = gameState
+        	broadcast(nil, websocket.TextMessage, msg)
+    	}
+    	conns.Unlock()
+    	return
 		}
 
 		var msg Message
@@ -104,6 +113,7 @@ func reader(conn *websocket.Conn) {
 			msg.Type = "pong"
 			msg.Player = conns.m[conn]
 			broadcast(conn, messageType, msg)
+			fmt.Println("recived ping")
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"
@@ -133,19 +143,25 @@ func respond(from *websocket.Conn, messageType int, message Message) {
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {
-	message.Player = conns.m[from]
-	r, err := json.Marshal(message)
-	if err != nil {
-		log.Println("broadcast error:", err)
-	}
-	for conn := range conns.m {
-		/* uncomment siis endale ei saada
-		if conn == from{
-			continue
-		} */
-		conn.WriteMessage(messageType, r)
-	}
+    if from != nil {
+        message.Player = conns.m[from]
+    } else {
+        message.Player = Player{} // or set to a default player if appropriate
+    }
+    r, err := json.Marshal(message)
+    if err != nil {
+        log.Println("broadcast error:", err)
+    }
+    for conn := range conns.m {
+        /* uncomment kui ei taha endale saata
+        if conn == from {
+            continue
+        }
+        */
+        conn.WriteMessage(messageType, r)
+    }
 }
+
 
 func broadcastPlayerList() {
 	var players []Player

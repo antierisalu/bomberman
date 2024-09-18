@@ -52,6 +52,9 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 	go func() {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
+			if !g.Timer.Active {
+                break
+            }
 			g.Timer.TimeRemaining -= 1 * time.Second
 
 			//broadcastTimer
@@ -64,10 +67,10 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
 			// g.DisplayGameBoard()
 		}
-		if g.Timer.TimeRemaining <= 0 {
-			g.Timer.Active = false
-			g.OnTimerEnd()
-		}
+		if g.Timer.TimeRemaining <= 0 && g.Timer.Active {
+            g.Timer.Active = false
+            g.OnTimerEnd()
+        }
 	}()
 }
 
@@ -83,6 +86,13 @@ func (g *GameState) OnTimerEnd() {
 	}()
 
 }
+
+func (g *GameState) StopTimer() {
+    g.Timer.Active = false
+    g.Timer.TimeRemaining = 0
+    g.Started = false // Reset the game started state
+}
+
 
 // Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
 func (g *GameState) AddPlayer(p Player) int {

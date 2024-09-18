@@ -79,6 +79,7 @@ func reader(conn *websocket.Conn) {
 			log.Println(gameState.Players)
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
+			broadcastPlayerList()
 			conns.Unlock()
 			return
 		}

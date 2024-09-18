@@ -91,6 +91,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		Speed:        1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
+	//start the timer if 2 or more players and timer active
 	if len(gameState.Players) >= 2 && !gameState.Timer.Active {
         fmt.Println("STARTING TIMER")
         gameState.StartTimer(15)

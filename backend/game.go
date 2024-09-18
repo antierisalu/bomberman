@@ -52,6 +52,7 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 	go func() {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
+			// check if timer has been manually stoped
 			if !g.Timer.Active {
                 break
             }
@@ -66,11 +67,13 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 			// Uncomment to display game board in backend and time remaining
 			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
 			// g.DisplayGameBoard()
-		}
+			}
+
+		//only start the game when timer expires itself and is still active
 		if g.Timer.TimeRemaining <= 0 && g.Timer.Active {
-            g.Timer.Active = false
-            g.OnTimerEnd()
-        }
+			g.Timer.Active = false
+			g.OnTimerEnd()
+		}
 	}()
 }
 
@@ -87,10 +90,11 @@ func (g *GameState) OnTimerEnd() {
 
 }
 
+// stops the routine and resets gamestate(this allows new players to join)
 func (g *GameState) StopTimer() {
     g.Timer.Active = false
     g.Timer.TimeRemaining = 0
-    g.Started = false // Reset the game started state
+    g.Started = false
 }
 
 

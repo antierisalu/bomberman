@@ -81,6 +81,7 @@ func reader(conn *websocket.Conn) {
 			delete(conns.rm, conns.m[conn])
 			broadcastPlayerList()
 
+			//check if player count is less than 2 and timer is active
 			if len(gameState.Players) < 2 && gameState.Timer.Active {
 				gameState.StopTimer()
 				log.Println("Timer stopped due to insufficient players")
@@ -143,6 +144,7 @@ func respond(from *websocket.Conn, messageType int, message Message) {
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {
+	// prevents runtime errors(panic) when from is nil
     if from != nil {
         message.Player = conns.m[from]
     } else {

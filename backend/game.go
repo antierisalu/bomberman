@@ -111,6 +111,11 @@ func (g *GameState) UpdatePlayer(p Player) {
 	}
 }
 
+func (g *GameState) RestartGame() {
+	InitGame()
+	g.Started = false
+}
+
 func (g *GameState) GenerateGameGrid() {
 	/*
 	   === BLOCK TYPES ===

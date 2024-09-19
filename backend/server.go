@@ -49,11 +49,11 @@ func StartServer() {
 }
 
 func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
-	// if gameState.Started {
-	// 	w.WriteHeader(http.StatusUnavailableForLegalReasons)
-	// 	fmt.Fprintf(w, "Game has already started")
-	// 	return
-	// }
+	if gameState.Started {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Fprintf(w, "Game has already started")
+		return
+	}
 
 	err := r.ParseMultipartForm(3200)
 	if err != nil {

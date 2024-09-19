@@ -75,7 +75,10 @@ func reader(conn *websocket.Conn) {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
 			gameState.removePlayer(conns.m[conn])
-			log.Println(gameState.Players)
+			log.Println("current player list", gameState.Players)
+			if len(gameState.Players) == 0 {
+				gameState.RestartGame()
+			}
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
 			broadcastPlayerList()

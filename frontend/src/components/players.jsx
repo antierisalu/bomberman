@@ -5,10 +5,11 @@ import { updateGame } from "../script/update";
 // import { renderGame } from "../script/render";
 import { InputHandler } from "../script/controls";
 
+let players = [];//not state but game class entities
+
 const Players = (prop) => {
 
     let playersNames = prop.players
-    let players = [];//not state but game class entities
     let input;
     let client = prop.clientInfo;
 

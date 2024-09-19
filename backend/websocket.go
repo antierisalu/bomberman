@@ -74,7 +74,7 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
-			//kahtlane kas removePlayer yldse tootab, check later
+			// kahtlane kas removePlayer yldse tootab, check later
 			gameState.Players = removePlayer(gameState.Players, conns.m[conn])
 			log.Println(gameState.Players)
 			delete(conns.m, conn)
@@ -93,7 +93,7 @@ func reader(conn *websocket.Conn) {
 		case "join":
 			conns.Lock()
 
-			//link gameState player to connection
+			// link gameState player to connection
 			conns.m[conn] = gameState.Players[msg.Player.Index]
 			conns.rm[msg.Player] = conn
 
@@ -101,9 +101,12 @@ func reader(conn *websocket.Conn) {
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
 		case "ping":
-			msg.Type = "pong"
+			var reply Message
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			reply.GameState.GameGrid[0][0].BlockType = 0
 			msg.Player = conns.m[conn]
-			broadcast(conn, messageType, msg)
+			broadcast(conn, messageType, reply)
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"

@@ -16,13 +16,22 @@ const Players = (prop) => {
         const gameWorldDiv = document.getElementById("gameArea");
         playersNames.forEach((playerName, index) => {
           let ele = document.getElementById(`player${index}`)
-          const player = new Player(ele, gameWorldDiv, playerName.username);
+          const player = new Player(ele, gameWorldDiv, playerName.username, prop.gameState.GameGrid);
           players.push(player); 
       });
       return players;
   };
-  
 
+  //et saada cellidele dom elemente getClientRect jaoks
+    const initCellElements = () => {
+        for (let y = 0; y < 11; y++) {
+          for (let x = 0; x < 13; x++) {
+            let cellDom = document.getElementById(y+'-'+x)
+            prop.gameState.GameGrid[y][x].element = cellDom
+          }
+        }
+      }
+    
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi
       ws.onmessage = function (event) {
           const data = JSON.parse(event.data);
@@ -34,6 +43,7 @@ const Players = (prop) => {
               prop.updateGameState(data.gameState);
               break;
             case "start":
+              initCellElements();
               initPlayers();
               input = new InputHandler();
               GameLoop();

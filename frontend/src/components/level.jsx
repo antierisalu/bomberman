@@ -15,7 +15,9 @@ const Level = (prop) => {
       this.onFire = onFire;
       this.hasBomb = hasBomb;
       this.dropType = dropType;
-      this.element = element;
+      this.jsx = element;
+      this.element;
+      // this.rect = this.element.getBoundingClientRect();
     }
   }
 
@@ -38,17 +40,14 @@ const Level = (prop) => {
         const xyID = row.toString() + '-' + column.toString()
 
         switch (blockType) {
-          case 0:
-            cell.element = <div id={xyID} className="box-0"></div>;
-            break;
           case 1:
-            cell.element = <div id={xyID} className="box-1"></div>;
+            cell.jsx = <div id={xyID} className="box-1"></div>;
             break;
           case 2:
-            cell.element = <div id={xyID} className="box-2"></div>;
+            cell.jsx = <div id={xyID} className="box-2"></div>;
             break;
           default:
-            cell.element = null;
+            cell.jsx = <div id={xyID} className="box-0"></div>;
             break;
         };
         cells.push(cell);
@@ -67,7 +66,7 @@ const Level = (prop) => {
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>
-              {cell.element}
+              {cell.jsx}
             </div>
           ))}
           <Players 

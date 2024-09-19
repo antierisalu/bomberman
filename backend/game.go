@@ -258,3 +258,12 @@ func (g *GameState) MovePlayer(p Player, pos Position) {
 	// log.Println(p.Index, p.Username)
 	g.Players[p.Index].Position = pos
 }
+
+func (g *GameState) removePlayer(player Player) {
+	for i, p := range g.Players {
+		if p.Username == player.Username {
+			g.Players = append(g.Players[:i], g.Players[i+1:]...)
+			break
+		}
+	}
+}

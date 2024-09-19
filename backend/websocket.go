@@ -74,8 +74,7 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
-			// kahtlane kas removePlayer yldse tootab, check later
-			gameState.Players = removePlayer(gameState.Players, conns.m[conn])
+			gameState.removePlayer(conns.m[conn])
 			log.Println(gameState.Players)
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
@@ -167,13 +166,4 @@ func broadcastPlayerList() {
 	for conn := range conns.m {
 		conn.WriteMessage(websocket.TextMessage, r)
 	}
-}
-
-func removePlayer(l []Player, item Player) []Player {
-	for i, other := range l {
-		if other.Username == item.Username {
-			return append(l[:i], l[i+1:]...)
-		}
-	}
-	return l
 }

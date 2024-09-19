@@ -1,42 +1,19 @@
 import { LAR } from "../framework";
-import { StartClientWebsocket, ws } from '../websocket.js'
+import { sendMessage } from '../websocket.js'
 
-const Chat = (props) => {
-    // const [messages, setMessages] = LAR.useState([]);  
+const Chat = (props) => {  
     const [currentMessage, setCurrentMessage] = LAR.useState(""); 
 
     // Handle sending messages
-    const sendMessage = (event) => {
-        event.preventDefault(); // Prevent form reload
-
-        // console.log('WebSocket readyState:', ws.readyState);
-        console.log('Current Message:', currentMessage);
-
-        if (ws && ws.readyState === 1 && currentMessage) {
+    const sendChatMessage = (event) => {
         const message = {
             type: "chat_message", 
             content: currentMessage // current message input by the user
-        };
-        ws.send(JSON.stringify(message)); // Send message over WebSocket
-        console.log('message sent:', message)
-
+        }
+        sendMessage(JSON.stringify(message)); // Send message over WebSocket
         setCurrentMessage(""); // Clear input after sending
-        }else {
-            console.log('websoket katki või sõnum tühi')
-        }   
+        
     };
-
-   /*  if (ws) {
-        //gets triggered whenever a message is received from websocket server
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            // Handle chat messages from the server
-            if (data.type === "chat_message") {
-                console.log('receiced chat_message', data)
-                props.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
-            }
-        };
-    } */
 
     return (
         <div style="padding: 10px; border: 1px solid black; width: 300px;">
@@ -47,19 +24,25 @@ const Chat = (props) => {
                     </div>
                 ))}
             </div>
-            <form onSubmit={sendMessage} style="margin-top: 10px;">
                 <input 
                     type="text" 
                     value={currentMessage}
-                    onChange={(e) => setCurrentMessage(e.target.value)}
+                    onInput={(e) =>  {
+                        setCurrentMessage(e.target.value)}
+                    }   
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            sendChatMessage(e)
+                        }
+                    }}
                     placeholder="Type a message..."
                     style="width: 283px; padding: 8px; border: 1px solid #ccc; margin-bottom: 5px;"
                 />
-                <button type="submit" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+                <button onClick={sendChatMessage} type="submit" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; cursor: pointer;">
                     Send
                 </button>
-            </form>
         </div>
+
     );
 };
 

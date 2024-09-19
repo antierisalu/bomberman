@@ -24,7 +24,7 @@ export class Player {
         const gridY = Math.floor(this.y / this.cellSize);
 
         // Ensure gridX and gridY are within bounds
-        // console.log("x", gridX, "y", gridY)
+        console.log("x", gridX, "y", gridY)
         if (gridY < 0 || gridY >= this.cells[0].length || gridX < 0 || gridX >= this.cells.length) {
             return null; // Return null if out of bounds
         }
@@ -38,7 +38,7 @@ export class Player {
         let can = true
         /* surroundingCells.forEach(cell => {
            // let cellElem = document.getElementById(cell.Y+'-'+cell..)
-           //console.log(this.element.getBoundingClientRect())
+           console.log(this.element.getBoundingClientRect())
             if (this.isColliding(cell.element.getBoundingClientRect(), this.element.getBoundingClientRect())) {
                 console.log("Collided cant move", cell.X, cell.Y)
                 //if (cell.BlockType === 1) can = false

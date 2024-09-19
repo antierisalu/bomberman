@@ -79,7 +79,7 @@ const Players = (prop) => {
 
         updateGame(deltaTime, input, players, client);
         requestAnimationFrame(GameLoop);
-    }
+    } 
 
   return (
     <div>

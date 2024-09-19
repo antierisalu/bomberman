@@ -4,6 +4,7 @@ import { sendMessage, ws } from "../websocket";
 import { updateGame } from "../script/update";
 // import { renderGame } from "../script/render";
 import { InputHandler } from "../script/controls";
+import Chat from "./chat";
 
 let players = [];//not state but game class entities
 
@@ -59,7 +60,12 @@ const Players = (prop) => {
                   }
                 })
               })
-            }
+              break
+            case "chat_message":
+              console.log('received chat_message', data)
+              prop.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+              break;
+          }
         }
     }
 
@@ -84,6 +90,7 @@ const Players = (prop) => {
 
   return (
     <div>
+      <Chat messages={prop.messages} setMessages={prop.setMessages}/> 
       <div className="hud">
         <div className="hudPlayers">
           {prop.players.map((player, index) => (

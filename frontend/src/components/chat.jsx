@@ -1,7 +1,7 @@
 import { LAR } from "../framework";
 import { sendMessage } from '../websocket.js'
 
-const Chat = (props) => {  
+const Chat = (prop) => {  
     const [currentMessage, setCurrentMessage] = LAR.useState(""); 
 
     // Handle sending messages
@@ -18,7 +18,7 @@ const Chat = (props) => {
     return (
         <div style="padding: 10px; border: 1px solid black; width: 300px;">
             <div style="height: 300px; width: overflow-y: scroll; background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc;"> 
-                {props.messages.map((msg, index) => (
+                {prop.messages.map((msg, index) => (
                     <div key={index} style="padding: 5px; border-bottom: 1px solid #ddd;">
                         {msg.content}
                     </div>

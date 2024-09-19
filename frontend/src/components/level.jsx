@@ -1,6 +1,7 @@
 import { LAR } from "../framework";
 import Players from "./players";
 import { sendMessage, ws } from "../websocket";
+import Chat from "./chat";
 
 
 const Level = (prop) => {
@@ -75,6 +76,8 @@ const Level = (prop) => {
           updateGameState={prop.updateGameState} 
           gameState={prop.gameState} 
           clientInfo={prop.clientInfo}
+          messages={prop.messages}
+          setMessages={prop.setMessages}
           />
         </div>
       </div>

@@ -50,8 +50,9 @@ const Lobby = (props) => {
                     if (data.gameState.Timer.TimeRemaining < 1){
                         props.sendToGame(true)
                     }
+                    break
                 case "chat_message":
-                    console.log('receiced chat_message', data)
+                    console.log('received chat_message', data)
                     props.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
                     break;
                 }
@@ -63,9 +64,7 @@ const Lobby = (props) => {
             {props.isRegistered ? 
             <div>
                 {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
-                <div id="chat">
                 <Chat messages={props.messages} setMessages={props.setMessages}/> 
-                </div>
                 <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 

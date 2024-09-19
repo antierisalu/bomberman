@@ -6,21 +6,25 @@ import  Chat  from "./chat"
 
 const Lobby = (props) => {
 
+    const [timer, setTimer] = LAR.useState(0)
+
     function sendJoinRequest(event) {
         event.preventDefault();
-
-        // temporary hack hide after submit
-        // document.getElementById('lobby').style.display = "none";
-
-
         const formData = new FormData(event.target);
         fetch('http://localhost:8080/newPlayer', {
             method: 'POST',
             body: formData
         })
-            .then(response => response.text())
-            .then(data => {
-                props.changeClientInfo({name:event.target.text.value, color:event.target.color.value})
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text); 
+                    });
+                }
+                return response.json(); 
+            })
+            .then(data => { 
+                props.changeClientInfo({name:event.target.text.value, color:event.target.color.value, index: data})
                 props.registerPlayer(true)
             })
             .catch(error => {
@@ -36,6 +40,16 @@ const Lobby = (props) => {
                     console.log("Updating players with:", data.players);
                     props.updatePlayers(data.players)
                     break;
+                case "gameState":
+                    props.updateGameState(data.gameState);
+                    // console.log("IM UPDATING GAMESTATE")
+                    break;
+                case "timer":
+                    // console.log(data.gameState.Timer)
+                    setTimer(data.gameState.Timer.TimeRemaining/1000000000)
+                    if (data.gameState.Timer.TimeRemaining < 1){
+                        props.sendToGame(true)
+                    }
                 case "chat_message":
                     console.log('receiced chat_message', data)
                     props.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
@@ -48,14 +62,14 @@ const Lobby = (props) => {
         <div>
             {props.isRegistered ? 
             <div>
+                {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
                 <div id="chat">
                 <Chat messages={props.messages} setMessages={props.setMessages}/> 
                 </div>
                 <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
-                <button onClick={()=>props.sendToGame(true)}>GO TO GAME</button>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 
-            <div>
+            <div>       
                 
                 <form onSubmit={(event) => sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     <div class="input-container">

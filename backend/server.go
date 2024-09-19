@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -28,16 +29,9 @@ func InitGame() {
 	}
 
 	gameState.GenerateGameGrid()
-
-	fmt.Println("SPAWNPOINTS:")
-	for _, v := range gameState.SpawnPoints {
-		fmt.Printf("SpawnPoint: {CellX: %f; CellY: %f}]\n", v.X, v.Y)
-	}
-
 }
 
 func StartServer() {
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/newPlayer", handleNewPlayer)
 	mux.HandleFunc("/ws", wsHandler)
@@ -55,6 +49,11 @@ func StartServer() {
 }
 
 func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
+	if gameState.Started {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Fprintf(w, "Game has already started")
+		return
+	}
 
 	err := r.ParseMultipartForm(3200)
 	if err != nil {
@@ -77,17 +76,14 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(gameState.Players)+1 >= 4 {
+	if len(gameState.Players) > 4 {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
 		fmt.Println("max players reached for this game, sorry.")
 		fmt.Fprintf(w, "max players reached for this game, sorry.")
 		return
 	}
 
-	fmt.Println("Joiner:", name, "[", color, "]")
-	// -- STAGING --
-
-	fmt.Println("ADDING PLAYER:", Player{
+	playerIndex := gameState.AddPlayer(Player{
 		Username:     name,
 		Color:        color,
 		Position:     Position{X: 0, Y: 0},
@@ -95,21 +91,16 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		Speed:        1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
-	gameState.AddPlayer(Player{
-		Username:     name,
-		Color:        color,
-		Position:     Position{X: 0, Y: 0},
-		Lives:        3,
-		Speed:        1,
-		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
-	})
-	fmt.Println("STARTING TIMER")
 	if !gameState.Timer.Active {
-		gameState.StartTimer(15)
+		fmt.Println("STARTING TIMER")
+		gameState.StartTimer(3)
 	}
 
-	// -- STAGING --
+	jsonResponse, err := json.Marshal(playerIndex)
+	if err != nil {
+		fmt.Println("err marshaling ", err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "--- %v [%v]", name, color)
 }

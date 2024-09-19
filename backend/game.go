@@ -8,6 +8,7 @@ import (
 )
 
 type GameState struct {
+	Started     bool
 	Timer       Timer
 	Players     []Player
 	GameGrid    [][]Cell
@@ -26,7 +27,7 @@ type Timer struct {
 }
 
 type Cell struct {
-	BlockType int //0-air 1-permanent 2-breakable
+	BlockType int // 0-air 1-permanent 2-breakable
 	OnFire    bool
 	HasBomb   bool
 	X         int
@@ -42,7 +43,7 @@ type Cell struct {
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
 	// g.GenerateGameGrid()
-	g.SetBomb(&g.GameGrid[3][3], 2)
+	// g.SetBomb(&g.GameGrid[3][3], 2)
 
 	g.Timer = Timer{
 		Active:        true,
@@ -52,9 +53,16 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
-			// dbg
-			fmt.Println("Time remaining:", g.Timer.TimeRemaining)
-			g.DisplayGameBoard()
+
+			//broadcastTimer
+			var msg Message
+			msg.Type = "timer"
+			msg.GameState = gameState
+			broadcast(nil, 1, msg)
+
+			// Uncomment to display game board in backend and time remaining
+			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
+			// g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
@@ -64,17 +72,26 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 }
 
 func (g *GameState) OnTimerEnd() {
-	fmt.Println("Timer finished with end time:", g.Timer.TimeRemaining)
-	fmt.Println("Connected Players:")
-	for _, p := range g.Players {
-		fmt.Printf("Player: %s [%s] at position (x:%f, y:%f)\n", p.Username, p.Color, p.Position.X, p.Position.Y)
-	}
+
+	timer := time.NewTimer(3 * time.Second)
+	go func() {
+		<-timer.C
+		g.Started = true //start game
+		var msg Message
+		msg.Type = "start"
+		broadcast(nil, 1, msg)
+	}()
+
 }
 
-func (g *GameState) AddPlayer(p Player) {
+// Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
+func (g *GameState) AddPlayer(p Player) int {
+	p.Index = len(g.Players) //assign player index
 	g.Players = append(g.Players, p)
+	return p.Index
 }
 
+// Check is playername is taken
 func (g *GameState) hasPlayerName(name string) bool {
 	for _, p := range g.Players {
 		if p.Username == name {
@@ -94,6 +111,11 @@ func (g *GameState) UpdatePlayer(p Player) {
 	}
 }
 
+func (g *GameState) RestartGame() {
+	InitGame()
+	g.Started = false
+}
+
 func (g *GameState) GenerateGameGrid() {
 	/*
 	   === BLOCK TYPES ===
@@ -105,7 +127,7 @@ func (g *GameState) GenerateGameGrid() {
 	*/
 
 	worldTemplate := [][]int{
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //{X=12; Y=0}  [0][12]
 		{1, 9, 8, 0, 0, 0, 0, 0, 0, 0, 8, 9, 1},
 		{1, 8, 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -118,7 +140,7 @@ func (g *GameState) GenerateGameGrid() {
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	}
 	//
-
+	//randomly generate breakable blocks
 	for i := 1; i < 10; i++ {
 		for j := 1; j < 12; j++ {
 			if worldTemplate[i][j] == 0 && rand.Intn(5) > 0 { // if air block and hits 80% chance, place breakable block
@@ -191,18 +213,17 @@ func (g *GameState) Explosion(c *Cell, r int) {
 	g.LightCell(c)
 
 	for i := 1; i <= r; i++ {
-		if c.X-i >= 0 { //left
+		if c.X-i >= 0 { // left
 			g.LightCell(&g.GameGrid[c.X-i][c.Y])
 		}
-		if c.X+i < len(g.GameGrid) { //right
+		if c.X+i < len(g.GameGrid) { // right
 			g.LightCell(&g.GameGrid[c.X+i][c.Y])
 		}
-		if c.Y-i >= 0 { //up
+		if c.Y-i >= 0 { // up
 			g.LightCell(&g.GameGrid[c.X][c.Y-i])
 		}
-		if c.Y+i < len(g.GameGrid[0]) { //down
+		if c.Y+i < len(g.GameGrid[0]) { // down
 			g.LightCell(&g.GameGrid[c.X][c.Y+i])
-
 		}
 	}
 }
@@ -232,8 +253,22 @@ func (g *GameState) LightCell(c *Cell) {
 		2 - BLAST RADIUS
 */
 func (c *Cell) RollDrop() {
-
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
+	}
+}
+
+// Update Player.Position
+func (g *GameState) MovePlayer(p Player, pos Position) {
+	// log.Println(p.Index, p.Username)
+	g.Players[p.Index].Position = pos
+}
+
+func (g *GameState) removePlayer(player Player) {
+	for i, p := range g.Players {
+		if p.Username == player.Username {
+			g.Players = append(g.Players[:i], g.Players[i+1:]...)
+			break
+		}
 	}
 }

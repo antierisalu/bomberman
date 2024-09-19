@@ -7,6 +7,11 @@ html {
     width: 100%;
 }
 
+.timer{
+  background-color: red;
+  font-size: x-large;
+}
+
 body {
     background-color: beige;
     height: 100%;
@@ -368,21 +373,33 @@ body {
 
 .player {
     position: absolute;
-
-    width: 58px;
+    width: 50px;
     height: 58px;
-    background-image: url('./assets/front.png');
-    background-size: cover;
 }
 
-#player1 {
-  left: 116px; /* magic */
+#player0 {
   top: 58px; /* magic */
-}
-
-#player2 {
   left: 58px; /* magic */
+  background-image: url('./assets/red.png');
+  background-size: cover;
+}
+#player1 {
   top: 58px; /* magic */
+  left: 638px; /* magic */
+  background-image: url('./assets/blue.png');
+  background-size: cover;
+}
+#player2 {
+  top: 522px; /* magic */
+  left: 58px; /* magic */
+  background-image: url('./assets/purple.png');
+  background-size: cover;
+}
+#player3 {
+  top: 522px; /* magic */
+  left: 638px; /* magic */
+  background-image: url('./assets/green.png');
+  background-size: cover;
 }
 
 .box-1 { /* in-desctructible */

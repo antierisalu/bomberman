@@ -37,6 +37,7 @@ type Position struct {
 }
 
 type Player struct {
+	Index        int          `json:"index"`
 	Username     string       `json:"username"`
 	Color        string       `json:"color"`
 	Position     Position     `json:"position"`
@@ -73,8 +74,11 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
+			gameState.removePlayer(conns.m[conn])
+			log.Println(gameState.Players)
 			delete(conns.m, conn)
 			delete(conns.rm, conns.m[conn])
+			broadcastPlayerList()
 			conns.Unlock()
 			return
 		}
@@ -84,21 +88,50 @@ func reader(conn *websocket.Conn) {
 			log.Println("unmarshal:", err)
 			continue
 		}
-		log.Println(msg)
 		switch msg.Type {
 		case "join":
 			conns.Lock()
-			conns.m[conn] = msg.Player
+
+			// link gameState player to connection
+			conns.m[conn] = gameState.Players[msg.Player.Index]
 			conns.rm[msg.Player] = conn
-			conn.WriteMessage(messageType, message) //saada endale tagasi et joinisid
-			broadcastPlayerList()                   //saadab koigile playerlisti
+
+			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
+			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
 		case "ping":
 			var reply Message
-			reply.Type = "pong"
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			reply.GameState.GameGrid[0][0].BlockType = 0
+			msg.Player = conns.m[conn]
 			broadcast(conn, messageType, reply)
+		case "gameState":
+			var reply Message
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			respond(conn, messageType, reply)
+		case "position":
+
+			gameState.MovePlayer(conns.m[conn], msg.Position)
+
+			var reply Message
+			reply.Type = "updateXY"
+			reply.Players = gameState.Players
+			conns.Lock()
+			broadcast(conn, messageType, reply)
+			conns.Unlock()
+
 		}
 	}
+}
+
+func respond(from *websocket.Conn, messageType int, message Message) {
+	r, err := json.Marshal(message)
+	if err != nil {
+		log.Println("respond error:", err)
+	}
+	from.WriteMessage(messageType, r)
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {

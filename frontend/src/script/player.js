@@ -8,10 +8,8 @@ export class Player {
         this.name = name;
         this.x = this.playerRect.x - this.clientGameRect.x
         this.y = this.playerRect.y - this.clientGameRect.y
-
         this.width = this.playerRect.width
         this.height = this.playerRect.height
-
         this.speed = 200;
         this.oldX = 0;
         this.oldY = 0;
@@ -20,11 +18,12 @@ export class Player {
     }
 
     update(input, dt) {
+        const movement = this.speed * dt;
         let right = 0;
         let left = 0;
         let up = 0;
         let down = 0;
-        const movement = this.speed * dt;
+
         if ((input.keys.indexOf("ArrowUp") > -1) || (input.keys.indexOf("w") > -1)) {
             up = 1
         }
@@ -53,36 +52,12 @@ export class Player {
         
     }
 
-    move(direction, dt) {
-        const movement = this.speed * dt;
-            switch (direction) {
-                case "up":
-                    this.y -= movement;
-                    this.element.style.top = this.y + 'px'
-                    break;
-                case "down":
-                    this.y += movement;
-                    this.element.style.top = this.y + 'px'
-                    break;
-                case "left":
-                    this.x -= movement;
-                    this.element.style.left = this.x + 'px'
-                    break;
-                case "right":
-                    this.x += movement;
-                    this.element.style.left = this.x + 'px'
-                    break;
-            }
-    }
-
-
-
     movePlayer(dx, dy, cells) {
         let obstacles = [].concat(...cells);
         let futureX = this.x + dx;
         let futureY = this.y + dy;
         
-        // Create a hypothetical bounding box for the this in the new position
+        // Create a hypothetical bounding box for the player in the new position
         let futurePlayer = {x: futureX, y: futureY, width: this.width, height: this.height};
         
         // Check for collisions with each obstacle
@@ -91,39 +66,25 @@ export class Player {
             let oRect = obstacle.element.getBoundingClientRect()
             let obsX = oRect.x - this.clientGameRect.x
             let obsY = oRect.y - this.clientGameRect.y
-
+            let calibratedObstacle = {x:obsX, y:obsY, height:oRect.height, width:oRect.width}
             if (obstacle.BlockType === 1){
-                if (this.isColliding(futurePlayer, {x:obsX, y:obsY, height:oRect.height, width:oRect.width})) {
-                    
-                    if (this.isColliding({x: futureX, y: this.y, width: this.width, height: this.height}, 
-                        {x:obsX, y:obsY, height:oRect.height, width:oRect.width})) {
-
+                if (this.isColliding(futurePlayer, calibratedObstacle)) {
+                    if (this.isColliding({x: futureX, y: this.y, width: this.width, height: this.height}, calibratedObstacle)) {
                     dx = 0; // Stop horizontal movement
                     }
-                    if (this.isColliding({x: this.x, y: futureY, width: this.width, height: this.height}, 
-                        {x:obsX, y:obsY, height:oRect.height, width:oRect.width})) {
+                    if (this.isColliding({x: this.x, y: futureY, width: this.width, height: this.height}, calibratedObstacle)) {
                     dy = 0; // Stop vertical movement
                     }
                 }
             }
         }
         
-        // Update the player's position based on the resolved movement
         this.x += dx;
         this.y += dy;
         this.element.style.left = this.x + 'px'
         this.element.style.top = this.y + 'px'
       }
     
-
-
-/*     isColliding(rect1, rect2) {
-        return !(rect1.left > rect2.right ||
-                 rect1.right < rect2.left ||
-                 rect1.bottom < rect2.top ||
-                 rect1.top > rect2.bottom);
-    } */
-
     isColliding(rect1, rect2) {
         return rect1.x < rect2.x + rect2.width &&
                rect1.x + rect1.width > rect2.x &&
@@ -131,97 +92,8 @@ export class Player {
                 rect1.y < rect2.y + rect2.height;
       }
 
-    getCellAt(gridX, gridY) {
-        if (gridX < 0 || gridX >= this.cells[0].length || gridY < 0 || gridY >= this.cells.length) {
-            return this.cells[0][0]; // Out of bounds
-        }
-        
-        return this.cells[gridX][gridY]; // Access the cell at the specified coordinates
-    }
-
     moveOther(){
         this.element.style.left = this.x + 'px'
         this.element.style.top = this.y + 'px'
     }
-
-    
 }
-
-
-class AABB {
-    constructor(x, y, width, height) {
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
-    }
-}
-
-
-
-    // getCellxd(direction) {
-    //     let gridX = Math.floor(this.x / this.cellSize);
-    //     let gridY = Math.floor(this.y / this.cellSize);
-    //     switch (direction) {
-    //         case "up":
-    //             gridY -= 1
-    //             break;
-    //         case "down":
-    //             gridY += 1
-    //             break;
-    //         case "left":
-    //             gridX -= 1
-    //             break;
-    //         case "right":
-    //             gridX += 1
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    //     // const element = document.getElementById(`${gridX}-${gridY}`)
-    //     return this.getCellAt(gridY, gridX);
-    // }
-    
-
-
-
-/* canMovexd(direction) {
-        let can = true
-
-         this.cells.forEach(row => row.forEach(cell => {
-        //    let cellElem = document.getElementById(cell.Y+'-'+cell..)
-            if (this.isColliding(this.element.getBoundingClientRect(), cell.element.getBoundingClientRect())) {
-                
-                cell.element.style.background = 'red'
-                setTimeout(()=>{
-                    cell.element.style.background = 'blue'
-                },100)
-                if (cell.BlockType === 1){
-                    //can = false
-                    console.log('Colliding with cell:', cell.X, cell.Y);
-                    
-                    const pRect = this.element.getBoundingClientRect();
-                    const cRect = cell.element.getBoundingClientRect();
-
-                    if (pRect.right > cRect.left && pRect.left < cRect.left) {
-                        // Collision on the right side
-                        this.x -= 1;
-                    } else if (pRect.left < cRect.right && pRect.right > cRect.right) {
-                        // Collision on the left side
-                        this.x += 1;
-                    } else if (pRect.bottom > cRect.top && pRect.top < cRect.top) {
-                        // Collision on the bottom side
-                        this.y -= 1;
-                    } else if (pRect.top < cRect.bottom && pRect.bottom > cRect.bottom) {
-                        // Collision on the top side
-                        this.y += 1;
-                    }
-
-                    this.element.style.left = `${this.x}px`;
-                    this.element.style.top = `${this.y}px`;
-                }
-            }
-            
-        })); 
-        return can
-    } */

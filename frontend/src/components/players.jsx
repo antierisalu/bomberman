@@ -65,7 +65,7 @@ const Players = (prop) => {
 
     LAR.useEffect(()=>{
       initCellElements();
-      players.forEach((player)=>{//update the cell info for player class
+      players.forEach((player)=>{//update the cell info for player class when gamestate gets updated
         player.cells = prop.gameState.GameGrid
       })
     },[prop.gameState])

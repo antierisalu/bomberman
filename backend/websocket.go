@@ -17,8 +17,8 @@ var upgrader = websocket.Upgrader{
 
 type Connections struct {
 	sync.RWMutex
-	m  map[*websocket.Conn]Player
-	rm map[Player]*websocket.Conn
+	m  map[*websocket.Conn]*Player
+	rm map[int]*websocket.Conn
 }
 
 type Message struct {
@@ -43,6 +43,8 @@ type Player struct {
 	Position     Position     `json:"position"`
 	Lives        int          `json:"lives"`
 	Speed        float32      `json:"speed"`
+	BombCount    int          `json:"bombCount"`
+	BombRange    int          `json:"bombRange"`
 	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
 }
 
@@ -54,8 +56,8 @@ type PowerUpLevel struct {
 
 // WS
 var conns = Connections{
-	m:  make(map[*websocket.Conn]Player),
-	rm: make(map[Player]*websocket.Conn),
+	m:  make(map[*websocket.Conn]*Player),
+	rm: make(map[int]*websocket.Conn),
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,16 +76,21 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			log.Println(conns.m[conn].Username, "is disconnecting", err)
 			conns.Lock()
+			delete(conns.rm, conns.m[conn].Index)
 			gameState.removePlayer(conns.m[conn])
-			log.Println("current player list", gameState.Players)
+			delete(conns.m, conn)
+			conns.Unlock()
+
+			broadcastPlayerList()
+
 			if len(gameState.Players) == 0 {
 				gameState.RestartGame()
 			}
-			delete(conns.m, conn)
-			delete(conns.rm, conns.m[conn])
-			broadcastPlayerList()
-			conns.Unlock()
 			return
+		}
+		if conns.m[conn] != nil {
+	
+			conns.m[conn] = &gameState.Players[conns.m[conn].Index]
 		}
 
 		var msg Message
@@ -96,9 +103,8 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 
 			// link gameState player to connection
-			conns.m[conn] = gameState.Players[msg.Player.Index]
-			conns.rm[msg.Player] = conn
-
+			conns.m[conn] = &gameState.Players[msg.Player.Index]
+			conns.rm[msg.Player.Index] = conn
 			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
@@ -107,7 +113,7 @@ func reader(conn *websocket.Conn) {
 			reply.Type = "gameState"
 			reply.GameState = gameState
 			reply.GameState.GameGrid[2][2].BlockType = 0
-			msg.Player = conns.m[conn]
+			msg.Player = *conns.m[conn]
 			broadcast(conn, messageType, reply)
 		case "gameState":
 			var reply Message
@@ -116,7 +122,7 @@ func reader(conn *websocket.Conn) {
 			respond(conn, messageType, reply)
 		case "position":
 
-			gameState.MovePlayer(conns.m[conn], msg.Position)
+			gameState.MovePlayer(*conns.m[conn], msg.Position)
 
 			var reply Message
 			reply.Type = "updateXY"
@@ -124,7 +130,10 @@ func reader(conn *websocket.Conn) {
 			conns.Lock()
 			broadcast(conn, messageType, reply)
 			conns.Unlock()
-
+		case "bomb":
+			x, y := conns.m[conn].CalcPlayerGridPosition()
+			gameState.SetBomb(&gameState.GameGrid[y][x], conns.m[conn].BombRange)
+			log.Println("bomb sent by", conns.m[conn], "at:", x, y)
 		}
 	}
 }
@@ -138,7 +147,9 @@ func respond(from *websocket.Conn, messageType int, message Message) {
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {
-	message.Player = conns.m[from]
+	if from != nil {
+		message.Player = *conns.m[from]
+	}
 	r, err := json.Marshal(message)
 	if err != nil {
 		log.Println("broadcast error:", err)
@@ -155,7 +166,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 func broadcastPlayerList() {
 	var players []Player
 	for _, player := range conns.m {
-		players = append(players, player)
+		players = append(players, *player)
 	}
 	msg := Message{
 		Type:    "player_list",

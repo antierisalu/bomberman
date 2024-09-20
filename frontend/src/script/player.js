@@ -96,4 +96,21 @@ export class Player {
         this.element.style.left = this.x + 'px'
         this.element.style.top = this.y + 'px'
     }
+
+    getCellAt(gridX, gridY) {
+        if (gridX < 0 || gridX >= this.cells[0].length || gridY < 0 || gridY >= this.cells.length) {
+            return this.cells[0][0]; // Out of bounds
+        }
+        return this.cells[gridY][gridX]; // Access the cell at the specified coordinates
+    }
+
+    getCurrentCell() {
+        const gridX = Math.floor(this.x / this.cellSize);
+        const gridY = Math.floor(this.y / this.cellSize);
+
+        if (gridY < 0 || gridY >= this.cells[0].length || gridX < 0 || gridX >= this.cells.length) {
+            return null; // Return null if out of bounds
+        }
+        return this.cells[gridY][gridX]; // Access the cell as a 2D array
+    }
 }

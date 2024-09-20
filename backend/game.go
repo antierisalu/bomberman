@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -41,6 +42,8 @@ type Cell struct {
 	*/
 }
 
+var CellSize = 58
+
 func (g *GameState) StartTimer(totalTimeSeconds int) {
 	// g.GenerateGameGrid()
 	// g.SetBomb(&g.GameGrid[3][3], 2)
@@ -54,14 +57,14 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
 
-			//broadcastTimer
+			// broadcastTimer
 			var msg Message
 			msg.Type = "timer"
 			msg.GameState = gameState
 			broadcast(nil, 1, msg)
 
 			// Uncomment to display game board in backend and time remaining
-			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
+			// fmt.Println("Time remaining:", g.Timer.TimeRemaining)
 			// g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
@@ -72,21 +75,19 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 }
 
 func (g *GameState) OnTimerEnd() {
-
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
-		g.Started = true //start game
+		g.Started = true // start game
 		var msg Message
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
 	}()
-
 }
 
 // Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
 func (g *GameState) AddPlayer(p Player) int {
-	p.Index = len(g.Players) //assign player index
+	p.Index = len(g.Players) // assign player index
 	g.Players = append(g.Players, p)
 	return p.Index
 }
@@ -209,6 +210,12 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 	}()
 }
 
+func (p *Player) CalcPlayerGridPosition() (int, int) {
+	gridX := math.Floor(float64(p.Position.X) / float64(CellSize))
+	gridY := math.Floor(float64(p.Position.Y) / float64(CellSize))
+	return int(gridX), int(gridY)
+}
+
 func (g *GameState) Explosion(c *Cell, r int) {
 	g.LightCell(c)
 
@@ -226,6 +233,10 @@ func (g *GameState) Explosion(c *Cell, r int) {
 			g.LightCell(&g.GameGrid[c.X][c.Y+i])
 		}
 	}
+	var reply Message
+	reply.Type = "gameState"
+	reply.GameState = gameState
+	broadcast(nil, 1, reply)
 }
 
 func (g *GameState) LightCell(c *Cell) {
@@ -264,7 +275,7 @@ func (g *GameState) MovePlayer(p Player, pos Position) {
 	g.Players[p.Index].Position = pos
 }
 
-func (g *GameState) removePlayer(player Player) {
+func (g *GameState) removePlayer(player *Player) {
 	for i, p := range g.Players {
 		if p.Username == player.Username {
 			g.Players = append(g.Players[:i], g.Players[i+1:]...)

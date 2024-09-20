@@ -89,6 +89,8 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		Position:     Position{X: 0, Y: 0},
 		Lives:        3,
 		Speed:        1,
+		BombCount:    1,
+		BombRange:    1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
 	if !gameState.Timer.Active {
@@ -102,5 +104,4 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResponse)
-
 }

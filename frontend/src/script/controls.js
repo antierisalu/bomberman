@@ -1,10 +1,5 @@
-function plantBomb() {
+import { sendMessage } from "../websocket";
 
-    let bombLocation = 'This place where user is. player.location vms'
-    console.log(bombLocation)
-    return
-
-}
 
 export class InputHandler {
     constructor() {
@@ -17,10 +12,12 @@ export class InputHandler {
                 e.key === "ArrowUp" ||
                 e.key === "ArrowDown" ||
                 e.key === "ArrowLeft" ||
-                e.key === "ArrowRight" ||
-                e.key === " ")
+                e.key === "ArrowRight")
                 && this.keys.indexOf(e.key) === -1) {
                 this.keys.push(e.key)
+            }
+            if (e.key === " "){
+                sendMessage(JSON.stringify({type:'bomb'}))
             }
         })
         window.addEventListener("keyup", e => {
@@ -31,8 +28,7 @@ export class InputHandler {
                 e.key === "ArrowUp" ||
                 e.key === "ArrowDown" ||
                 e.key === "ArrowLeft" ||
-                e.key === "ArrowRight" ||
-                e.key === " ")) {
+                e.key === "ArrowRight")) {
                 this.keys.splice(this.keys.indexOf(e.key), 1)
             }
         })

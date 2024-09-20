@@ -421,6 +421,13 @@ body {
   height: 58px;
 }
 
+.hasBomb {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/bomb.png');
+  background-size: cover;
+}
+
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
   position:absolute;
   display: flex;

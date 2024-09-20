@@ -202,12 +202,19 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 	c.HasBomb = true
 	fmt.Println("Bomb planted")
 	timer := time.NewTimer(3 * time.Second)
+	
+	var reply Message
+	reply.Type = "gameState"
+	reply.GameState = gameState
+	broadcast(nil, 1, reply)
+
 	go func() {
 		<-timer.C
 		fmt.Println("Bomb exploded")
 		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
+	
 }
 
 func (p *Player) CalcPlayerGridPosition() (int, int) {
@@ -233,6 +240,8 @@ func (g *GameState) Explosion(c *Cell, r int) {
 			g.LightCell(&g.GameGrid[c.X][c.Y+i])
 		}
 	}
+
+	time.Sleep(1200 * time.Millisecond) // nice work
 	var reply Message
 	reply.Type = "gameState"
 	reply.GameState = gameState
@@ -247,6 +256,7 @@ func (g *GameState) LightCell(c *Cell) {
 	fmt.Println("Fire started at:", c.X, c.Y)
 
 	timer := time.NewTimer(1 * time.Second)
+
 	go func() {
 		<-timer.C
 		c.OnFire = false

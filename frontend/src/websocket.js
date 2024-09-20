@@ -22,6 +22,8 @@ export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState)
                 // console.log("IM UPDATING GAMESTATE")
                 break;
             case "pong":
+                console.log("pong pong")
+                break;
         }
     }
 }

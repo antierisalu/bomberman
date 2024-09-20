@@ -5,8 +5,6 @@ import { sendMessage, ws } from "../websocket";
 
 const Level = (prop) => {
 
-  const [nuss, nussime] = LAR.useState(0)
-
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
       this.x = x;
@@ -38,7 +36,7 @@ const Level = (prop) => {
         const dropType = prop.gameState.GameGrid[row][column].dropType;
         const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
         const xyID = row.toString() + '-' + column.toString()
-
+        console.log(hasBomb)
         switch (blockType) {
           case 1:
             cell.jsx = <div id={xyID} className="box-1"></div>;
@@ -47,7 +45,11 @@ const Level = (prop) => {
             cell.jsx = <div id={xyID} className="box-2"></div>;
             break;
           default:
-            cell.jsx = <div id={xyID} className="box-0"></div>;
+            if (hasBomb) {
+              cell.jsx = <div id={xyID} className="hasBomb"></div>; // Add a special class for bombs
+            } else {
+              cell.jsx = <div id={xyID} className="box-0"></div>; // Regular default case without bomb
+            }
             break;
         };
         cells.push(cell);
@@ -62,7 +64,6 @@ const Level = (prop) => {
       
       <div id="level">
             <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
-            <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>

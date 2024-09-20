@@ -131,6 +131,7 @@ func reader(conn *websocket.Conn) {
 			broadcast(conn, messageType, reply)
 			conns.Unlock()
 		case "bomb":
+			
 			x, y := conns.m[conn].CalcPlayerGridPosition()
 			gameState.SetBomb(&gameState.GameGrid[y][x], conns.m[conn].BombRange)
 			log.Println("bomb sent by", conns.m[conn], "at:", x, y)

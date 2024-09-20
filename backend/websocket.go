@@ -106,7 +106,7 @@ func reader(conn *websocket.Conn) {
 			var reply Message
 			reply.Type = "gameState"
 			reply.GameState = gameState
-			reply.GameState.GameGrid[0][0].BlockType = 0
+			reply.GameState.GameGrid[2][2].BlockType = 0
 			msg.Player = conns.m[conn]
 			broadcast(conn, messageType, reply)
 		case "gameState":

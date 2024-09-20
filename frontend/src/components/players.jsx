@@ -47,7 +47,7 @@ const Players = (prop) => {
               initCellElements();
               initPlayers();
               input = new InputHandler();
-              GameLoop();
+              GameLoop(0);
               break;
             case "updateXY":
               //update player positions
@@ -62,6 +62,13 @@ const Players = (prop) => {
             }
         }
     }
+
+    LAR.useEffect(()=>{
+      initCellElements();
+      players.forEach((player)=>{//update the cell info for player class
+        player.cells = prop.gameState.GameGrid
+      })
+    },[prop.gameState])
 
     let lastFrameTime = 0;
     let frame = 0;

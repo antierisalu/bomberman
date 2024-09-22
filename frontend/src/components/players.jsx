@@ -1,8 +1,7 @@
 import { Player } from "../script/player";
 import { LAR } from "../framework";
-import { sendMessage, ws } from "../websocket";
+import { ws } from "../websocket";
 import { updateGame } from "../script/update";
-// import { renderGame } from "../script/render";
 import { InputHandler } from "../script/controls";
 
 let players = [];//not state but game class entities
@@ -128,7 +127,7 @@ const Players = (prop) => {
           <div className="hudPlayers">
             {prop.players.map((player, index) => (
               <div key={index} className="hudPlayer">
-                <span>{player.username}</span> - <span>{player.color}</span>
+                {player.username}  Lives:{player.lives}
               </div>
             ))}
           </div>

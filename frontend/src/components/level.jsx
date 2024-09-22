@@ -1,6 +1,6 @@
 import { LAR } from "../framework";
 import Players from "./players";
-import { sendMessage, ws } from "../websocket";
+import { sendMessage } from "../websocket";
 
 let cells = [];
 

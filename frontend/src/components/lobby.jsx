@@ -22,7 +22,7 @@ const Lobby = (props) => {
                 return response.json(); 
             })
             .then(data => { 
-                props.changeClientInfo({name:event.target.text.value, color:event.target.color.value, index: data})
+                props.changeClientInfo({name:event.target.text.value, index: data})
                 props.registerPlayer(true)
             })
             .catch(error => {
@@ -64,26 +64,7 @@ const Lobby = (props) => {
                 
                 <form onSubmit={(event) => sendJoinRequest(event)} id="join-form" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     <div class="input-container">
-                        <input class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />
-                    </div>
-                    <div style="margin: 30px;">
-                        <div style="display: flex; gap: 10px; margin: 10px;">
-                            <div style="background-color: red; height: 20px; width: 20px"></div>
-                            <input name="color" type="radio" id="color-option1" value="red" />
-                        </div>
-                        <div style="display: flex; gap: 10px; margin: 10px;">
-                            <div style="background-color: green; height: 20px; width: 20px"></div>
-                            <input name="color" type="radio" id="color-option2" value="green" />
-                        </div>
-                        <div style="display: flex; gap: 10px; margin: 10px;">
-                            <div style="background-color: blue; height: 20px; width: 20px"></div>
-                            <input name="color" type="radio" id="color-option3" value="blue" />
-                        </div>
-                        <div style="display: flex; gap: 10px; margin: 10px;">
-                            <div style="background-color: purple; height: 20px; width: 20px"></div>
-                            <input name="color" type="radio" id="color-option4" value="purple" />
-                        </div>
-
+                        <input style="margin-bottom: 50px;" class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />
                     </div>
                     <button class="button-50" type="submit">Play</button>
                 </form>

@@ -61,14 +61,8 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	color := r.FormValue("color")
 	name := r.FormValue("text")
-	if color == "" {
-		w.WriteHeader(http.StatusUnavailableForLegalReasons)
-		fmt.Println(name, "ei valinud v2rvi")
-		fmt.Fprintf(w, "vali v2rv")
-		return
-	}
+
 	if gameState.hasPlayerName(name) {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
 		fmt.Println(name, " nimi on taken")
@@ -85,7 +79,6 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 
 	playerIndex := gameState.AddPlayer(Player{
 		Username:     name,
-		Color:        color,
 		Position:     Position{X: 0, Y: 0},
 		Lives:        3,
 		Speed:        1,

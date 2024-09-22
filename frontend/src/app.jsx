@@ -1,7 +1,7 @@
 import { LAR } from './framework';
 import Lobby from './components/lobby';
 import Level from './components/level';
-import { StartClientWebsocket, sendMessage } from './websocket';
+import { StartClientWebsocket } from './websocket';
 
 const App = () => {
 

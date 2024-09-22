@@ -40,7 +40,6 @@ type Position struct {
 type Player struct {
 	Index        int          `json:"index"`
 	Username     string       `json:"username"`
-	Color        string       `json:"color"`
 	Position     Position     `json:"position"`
 	Lives        int          `json:"lives"`
 	Speed        float32      `json:"speed"`

@@ -1,11 +1,9 @@
-import { LAR } from './framework';
-
 export let ws;
 
 export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState) {
     ws = new WebSocket("ws://localhost:8080/ws")
     ws.onopen = function (event) {
-        ws.send(JSON.stringify({ type:'join', player: {index: clientInfo.index, username: clientInfo.name, color: clientInfo.color}}));
+        ws.send(JSON.stringify({ type:'join', player: {index: clientInfo.index, username: clientInfo.name}}));
         sendMessage(JSON.stringify({ type:'gameState'}));
         console.log("Websocket connected!");
     }

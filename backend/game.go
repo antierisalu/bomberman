@@ -202,7 +202,7 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 	c.HasBomb = true
 	fmt.Println("Bomb planted")
 	timer := time.NewTimer(3 * time.Second)
-	
+
 	var reply Message
 	reply.Type = "gameState"
 	reply.GameState = gameState
@@ -214,7 +214,7 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
-	
+
 }
 
 func (p *Player) CalcPlayerGridPosition() (int, int) {
@@ -224,8 +224,8 @@ func (p *Player) CalcPlayerGridPosition() (int, int) {
 }
 
 func (g *GameState) Explosion(c *Cell, r int) {
-	g.LightCell(c)
 
+	g.LightCell(c)
 	for i := 1; i <= r; i++ {
 		if c.X-i >= 0 { // left
 			g.LightCell(&g.GameGrid[c.X-i][c.Y])
@@ -241,11 +241,35 @@ func (g *GameState) Explosion(c *Cell, r int) {
 		}
 	}
 
-	time.Sleep(1200 * time.Millisecond) // nice work
 	var reply Message
 	reply.Type = "gameState"
 	reply.GameState = gameState
 	broadcast(nil, 1, reply)
+
+	timer := time.NewTimer(1 * time.Second)
+	go func() {
+		<-timer.C
+		g.DestroyCell(c)
+		for i := 1; i <= r; i++ {
+			if c.X-i >= 0 { // left
+				g.DestroyCell(&g.GameGrid[c.X-i][c.Y])
+			}
+			if c.X+i < len(g.GameGrid) { // right
+				g.DestroyCell(&g.GameGrid[c.X+i][c.Y])
+			}
+			if c.Y-i >= 0 { // up
+				g.DestroyCell(&g.GameGrid[c.X][c.Y-i])
+			}
+			if c.Y+i < len(g.GameGrid[0]) { // down
+				g.DestroyCell(&g.GameGrid[c.X][c.Y+i])
+			}
+		}
+		var reply Message
+		reply.Type = "gameState"
+		reply.GameState = gameState
+		broadcast(nil, 1, reply)
+	}()
+
 }
 
 func (g *GameState) LightCell(c *Cell) {
@@ -254,17 +278,16 @@ func (g *GameState) LightCell(c *Cell) {
 	}
 	c.OnFire = true
 	fmt.Println("Fire started at:", c.X, c.Y)
-
-	timer := time.NewTimer(1 * time.Second)
-
-	go func() {
-		<-timer.C
-		c.OnFire = false
-		if c.BlockType == 2 { // if breakable block, turn it into air
-			c.BlockType = 0
-		}
-		fmt.Println("Fire ended at:", c.X, c.Y)
-	}()
+}
+func (g *GameState) DestroyCell(c *Cell) {
+	if c.BlockType == 1 { // dont destroy unbreakable blocks
+		return
+	}
+	c.OnFire = false
+	if c.BlockType == 2 { // if breakable block, turn it into air
+		c.BlockType = 0
+	}
+	fmt.Println("Fire ended at:", c.X, c.Y)
 }
 
 /*

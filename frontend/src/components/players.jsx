@@ -19,7 +19,6 @@ const Players = (prop) => {
     })
   }
   
-  
     let playersNames = prop.players
     let input;
     let client = prop.clientInfo;
@@ -88,7 +87,6 @@ const Players = (prop) => {
                   }
                 })
               }
-              ws.onmessage = null
               break;
             default:
               console.log("unknown data:",data)

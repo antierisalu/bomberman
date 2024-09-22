@@ -81,6 +81,7 @@ const Players = (prop) => {
               if (data.player.username == client.name){
                 players = []
                 prop.killPlayer(false)
+                ws.onmessage = null
               } else {
                 players.forEach((player)=>{
                   if (player.name === data.player.username){

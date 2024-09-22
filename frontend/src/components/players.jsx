@@ -81,7 +81,6 @@ const Players = (prop) => {
               if (data.player.username == client.name){
                 players = []
                 prop.killPlayer(false)
-                ws.onmessage = null
               } else {
                 players.forEach((player)=>{
                   if (player.name === data.player.username){
@@ -89,6 +88,7 @@ const Players = (prop) => {
                   }
                 })
               }
+              ws.onmessage = null
               break;
             default:
               console.log("unknown data:",data)

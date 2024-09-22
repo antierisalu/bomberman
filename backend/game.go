@@ -306,7 +306,6 @@ func (c *Cell) RollDrop() {
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
 	}
-	c.DropType = 1
 }
 
 // Update Player.Position

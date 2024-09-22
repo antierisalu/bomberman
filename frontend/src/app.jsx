@@ -18,6 +18,8 @@ const App = () => {
         }
     },[isRegistered])
 
+
+
     return (
         <body>
             {isInGame ? 

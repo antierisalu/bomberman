@@ -10,7 +10,17 @@ let cells = []//
 
 const Players = (prop) => {
 
+  window.addEventListener('resize', resizeAction)
 
+  function resizeAction(){
+    players.forEach((player)=>{
+      if (player.name === client.name){
+       player.updateOnResize()
+      }
+    })
+  }
+  
+  
     let playersNames = prop.players
     let input;
     let client = prop.clientInfo;
@@ -79,6 +89,7 @@ const Players = (prop) => {
                   }
                 })
               }
+              break;
             default:
               console.log("unknown data:",data)
             }

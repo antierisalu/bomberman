@@ -71,7 +71,6 @@ export class Player {
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
                     
                     if (obstacle.HasBomb && !obstacle.collidableBomb){//if player is on top of bomb, don't collide with it
-                        console.log(obstacle, cells[obstacle.Y][obstacle.X])
                         continue
                     } 
                     if (obstacle.DropType > -1 && obstacle.BlockType === 0){

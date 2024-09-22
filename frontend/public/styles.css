@@ -433,6 +433,40 @@ body {
   background-image: url('./assets/fire.png');
   background-size: cover;
 }
+.LOOT {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/loot.png');
+  background-size: cover;
+}
+
+.extraBomb {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/extraBomb.png');
+  background-size: cover;
+}
+
+.extraRange {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/extraRange.png');
+  background-size: cover;
+}
+
+/* .extraLife {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/helth.png');
+  background-size: cover;
+} */
+
+.extraSpeed {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/speed.png');
+  background-size: cover;
+}
 
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
   position:absolute;

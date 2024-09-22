@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"strings"
@@ -16,10 +17,16 @@ type GameState struct {
 	SpawnPoints []Position
 }
 
-/* type Player struct { juba olemas websocket.gos
-	Username string   `json:"username"`
-	Color    string   `json:"color"`
-	Position Position `json:"position"`
+/* type Player struct {
+	Index        int          `json:"index"`
+	Username     string       `json:"username"`
+	Color        string       `json:"color"`
+	Position     Position     `json:"position"`
+	Lives        int          `json:"lives"`
+	Speed        float32      `json:"speed"`
+	BombCount    int          `json:"bombCount"`
+	BombRange    int          `json:"bombRange"`
+	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
 } */
 
 type Timer struct {
@@ -45,8 +52,6 @@ type Cell struct {
 var CellSize = 58
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
-	// g.GenerateGameGrid()
-	// g.SetBomb(&g.GameGrid[3][3], 2)
 
 	g.Timer = Timer{
 		Active:        true,
@@ -200,17 +205,15 @@ func (g *GameState) DisplayGameBoard() {
 
 func (g *GameState) SetBomb(c *Cell, radius int) {
 	c.HasBomb = true
-	fmt.Println("Bomb planted")
-	timer := time.NewTimer(3 * time.Second)
 
 	var reply Message
 	reply.Type = "gameState"
 	reply.GameState = gameState
 	broadcast(nil, 1, reply)
 
+	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
-		fmt.Println("Bomb exploded")
 		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
@@ -218,26 +221,32 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 }
 
 func (p *Player) CalcPlayerGridPosition() (int, int) {
-	gridX := math.Floor(float64(p.Position.X) / float64(CellSize))
-	gridY := math.Floor(float64(p.Position.Y) / float64(CellSize))
+	gridX := math.Floor(float64(p.Position.X+24) / float64(CellSize))
+	gridY := math.Floor(float64(p.Position.Y+27) / float64(CellSize))
+	return int(gridX), int(gridY)
+}
+func GetCellPos(x, y float32) (int, int) {
+	gridX := math.Floor(float64(x) / float64(CellSize))
+	gridY := math.Floor(float64(y) / float64(CellSize))
 	return int(gridX), int(gridY)
 }
 
 func (g *GameState) Explosion(c *Cell, r int) {
 
 	g.LightCell(c)
+	directionBlocked := [4]bool{false, false, false, false}
 	for i := 1; i <= r; i++ {
-		if c.X-i >= 0 { // left
-			g.LightCell(&g.GameGrid[c.X-i][c.Y])
+		if c.X-i >= 0 && !directionBlocked[0] { // left
+			directionBlocked[0] = g.LightCell(&g.GameGrid[c.X-i][c.Y])
 		}
-		if c.X+i < len(g.GameGrid) { // right
-			g.LightCell(&g.GameGrid[c.X+i][c.Y])
+		if c.X+i < len(g.GameGrid) && !directionBlocked[1] { // right
+			directionBlocked[1] = g.LightCell(&g.GameGrid[c.X+i][c.Y])
 		}
-		if c.Y-i >= 0 { // up
-			g.LightCell(&g.GameGrid[c.X][c.Y-i])
+		if c.Y-i >= 0 && !directionBlocked[2] { // up
+			directionBlocked[2] = g.LightCell(&g.GameGrid[c.X][c.Y-i])
 		}
-		if c.Y+i < len(g.GameGrid[0]) { // down
-			g.LightCell(&g.GameGrid[c.X][c.Y+i])
+		if c.Y+i < len(g.GameGrid[0]) && !directionBlocked[3] { // down
+			directionBlocked[3] = g.LightCell(&g.GameGrid[c.X][c.Y+i])
 		}
 	}
 
@@ -245,7 +254,6 @@ func (g *GameState) Explosion(c *Cell, r int) {
 	reply.Type = "gameState"
 	reply.GameState = gameState
 	broadcast(nil, 1, reply)
-
 	timer := time.NewTimer(1 * time.Second)
 	go func() {
 		<-timer.C
@@ -272,15 +280,15 @@ func (g *GameState) Explosion(c *Cell, r int) {
 
 }
 
-func (g *GameState) LightCell(c *Cell) {
+func (g *GameState) LightCell(c *Cell) bool {
 	if c.BlockType == 1 { // dont light unbreakable blocks
-		return
+		return true
 	}
 	c.OnFire = true
 	if c.BlockType == 2 { // if breakable block, turn it into air
 		c.BlockType = 0
 	}
-	fmt.Println("Fire started at:", c.X, c.Y)
+	return false
 }
 func (g *GameState) ExtinguishCell(c *Cell) {
 	if c.BlockType == 1 {
@@ -288,7 +296,6 @@ func (g *GameState) ExtinguishCell(c *Cell) {
 	}
 	c.OnFire = false
 
-	fmt.Println("Fire ended at:", c.X, c.Y)
 }
 
 /*

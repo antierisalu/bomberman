@@ -33,7 +33,7 @@ const Level = (prop) => {
         const blockType = prop.gameState.GameGrid[row][column].BlockType;
         const onFire = prop.gameState.GameGrid[row][column].OnFire;
         const hasBomb = prop.gameState.GameGrid[row][column].HasBomb;  
-        const dropType = prop.gameState.GameGrid[row][column].dropType;
+        const dropType = prop.gameState.GameGrid[row][column].DropType;
         const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
         const xyID = row.toString() + '-' + column.toString()
         console.log(hasBomb)
@@ -49,8 +49,21 @@ const Level = (prop) => {
               cell.jsx = <div id={xyID} className="hasBomb"></div>; // Add a special class for bombs
             } else if (onFire) {
               cell.jsx = <div id={xyID} className="onFire"></div>;
+            } else if (dropType > -1) {
+              switch(dropType){
+                case 0:
+                  cell.jsx = <div id={xyID} className="extraSpeed"></div>;
+                  break;
+                case 1:
+                  cell.jsx = <div id={xyID} className="extraBomb"></div>;
+                  break;
+                case 2:
+                  cell.jsx = <div id={xyID} className="extraRange"></div>;
+                  break;
+              }
             } else {
               cell.jsx = <div id={xyID} className="box-0"></div>; // Regular default case without bomb
+              break;
             }
             break;
         };

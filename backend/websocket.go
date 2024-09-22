@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -89,7 +90,6 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 		if conns.m[conn] != nil {
-	
 			conns.m[conn] = &gameState.Players[conns.m[conn].Index]
 		}
 
@@ -121,20 +121,52 @@ func reader(conn *websocket.Conn) {
 			reply.GameState = gameState
 			respond(conn, messageType, reply)
 		case "position":
-
+			conns.Lock()
 			gameState.MovePlayer(*conns.m[conn], msg.Position)
-
+			conns.Unlock()
 			var reply Message
 			reply.Type = "updateXY"
 			reply.Players = gameState.Players
-			conns.Lock()
+
 			broadcast(conn, messageType, reply)
-			conns.Unlock()
+
 		case "bomb":
-			
-			x, y := conns.m[conn].CalcPlayerGridPosition()
-			gameState.SetBomb(&gameState.GameGrid[y][x], conns.m[conn].BombRange)
-			log.Println("bomb sent by", conns.m[conn], "at:", x, y)
+			if conns.m[conn].BombCount > 0 {
+				conns.m[conn].BombCount--
+				x, y := conns.m[conn].CalcPlayerGridPosition()
+				log.Println(conns.m[conn].BombRange, conns.m[conn].BombCount)
+				gameState.SetBomb(&gameState.GameGrid[y][x], conns.m[conn].BombRange)
+
+				timer := time.NewTimer(4 * time.Second)
+				go func() {
+					<-timer.C
+					conns.m[conn].BombCount++
+				}()
+			}
+		case "powerup":
+			x, y := GetCellPos(msg.Position.X, msg.Position.Y)
+			log.Print(conns.m[conn], "consumed a powerup of type")
+			player := &gameState.Players[conns.m[conn].Index]
+			switch gameState.GameGrid[y][x].DropType {
+			case 0:
+				player.PowerUpLevel.Speed++
+				log.Println(" speed")
+			case 1:
+				player.PowerUpLevel.Bombs++
+				player.BombCount++
+				log.Println(" Extra Bomb")
+
+			case 2:
+				player.PowerUpLevel.Flames++
+				player.BombRange++
+				log.Println(" Bomb Range")
+
+			}
+			gameState.GameGrid[y][x].DropType = -1
+			var reply Message
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			broadcast(conn, messageType, reply)
 		}
 	}
 }
@@ -148,6 +180,7 @@ func respond(from *websocket.Conn, messageType int, message Message) {
 }
 
 func broadcast(from *websocket.Conn, messageType int, message Message) {
+	conns.Lock()
 	if from != nil {
 		message.Player = *conns.m[from]
 	}
@@ -162,6 +195,7 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 		} */
 		conn.WriteMessage(messageType, r)
 	}
+	conns.Unlock()
 }
 
 func broadcastPlayerList() {

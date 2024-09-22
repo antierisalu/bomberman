@@ -67,10 +67,25 @@ export class Player {
             let obsX = oRect.x - this.clientGameRect.x
             let obsY = oRect.y - this.clientGameRect.y
             let calibratedObstacle = {x:obsX, y:obsY, height:oRect.height, width:oRect.width}
-            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || (obstacle.HasBomb && obstacle.freeBomb) ){ // 
+            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || obstacle.HasBomb || obstacle.DropType > -1 ){ // 
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
-                    if (obstacle.HasBomb){
-                        obstacle.freeBomb = true;
+                    
+                    if (obstacle.HasBomb && !obstacle.collidableBomb){//if player is on top of bomb, don't collide with it
+                        continue
+                    }
+
+                    if (obstacle.DropType > -1 && obstacle.BlockType === 0){
+                        if (obstacle.DropType === 0){
+                            this.speed += 100
+                            setTimeout(()=>{
+                                this.speed -= 100
+                            }, 5000)
+                        } else if (obstacle.DropType > 0) {
+                            console.log("i found a drop type", obstacle.DropType)
+                        }
+                        sendMessage(JSON.stringify({type: 'powerup', position: {x:obsX,y:obsY}}))
+                        obstacle.DropType = -1
+                        continue
                     }
 
                     if (this.isColliding({x: futureX, y: this.y, width: this.width, height: this.height}, calibratedObstacle)) {
@@ -79,6 +94,9 @@ export class Player {
                     if (this.isColliding({x: this.x, y: futureY, width: this.width, height: this.height}, calibratedObstacle)) {
                     dy = 0; // Stop vertical movement
                     }
+                } else if (obstacle.HasBomb){// if player isnt on top of bomb, make it collideable
+                        console.log(obstacle)
+                        obstacle.collidableBomb = true;
                 }
             }
         }

@@ -84,7 +84,15 @@ func reader(conn *websocket.Conn) {
 
 			broadcastPlayerList()
 
-			if len(gameState.Players) == 0 {
+			shouldRestart := true
+			for _, p := range gameState.Players {
+				if p.Index > -999 {
+					shouldRestart = false
+					log.Println("shouldn't res")
+				}
+			}
+			if shouldRestart {
+				log.Println("restarting")
 				gameState.RestartGame()
 			}
 			return
@@ -110,13 +118,6 @@ func reader(conn *websocket.Conn) {
 			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
-		case "ping":
-			var reply Message
-			reply.Type = "gameState"
-			reply.GameState = gameState
-			reply.GameState.GameGrid[2][2].BlockType = 0
-			msg.Player = *conns.m[conn]
-			broadcast(conn, messageType, reply)
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"
@@ -134,21 +135,35 @@ func reader(conn *websocket.Conn) {
 
 		case "bomb":
 			if conns.m[conn].BombCount > 0 {
-				conns.m[conn].BombCount--
 				x, y := conns.m[conn].CalcPlayerGridPosition()
+
+				if x > 12 || y > 10 || x < 0 || y < 0 {
+					conn.Close()
+					continue
+				}
+				conns.Lock()
+				conns.m[conn].BombCount--
+				conns.Unlock()
 				log.Println(conns.m[conn].BombRange, conns.m[conn].BombCount)
 				gameState.SetBomb(&gameState.GameGrid[y][x], conns.m[conn].BombRange)
 
 				timer := time.NewTimer(4 * time.Second)
+
 				go func() {
 					<-timer.C
-					conns.m[conn].BombCount++
+
+					if conns.m[conn] != nil {
+						conns.Lock()
+						conns.m[conn].BombCount++
+						conns.Unlock()
+					}
 				}()
 			}
 		case "powerup":
 			x, y := GetCellPos(msg.Position.X, msg.Position.Y)
 			log.Print(conns.m[conn], "consumed a powerup of type")
 			player := &gameState.Players[conns.m[conn].Index]
+			conns.Lock()
 			switch gameState.GameGrid[y][x].DropType {
 			case 0:
 				player.PowerUpLevel.Speed++
@@ -164,6 +179,7 @@ func reader(conn *websocket.Conn) {
 				log.Println(" Bomb Range")
 
 			}
+			conns.Unlock()
 			gameState.GameGrid[y][x].DropType = -1
 			var reply Message
 			reply.Type = "gameState"
@@ -173,6 +189,10 @@ func reader(conn *websocket.Conn) {
 			player := &gameState.Players[conns.m[conn].Index]
 			if !player.Immune {
 				player.Lives--
+				var reply Message
+				reply.Type = "damage"
+				reply.Player = *player
+				broadcast(conn, messageType, reply)
 				log.Println("player", player.Username, "lost a life. lives left:", player.Lives)
 
 				if player.Lives == 0 {
@@ -180,6 +200,7 @@ func reader(conn *websocket.Conn) {
 					reply.Type = "death"
 					reply.Player = *player
 					broadcast(conn, messageType, reply)
+					conn.Close()
 					continue
 				}
 
@@ -213,20 +234,13 @@ func broadcast(from *websocket.Conn, messageType int, message Message) {
 		log.Println("broadcast error:", err)
 	}
 	for conn := range conns.m {
-		/* uncomment siis endale ei saada
-		if conn == from{
-			continue
-		} */
 		conn.WriteMessage(messageType, r)
 	}
 	conns.Unlock()
 }
 
 func broadcastPlayerList() {
-	var players []Player
-	for _, player := range conns.m {
-		players = append(players, *player)
-	}
+	players := gameState.Players
 	msg := Message{
 		Type:    "player_list",
 		Players: players,

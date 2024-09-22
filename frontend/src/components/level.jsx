@@ -6,7 +6,6 @@ let cells = [];
 
 const Level = (prop) => {
   const [alive, killPlayer] = LAR.useState(true)
-  console.log(alive)
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
       this.x = x;
@@ -75,7 +74,6 @@ const Level = (prop) => {
     return (
       <div>{alive ? 
           <div id="level">
-                <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
             <div className="gameArea" id="gameArea">
               {cells.map((cell, index) => (
                 <div key={index}>
@@ -94,7 +92,10 @@ const Level = (prop) => {
               />
             </div>
           </div> :
-          <div>u ded</div>
+          <div>
+            <span>u ded</span>
+            <button onClick={()=> window.location.reload()}>Main Menu</button>
+          </div>
           }
       </div>
     );

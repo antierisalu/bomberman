@@ -83,13 +83,26 @@ const Players = (prop) => {
               } else {
                 players.forEach((player)=>{
                   if (player.name === data.player.username){
-                    player.element.remove()// remove dead player from the game
+                    player.index = -999
                   }
                 })
               }
               break;
+            case "damage":
+              console.log(`player ${data.player.username} took damage`)
+              prop.updatePlayers((pleierid)=>{
+                console.log("UPDATING PLAYER LIVES:", pleierid  , data.player)
+                pleierid.forEach((player)=>{
+                  if (player.username === data.player.username){
+                    console.log('updating', player)
+                    player.lives = data.player.lives
+                  }
+                })
+                return pleierid
+              })
             default:
-              console.log("unknown data:",data)
+
+              console.log("unknown data:",data.type)
             }
         }
     }
@@ -119,7 +132,6 @@ const Players = (prop) => {
         requestAnimationFrame(GameLoop);
       }
     } 
-
   return (
       <div>
         <div className="hud">
@@ -133,7 +145,7 @@ const Players = (prop) => {
         </div>
           {prop.players.map((player, index) => (
             <div>
-                <span className="player" id={`player${index}`}>{player.username}</span>
+                {player.index !== -999 ? <span className="player" id={`player${index}`}>{player.username}</span>: null }
             </div>
           ))}
       </div>

@@ -351,6 +351,11 @@ body {
     padding: 20px;
   }
 
+  .hudPlayer {
+    font-size: x-large;
+    margin-right: 20px;
+  }
+
   .gameArea {
     position: relative;
     height: 638px;

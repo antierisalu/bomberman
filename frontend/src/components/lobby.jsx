@@ -5,6 +5,7 @@ import { sendMessage, ws } from "../websocket";
 const Lobby = (props) => {
 
     const [timer, setTimer] = LAR.useState(0)
+    const [errorMsg, changeErrorMsg] = LAR.useState("")
 
     function sendJoinRequest(event) {
         event.preventDefault();
@@ -26,7 +27,7 @@ const Lobby = (props) => {
                 props.registerPlayer(true)
             })
             .catch(error => {
-                console.log("Error:", error);
+                changeErrorMsg(error.message)
             })
     }
 
@@ -57,8 +58,7 @@ const Lobby = (props) => {
             {props.isRegistered ? 
             <div>
                 {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
-                <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
-                <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
+                <div className="players">{props.players.map(elem=><div>{elem.username}</div>)}</div>
             </div> : 
             <div>       
                 
@@ -67,6 +67,7 @@ const Lobby = (props) => {
                         <input style="margin-bottom: 50px;" class="input" type="text" name="text" placeholder="Your name here..." id="username-field" />
                     </div>
                     <button class="button-50" type="submit">Play</button>
+                    <div style="color: red; font-size:x-large; margin-top: 20px">{errorMsg}</div>
                 </form>
             </div>}
         </div>

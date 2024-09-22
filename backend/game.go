@@ -51,7 +51,6 @@ type Cell struct {
 var CellSize = 58
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
-
 	g.Timer = Timer{
 		Active:        true,
 		TimeRemaining: time.Duration(totalTimeSeconds) * time.Second,
@@ -77,11 +76,12 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 	}()
 }
+
 func (g *GameState) OnTimerEnd() {
 	timer := time.NewTimer(1 * time.Second)
+	g.Started = true // start game
 	go func() {
 		<-timer.C
-		g.Started = true // start game
 		var msg Message
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
@@ -117,6 +117,7 @@ func (g *GameState) UpdatePlayer(p Player) {
 
 func (g *GameState) RestartGame() {
 	InitGame()
+	g.Players = nil
 	g.Started = false
 }
 
@@ -215,7 +216,6 @@ func (g *GameState) SetBomb(c *Cell, radius int) {
 		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
-
 }
 
 func (p *Player) CalcPlayerGridPosition() (int, int) {
@@ -223,6 +223,7 @@ func (p *Player) CalcPlayerGridPosition() (int, int) {
 	gridY := math.Floor(float64(p.Position.Y+27) / float64(CellSize))
 	return int(gridX), int(gridY)
 }
+
 func GetCellPos(x, y float32) (int, int) {
 	gridX := math.Floor(float64(x) / float64(CellSize))
 	gridY := math.Floor(float64(y) / float64(CellSize))
@@ -274,7 +275,6 @@ func (g *GameState) Explosion(c *Cell, r int) {
 		reply.GameState = gameState
 		broadcast(nil, 1, reply)
 	}()
-
 }
 
 func (g *GameState) LightCell(c *Cell) bool {
@@ -287,12 +287,12 @@ func (g *GameState) LightCell(c *Cell) bool {
 	}
 	return false
 }
+
 func (g *GameState) ExtinguishCell(c *Cell) {
 	if c.BlockType == 1 {
 		return
 	}
 	c.OnFire = false
-
 }
 
 /*
@@ -301,22 +301,23 @@ func (g *GameState) ExtinguishCell(c *Cell) {
 		1 - MORE BOMBS
 		2 - BLAST RADIUS
 */
+
 func (c *Cell) RollDrop() {
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
 	}
+	c.DropType = 1
 }
 
 // Update Player.Position
 func (g *GameState) MovePlayer(p Player, pos Position) {
-	// log.Println(p.Index, p.Username)
 	g.Players[p.Index].Position = pos
 }
 
 func (g *GameState) removePlayer(player *Player) {
 	for i, p := range g.Players {
 		if p.Username == player.Username {
-			g.Players = append(g.Players[:i], g.Players[i+1:]...)
+			g.Players[i] = Player{Username: "Player Dead", Index: -999}
 			break
 		}
 	}

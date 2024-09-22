@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func enableCors(next http.Handler) http.Handler {
@@ -61,12 +62,17 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	name := r.FormValue("text")
+	name := strings.TrimSpace(r.FormValue("text"))
+
+	if name == "" {
+		w.WriteHeader(http.StatusUnavailableForLegalReasons)
+		fmt.Fprintf(w, "Please enter a name")
+		return
+	}
 
 	if gameState.hasPlayerName(name) {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
-		fmt.Println(name, " nimi on taken")
-		fmt.Fprintf(w, "vali orginaalsem nimi")
+		fmt.Fprintf(w, "This name is taken")
 		return
 	}
 
@@ -86,7 +92,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		BombRange:    1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
-	if !gameState.Timer.Active {
+	if !gameState.Timer.Active && !gameState.Started && len(gameState.Players) > 1 {
 		fmt.Println("STARTING TIMER")
 		gameState.StartTimer(3)
 	}

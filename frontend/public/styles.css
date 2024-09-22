@@ -402,71 +402,23 @@ body {
   background-size: cover;
 }
 
-.box-1 { /* in-desctructible */
-    width: 58px;
-    height: 58px;
-    background-image: url('./assets/hardbrick.png');
-    background-size: cover;
-}
-
-.box-2 { /* desctructible */
+.box-0, .box-1, .box-2, .hasBomb, .onFire, .extraBomb, .extraRange, .extraSpeed {
   width: 58px;
   height: 58px;
-  background-image: url('./assets/softbrick.png');
   background-size: cover;
 }
 
-.box-0 { /* empty */
-  width: 58px;
-  height: 58px;
+.box-0 { 
+  background-size: auto;
 }
 
-.hasBomb {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/bomb.png');
-  background-size: cover;
-}
-.onFire {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/fire.png');
-  background-size: cover;
-}
-.LOOT {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/loot.png');
-  background-size: cover;
-}
-
-.extraBomb {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/extraBomb.png');
-  background-size: cover;
-}
-
-.extraRange {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/extraRange.png');
-  background-size: cover;
-}
-
-/* .extraLife {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/helth.png');
-  background-size: cover;
-} */
-
-.extraSpeed {
-  width: 58px;
-  height: 58px;
-  background-image: url('./assets/speed.png');
-  background-size: cover;
-}
+.box-1 { background-image: url('./assets/hardbrick.png'); } /* indestructible */
+.box-2 { background-image: url('./assets/softbrick.png'); } /* destructible */
+.hasBomb { background-image: url('./assets/bomb.png'); }
+.onFire { background-image: url('./assets/fire.png'); }
+.extraBomb { background-image: url('./assets/extraBomb.png'); }
+.extraRange { background-image: url('./assets/extraRange.png'); }
+.extraSpeed { background-image: url('./assets/speed.png'); }
 
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
   position:absolute;

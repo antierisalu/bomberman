@@ -2,6 +2,7 @@ import { LAR } from "../framework";
 import Players from "./players";
 import { sendMessage, ws } from "../websocket";
 
+let cells = [];
 
 const Level = (prop) => {
 
@@ -15,18 +16,15 @@ const Level = (prop) => {
       this.dropType = dropType;
       this.jsx = element;
       this.element;
-      // this.rect = this.element.getBoundingClientRect();
     }
   }
 
   const GRID_LENGTH = 11;
   const GRID_WIDTH = 13;
 
-  let cells = []; // why duplicates
-
   const initializeGrid = () => {
 
-    let cells = [];
+    let newCells = [];
 
     for (let row = 0; row < GRID_LENGTH; row++) {
       for (let column = 0; column < GRID_WIDTH; column++) {
@@ -36,7 +34,6 @@ const Level = (prop) => {
         const dropType = prop.gameState.GameGrid[row][column].DropType;
         const cell = new Cell(row, column, blockType, onFire, hasBomb, dropType, null);
         const xyID = row.toString() + '-' + column.toString()
-        console.log(hasBomb)
         switch (blockType) {
           case 1:
             cell.jsx = <div id={xyID} className="box-1"></div>;
@@ -67,10 +64,10 @@ const Level = (prop) => {
             }
             break;
         };
-        cells.push(cell);
+        newCells.push(cell);
       }
     }
-    return cells;
+    return newCells;
   };
 
   cells = initializeGrid();
@@ -86,6 +83,7 @@ const Level = (prop) => {
             </div>
           ))}
           <Players 
+          cells={cells}
           players={prop.players} 
           updatePlayers={prop.updatePlayers} 
           updateGameState={prop.updateGameState} 

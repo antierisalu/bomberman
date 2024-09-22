@@ -2,7 +2,6 @@ package backend
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"math/rand"
 	"strings"
@@ -78,9 +77,8 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 	}()
 }
-
 func (g *GameState) OnTimerEnd() {
-	timer := time.NewTimer(3 * time.Second)
+	timer := time.NewTimer(1 * time.Second)
 	go func() {
 		<-timer.C
 		g.Started = true // start game
@@ -232,7 +230,6 @@ func GetCellPos(x, y float32) (int, int) {
 }
 
 func (g *GameState) Explosion(c *Cell, r int) {
-
 	g.LightCell(c)
 	directionBlocked := [4]bool{false, false, false, false}
 	for i := 1; i <= r; i++ {

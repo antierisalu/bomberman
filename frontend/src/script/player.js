@@ -71,9 +71,9 @@ export class Player {
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
                     
                     if (obstacle.HasBomb && !obstacle.collidableBomb){//if player is on top of bomb, don't collide with it
+                        console.log(obstacle, cells[obstacle.Y][obstacle.X])
                         continue
-                    }
-
+                    } 
                     if (obstacle.DropType > -1 && obstacle.BlockType === 0){
                         if (obstacle.DropType === 0){
                             this.speed += 100
@@ -95,9 +95,11 @@ export class Player {
                     dy = 0; // Stop vertical movement
                     }
                 } else if (obstacle.HasBomb){// if player isnt on top of bomb, make it collideable
-                        console.log(obstacle)
                         obstacle.collidableBomb = true;
                 }
+            }
+            if (obstacle.collidableBomb && !obstacle.HasBomb){
+                obstacle.collidableBomb = false
             }
         }
         

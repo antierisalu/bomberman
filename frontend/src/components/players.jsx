@@ -6,6 +6,7 @@ import { updateGame } from "../script/update";
 import { InputHandler } from "../script/controls";
 
 let players = [];//not state but game class entities
+let cells = []//
 
 const Players = (prop) => {
 
@@ -29,8 +30,13 @@ const Players = (prop) => {
           for (let x = 0; x < 13; x++) {
             let cellDom = document.getElementById(y+'-'+x)
             prop.gameState.GameGrid[y][x].element = cellDom
-          }
+            if (cells.length > 0){
+            prop.gameState.GameGrid[y][x].collidableBomb = cells[y][x].collidableBomb
+            // remember to keep bomb collideable after gamestate update
+            }
         }
+        }
+        cells = prop.gameState.GameGrid
       }
     
     if (ws){ // see kirjutab yle lobby.jsx'i ws.onmessage methodi

@@ -90,7 +90,9 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 		if conns.m[conn] != nil {
+			conns.Lock()
 			conns.m[conn] = &gameState.Players[conns.m[conn].Index]
+			conns.Unlock()
 		}
 
 		var msg Message

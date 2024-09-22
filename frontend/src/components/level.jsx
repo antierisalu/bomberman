@@ -5,7 +5,8 @@ import { sendMessage, ws } from "../websocket";
 let cells = [];
 
 const Level = (prop) => {
-
+  const [alive, killPlayer] = LAR.useState(true)
+  console.log(alive)
   class Cell {
     constructor(x, y, blockType, onFire, hasBomb, dropType, element) {
       this.x = x;
@@ -23,7 +24,6 @@ const Level = (prop) => {
   const GRID_WIDTH = 13;
 
   const initializeGrid = () => {
-
     let newCells = [];
 
     for (let row = 0; row < GRID_LENGTH; row++) {
@@ -73,24 +73,29 @@ const Level = (prop) => {
   cells = initializeGrid();
   
     return (
-      
-      <div id="level">
-            <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
-        <div className="gameArea" id="gameArea">
-          {cells.map((cell, index) => (
-            <div key={index}>
-              {cell.jsx}
+      <div>{alive ? 
+          <div id="level">
+                <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
+            <div className="gameArea" id="gameArea">
+              {cells.map((cell, index) => (
+                <div key={index}>
+                  {cell.jsx}
+                </div>
+              ))}
+              <Players 
+              cells={cells}
+              players={prop.players} 
+              updatePlayers={prop.updatePlayers} 
+              updateGameState={prop.updateGameState} 
+              gameState={prop.gameState} 
+              clientInfo={prop.clientInfo}
+              alive={alive}
+              killPlayer={killPlayer}
+              />
             </div>
-          ))}
-          <Players 
-          cells={cells}
-          players={prop.players} 
-          updatePlayers={prop.updatePlayers} 
-          updateGameState={prop.updateGameState} 
-          gameState={prop.gameState} 
-          clientInfo={prop.clientInfo}
-          />
-        </div>
+          </div> :
+          <div>u ded</div>
+          }
       </div>
     );
   };

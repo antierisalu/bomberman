@@ -67,9 +67,12 @@ export class Player {
             let obsX = oRect.x - this.clientGameRect.x
             let obsY = oRect.y - this.clientGameRect.y
             let calibratedObstacle = {x:obsX, y:obsY, height:oRect.height, width:oRect.width}
-            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || obstacle.HasBomb || obstacle.DropType > -1 ){ // 
+            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || obstacle.HasBomb || obstacle.DropType > -1 || obstacle.OnFire){ // 
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
-                    
+                    if (obstacle.OnFire){
+                        sendMessage(JSON.stringify({type:'playerInFire'}))
+                        continue
+                    }
                     if (obstacle.HasBomb && !obstacle.collidableBomb){//if player is on top of bomb, don't collide with it
                         continue
                     } 

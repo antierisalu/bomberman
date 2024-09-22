@@ -47,6 +47,7 @@ type Player struct {
 	BombCount    int          `json:"bombCount"`
 	BombRange    int          `json:"bombRange"`
 	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
+	Immune       bool
 }
 
 type PowerUpLevel struct {
@@ -169,7 +170,29 @@ func reader(conn *websocket.Conn) {
 			reply.Type = "gameState"
 			reply.GameState = gameState
 			broadcast(conn, messageType, reply)
+		case "playerInFire":
+			player := &gameState.Players[conns.m[conn].Index]
+			if !player.Immune {
+				player.Lives--
+				log.Println("player", player.Username, "lost a life. lives left:", player.Lives)
+
+				if player.Lives == 0 {
+					var reply Message
+					reply.Type = "death"
+					reply.Player = *player
+					broadcast(conn, messageType, reply)
+					continue
+				}
+
+				player.Immune = true
+				timer := time.NewTimer(4 * time.Second)
+				go func() {
+					<-timer.C
+					player.Immune = false
+				}()
+			}
 		}
+
 	}
 }
 

@@ -10,6 +10,7 @@ let cells = []//
 
 const Players = (prop) => {
 
+
     let playersNames = prop.players
     let input;
     let client = prop.clientInfo;
@@ -66,7 +67,20 @@ const Players = (prop) => {
                 })
               })
               break;
-              case "speed":
+            case "death":
+              console.log(data)
+              if (data.player.username == client.name){
+                players = []
+                prop.killPlayer(false)
+              } else {
+                players.forEach((player)=>{
+                  if (player.name === data.player.username){
+                    player.element.remove()// remove dead player from the game
+                  }
+                })
+              }
+            default:
+              console.log("unknown data:",data)
             }
         }
     }
@@ -82,9 +96,8 @@ const Players = (prop) => {
     let frame = 0;
     let startTime = performance.now();
     
-    // https://www.codeease.net/programming/javascript/delta-time-js - solution 2
-    // https://codepen.io/lnfnunes/pen/Qjeeyg - fps counter
     function GameLoop(currentFrameTime) {
+      if (prop.alive){
         const deltaTime = (currentFrameTime - lastFrameTime) / 1000; // Convert to seconds
         frame++;
         if (currentFrameTime - startTime > 1000) {
@@ -95,26 +108,26 @@ const Players = (prop) => {
 
         updateGame(deltaTime, input, players, client);
         requestAnimationFrame(GameLoop);
+      }
     } 
 
   return (
-    <div>
-      <div className="hud">
-        <div className="hudPlayers">
+      <div>
+        <div className="hud">
+          <div className="hudPlayers">
+            {prop.players.map((player, index) => (
+              <div key={index} className="hudPlayer">
+                <span>{player.username}</span> - <span>{player.color}</span>
+              </div>
+            ))}
+          </div>
+        </div>
           {prop.players.map((player, index) => (
-            <div key={index} className="hudPlayer">
-              <span>{player.username}</span> - <span>{player.color}</span>
+            <div>
+                <span className="player" id={`player${index}`}>{player.username}</span>
             </div>
           ))}
-        </div>
       </div>
-        {prop.players.map((player, index) => (
-          <div>
-              <span className="player" id={`player${index}`}>{player.username}</span>
-              
-          </div>
-        ))}
-    </div>
   );
 };
 

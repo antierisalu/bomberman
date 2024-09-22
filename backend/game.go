@@ -249,19 +249,19 @@ func (g *GameState) Explosion(c *Cell, r int) {
 	timer := time.NewTimer(1 * time.Second)
 	go func() {
 		<-timer.C
-		g.DestroyCell(c)
+		g.ExtinguishCell(c)
 		for i := 1; i <= r; i++ {
 			if c.X-i >= 0 { // left
-				g.DestroyCell(&g.GameGrid[c.X-i][c.Y])
+				g.ExtinguishCell(&g.GameGrid[c.X-i][c.Y])
 			}
 			if c.X+i < len(g.GameGrid) { // right
-				g.DestroyCell(&g.GameGrid[c.X+i][c.Y])
+				g.ExtinguishCell(&g.GameGrid[c.X+i][c.Y])
 			}
 			if c.Y-i >= 0 { // up
-				g.DestroyCell(&g.GameGrid[c.X][c.Y-i])
+				g.ExtinguishCell(&g.GameGrid[c.X][c.Y-i])
 			}
 			if c.Y+i < len(g.GameGrid[0]) { // down
-				g.DestroyCell(&g.GameGrid[c.X][c.Y+i])
+				g.ExtinguishCell(&g.GameGrid[c.X][c.Y+i])
 			}
 		}
 		var reply Message
@@ -277,16 +277,17 @@ func (g *GameState) LightCell(c *Cell) {
 		return
 	}
 	c.OnFire = true
-	fmt.Println("Fire started at:", c.X, c.Y)
-}
-func (g *GameState) DestroyCell(c *Cell) {
-	if c.BlockType == 1 { // dont destroy unbreakable blocks
-		return
-	}
-	c.OnFire = false
 	if c.BlockType == 2 { // if breakable block, turn it into air
 		c.BlockType = 0
 	}
+	fmt.Println("Fire started at:", c.X, c.Y)
+}
+func (g *GameState) ExtinguishCell(c *Cell) {
+	if c.BlockType == 1 {
+		return
+	}
+	c.OnFire = false
+
 	fmt.Println("Fire ended at:", c.X, c.Y)
 }
 

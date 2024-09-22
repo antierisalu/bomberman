@@ -427,6 +427,12 @@ body {
   background-image: url('./assets/bomb.png');
   background-size: cover;
 }
+.onFire {
+  width: 58px;
+  height: 58px;
+  background-image: url('./assets/fire.png');
+  background-size: cover;
+}
 
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
   position:absolute;

@@ -67,8 +67,12 @@ export class Player {
             let obsX = oRect.x - this.clientGameRect.x
             let obsY = oRect.y - this.clientGameRect.y
             let calibratedObstacle = {x:obsX, y:obsY, height:oRect.height, width:oRect.width}
-            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || obstacle.HasBomb){ // 
+            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || (obstacle.HasBomb && obstacle.freeBomb) ){ // 
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
+                    if (obstacle.HasBomb){
+                        obstacle.freeBomb = true;
+                    }
+
                     if (this.isColliding({x: futureX, y: this.y, width: this.width, height: this.height}, calibratedObstacle)) {
                     dx = 0; // Stop horizontal movement
                     }

@@ -47,6 +47,8 @@ const Level = (prop) => {
           default:
             if (hasBomb) {
               cell.jsx = <div id={xyID} className="hasBomb"></div>; // Add a special class for bombs
+            } else if (onFire) {
+              cell.jsx = <div id={xyID} className="onFire"></div>;
             } else {
               cell.jsx = <div id={xyID} className="box-0"></div>; // Regular default case without bomb
             }

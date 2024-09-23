@@ -429,3 +429,63 @@ body {
 .leftBoxes, .rightBoxes {
   flex-direction: column;
 }
+
+
+/* Chat container */
+.chat-container {
+  position: absolute;
+  left: 750px;
+  top: -9px;
+  padding: 10px;
+  width: 200px;
+}
+
+/* Chat message list */
+.chat-messages {
+  height: 585px;
+  overflow-y: scroll;
+  background-color: #888;
+  padding: 10px;
+  border: 2px solid black;
+}
+
+/* Individual message */
+.message {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Container for textarea and button */
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Textarea input */
+.chat-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  resize: none;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-right: 100px;
+  box-sizing: border-box;
+}
+
+/* Send button with bomb icon */
+.send-button {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.bomb-icon {
+  background-image: url('./assets/bomb.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

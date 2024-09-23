@@ -16,16 +16,17 @@ const Chat = (prop) => {
     };
 
     return (
-        <div style="padding: 10px; border: 1px solid black; width: 300px;">
-            <div style="height: 300px; width: overflow-y: scroll; background-color: #f0f0f0; padding: 10px; border: 1px solid #ccc;"> 
+        <div style="position: absolute; left: 750px; top: -9px; padding: 10px; width: 200px;">
+            <div style="height: 585px; width: overflow-y: scroll; background-color: #888; padding: 10px; border: 2px solid black;"> 
                 {prop.messages.map((msg, index) => (
                     <div key={index} style="padding: 5px; border-bottom: 1px solid #ddd;">
                         {msg.content}
                     </div>
                 ))}
             </div>
-                <input 
-                    type="text" 
+
+            <div style="display: flex; align-items: center; margin-top: 10px;">  
+                <textarea  
                     value={currentMessage}
                     onInput={(e) =>  {
                         setCurrentMessage(e.target.value)}
@@ -36,13 +37,34 @@ const Chat = (prop) => {
                         }
                     }}
                     placeholder="Type a message..."
-                    style="width: 283px; padding: 8px; border: 1px solid #ccc; margin-bottom: 5px;"
+                    rows="2"
+                    style= {{
+                        width: '100%', 
+                        padding: '10px', 
+                        border: '1px solid #ccc', 
+                        resize: 'none', // Prevent manual resizing
+                        overflow: 'hidden',
+                        borderRadius: '4px',
+                        marginRight: '100px', // Space between textarea and button
+                        boxSizing: 'border-box'
+                    }}
                 />
-                <button onClick={sendChatMessage} type="submit" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+                <button 
+                onClick={sendChatMessage} 
+                type="submit" 
+                style={{
+                    padding: '8px 16px', 
+                    backgroundColor: '#888', 
+                    color: 'white', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    borderRadius: '4px'
+                    }}
+                >                    
                     Send
                 </button>
+            </div>    
         </div>
-
     );
 };
 

@@ -94,7 +94,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 	})
 	if !gameState.Timer.Active && !gameState.Started && len(gameState.Players) > 1 {
 		fmt.Println("STARTING TIMER")
-		gameState.StartTimer(3)
+		gameState.StartTimer(20)
 	}
 
 	jsonResponse, err := json.Marshal(playerIndex)

@@ -31,6 +31,7 @@ type GameState struct {
 type Timer struct {
 	Active        bool
 	TimeRemaining time.Duration
+	LobbyTimer	  bool
 }
 
 type Cell struct {
@@ -51,7 +52,11 @@ type Cell struct {
 var CellSize = 58
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
+
+
+	
 	g.Timer = Timer{
+		LobbyTimer: true,
 		Active:        true,
 		TimeRemaining: time.Duration(totalTimeSeconds) * time.Second,
 	}
@@ -59,6 +64,11 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
+			
+				// check if timer has been manually stoped
+			if !g.Timer.Active {
+                break
+			}
 
 			// broadcastTimer
 			var msg Message
@@ -72,10 +82,19 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
-			g.OnTimerEnd()
+			if g.Timer.LobbyTimer == true{
+			gameState.StartTimer(5)
+			g.Timer.LobbyTimer = false
+			}
+			if g.Timer.LobbyTimer == false && g.Timer.TimeRemaining == 0 {
+				g.OnTimerEnd()
+			}
+
 		}
 	}()
 }
+
+
 
 func (g *GameState) OnTimerEnd() {
 	timer := time.NewTimer(1 * time.Second)
@@ -86,6 +105,27 @@ func (g *GameState) OnTimerEnd() {
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
 	}()
+}
+
+// stops the routine and resets gamestate(this allows new players to join)
+func (g *GameState) StopTimer() {
+    g.Timer.Active = false
+	g.Timer.LobbyTimer = false
+    g.Timer.TimeRemaining = -1 * time.Second
+    g.Started = false
+	conns.Lock()
+	for _, val := range conns.m{
+		g.Players = []Player{*val}
+	}
+	conns.Unlock()
+	var msg Message
+	msg.Type = "player_list"
+	fmt.Println(g.Players)
+	g.Players[0].Index = 0
+	msg.Players = g.Players
+	broadcast(nil, 1, msg)
+	msg.Type = "timer_stopped"
+	broadcast(nil, 1, msg)
 }
 
 // Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
@@ -320,4 +360,21 @@ func (g *GameState) removePlayer(player *Player) {
 			break
 		}
 	}
+}
+
+
+func (g *GameState) CheckWin()Player{
+	playerCount := 0
+	var winner Player
+			for _, p := range gameState.Players {
+				if p.Index > -999 {
+					playerCount++
+					winner = p
+				}
+			}
+
+	if playerCount == 1 {
+		return winner
+	}
+	return Player{}
 }

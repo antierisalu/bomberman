@@ -88,14 +88,31 @@ func reader(conn *websocket.Conn) {
 
 			broadcastPlayerList()
 
-			shouldRestart := true
+			playerCount := 0
 			for _, p := range gameState.Players {
 				if p.Index > -999 {
-					shouldRestart = false
-					log.Println("shouldn't res")
+					playerCount++
 				}
 			}
-			if shouldRestart {
+			log.Println("PLAYECOUNT:", playerCount)
+
+			if playerCount < 2 && gameState.Timer.Active {
+				gameState.StopTimer()
+				log.Println("Timer stopped due to insufficient players")
+				var msg Message
+				msg.Type = "timer_stopped"
+				msg.GameState = gameState
+				broadcast(nil, websocket.TextMessage, msg)
+			} else if playerCount < 2 {
+				var msg Message
+				msg.Type = "winner"
+				msg.Player = gameState.CheckWin()
+				broadcast(nil, websocket.TextMessage, msg)
+				
+			}
+
+
+			if playerCount<1 {
 				log.Println("restarting")
 				gameState.RestartGame()
 			}

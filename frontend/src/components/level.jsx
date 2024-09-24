@@ -1,5 +1,6 @@
 import { LAR } from "../framework";
 import Players from "./players";
+import Hud from "./hud";
 import { sendMessage, ws } from "../websocket";
 
 
@@ -61,8 +62,13 @@ const Level = (prop) => {
     return (
       
       <div id="level">
-            <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test ja remove box at 0 0</button>
-            <button onClick={()=>nussime(nuss+1)}>Nussi</button> {nuss}
+            <Hud
+            players={prop.players}
+            updatePlayers={prop.updatePlayers} 
+            updateGameState={prop.updateGameState} 
+            gameState={prop.gameState} 
+            clientInfo={prop.clientInfo}
+            />
         <div className="gameArea" id="gameArea">
           {cells.map((cell, index) => (
             <div key={index}>

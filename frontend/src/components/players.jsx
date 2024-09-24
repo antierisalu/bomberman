@@ -4,8 +4,11 @@ import { sendMessage, ws } from "../websocket";
 import { updateGame } from "../script/update";
 // import { renderGame } from "../script/render";
 import { InputHandler } from "../script/controls";
+import { HUD } from "../script/hud";
+
 
 let players = [];//not state but game class entities
+let hud;
 
 const Players = (prop) => {
 
@@ -46,6 +49,50 @@ const Players = (prop) => {
             case "start":
               initCellElements();
               initPlayers();
+
+              const dom = document.getElementById('HUD');
+              
+              console.log("THE DOM:", dom);
+              console.log(prop.gameState);
+              // prop.gameState --> vdom interpreter atm veel puudu *todo
+              const vdom = {
+                  health: 4,
+                  powerLvl: {
+                      speed: 0,
+                      bombs: 0,
+                      fire: 0,
+                  },
+                  players: [
+                      {
+                          isClient: false,
+                          isAlive: true,
+                          name: 'Chris',
+                          color: 'blue',
+                      },
+                      {
+                          isClient: false,
+                          isAlive: true,
+                          name: 'Lukas',
+                          color: 'red',
+                      },
+                      {
+                          isClient: false,
+                          isAlive: true,
+                          name: 'Anti',
+                          color: 'purple',
+                      },
+                      {
+                          isClient: true,
+                          isAlive: true,
+                          name: 'LukasAnti',
+                          color: 'green',
+                      },
+                  ]
+              }
+              hud = new HUD(dom, vdom, prop);
+              console.log(hud)
+              hud.emoji("Chris", "die")
+              
               input = new InputHandler();
               GameLoop();
               break;

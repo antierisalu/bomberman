@@ -95,7 +95,6 @@ export class Player {
         if (gridX < 0 || gridX >= this.cells[0].length || gridY < 0 || gridY >= this.cells.length) {
             return this.cells[0][0]; // Out of bounds
         }
-        console.log("getCELLAT CELL:",this.cells[gridY][gridX].element, gridY, gridX)
         return this.cells[gridY][gridX]; // Access the cell at the specified coordinates
     }
 

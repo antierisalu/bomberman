@@ -10,7 +10,7 @@ const App = () => {
     const [isInGame, sendToGame] = LAR.useState(false) //kas m2ng on alanud
     const [players, updatePlayers] = LAR.useState([]) //k6ik m2ngijad ja nende info
     const [clientInfo, changeClientInfo] = LAR.useState({}) //client m2ngija v2rv ja nimi mis s2ttitakse lobbys yhe korra
-
+    
     LAR.useEffect(()=>{
         if (isRegistered){ //alusta ws kui lobbys vajutatakse play
             console.log("registered")

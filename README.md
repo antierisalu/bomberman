@@ -36,3 +36,21 @@ The Bomberman Game
 > <br/>
 ---
 ---
+---
+---
+><br/>
+>
+># How to play
+>
+>>
+>### 1) WASD or arrow keys for movement
+>
+>### 2) Spacebar for placing bombs
+>
+>### 3) There are three powerups:
+> - Speed - makes you faster for 5 seconds
+> - Bomb - gives you an extra bomb
+> - Flames - makes your bombs explode further
+>### 4) Last alive is the winner
+> <br/>
+---

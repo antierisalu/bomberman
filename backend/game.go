@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -15,15 +16,22 @@ type GameState struct {
 	SpawnPoints []Position
 }
 
-/* type Player struct { juba olemas websocket.gos
-	Username string   `json:"username"`
-	Color    string   `json:"color"`
-	Position Position `json:"position"`
+/* type Player struct {
+	Index        int          `json:"index"`
+	Username     string       `json:"username"`
+	Color        string       `json:"color"`
+	Position     Position     `json:"position"`
+	Lives        int          `json:"lives"`
+	Speed        float32      `json:"speed"`
+	BombCount    int          `json:"bombCount"`
+	BombRange    int          `json:"bombRange"`
+	PowerUpLevel PowerUpLevel `json:"powerUpLevel"`
 } */
 
 type Timer struct {
 	Active        bool
 	TimeRemaining time.Duration
+	LobbyTimer	  bool
 }
 
 type Cell struct {
@@ -41,11 +49,14 @@ type Cell struct {
 	*/
 }
 
-func (g *GameState) StartTimer(totalTimeSeconds int) {
-	// g.GenerateGameGrid()
-	// g.SetBomb(&g.GameGrid[3][3], 2)
+var CellSize = 58
 
+func (g *GameState) StartTimer(totalTimeSeconds int) {
+
+
+	
 	g.Timer = Timer{
+		LobbyTimer: true,
 		Active:        true,
 		TimeRemaining: time.Duration(totalTimeSeconds) * time.Second,
 	}
@@ -53,40 +64,73 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
+			
+				// check if timer has been manually stoped
+			if !g.Timer.Active {
+                break
+			}
 
-			//broadcastTimer
+			// broadcastTimer
 			var msg Message
 			msg.Type = "timer"
 			msg.GameState = gameState
 			broadcast(nil, 1, msg)
 
 			// Uncomment to display game board in backend and time remaining
-			//fmt.Println("Time remaining:", g.Timer.TimeRemaining)
+			// fmt.Println("Time remaining:", g.Timer.TimeRemaining)
 			// g.DisplayGameBoard()
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
-			g.OnTimerEnd()
+			if g.Timer.LobbyTimer == true{
+			gameState.StartTimer(5)
+			g.Timer.LobbyTimer = false
+			}
+			if g.Timer.LobbyTimer == false && g.Timer.TimeRemaining == 0 {
+				g.OnTimerEnd()
+			}
+
 		}
 	}()
 }
 
-func (g *GameState) OnTimerEnd() {
 
-	timer := time.NewTimer(3 * time.Second)
+
+func (g *GameState) OnTimerEnd() {
+	timer := time.NewTimer(1 * time.Second)
+	g.Started = true // start game
 	go func() {
 		<-timer.C
-		g.Started = true //start game
 		var msg Message
 		msg.Type = "start"
 		broadcast(nil, 1, msg)
 	}()
+}
 
+// stops the routine and resets gamestate(this allows new players to join)
+func (g *GameState) StopTimer() {
+    g.Timer.Active = false
+	g.Timer.LobbyTimer = false
+    g.Timer.TimeRemaining = -1 * time.Second
+    g.Started = false
+	conns.Lock()
+	for _, val := range conns.m{
+		g.Players = []Player{*val}
+	}
+	conns.Unlock()
+	var msg Message
+	msg.Type = "player_list"
+	fmt.Println(g.Players)
+	g.Players[0].Index = 0
+	msg.Players = g.Players
+	broadcast(nil, 1, msg)
+	msg.Type = "timer_stopped"
+	broadcast(nil, 1, msg)
 }
 
 // Adds player to gamestate and returns the index of the added player for easy linking with websocket connection
 func (g *GameState) AddPlayer(p Player) int {
-	p.Index = len(g.Players) //assign player index
+	p.Index = len(g.Players) // assign player index
 	g.Players = append(g.Players, p)
 	return p.Index
 }
@@ -113,6 +157,7 @@ func (g *GameState) UpdatePlayer(p Player) {
 
 func (g *GameState) RestartGame() {
 	InitGame()
+	g.Players = nil
 	g.Started = false
 }
 
@@ -199,51 +244,95 @@ func (g *GameState) DisplayGameBoard() {
 
 func (g *GameState) SetBomb(c *Cell, radius int) {
 	c.HasBomb = true
-	fmt.Println("Bomb planted")
+
+	var reply Message
+	reply.Type = "gameState"
+	reply.GameState = gameState
+	broadcast(nil, 1, reply)
+
 	timer := time.NewTimer(3 * time.Second)
 	go func() {
 		<-timer.C
-		fmt.Println("Bomb exploded")
 		c.HasBomb = false
 		g.Explosion(c, radius)
 	}()
 }
 
-func (g *GameState) Explosion(c *Cell, r int) {
-	g.LightCell(c)
-
-	for i := 1; i <= r; i++ {
-		if c.X-i >= 0 { // left
-			g.LightCell(&g.GameGrid[c.X-i][c.Y])
-		}
-		if c.X+i < len(g.GameGrid) { // right
-			g.LightCell(&g.GameGrid[c.X+i][c.Y])
-		}
-		if c.Y-i >= 0 { // up
-			g.LightCell(&g.GameGrid[c.X][c.Y-i])
-		}
-		if c.Y+i < len(g.GameGrid[0]) { // down
-			g.LightCell(&g.GameGrid[c.X][c.Y+i])
-		}
-	}
+func (p *Player) CalcPlayerGridPosition() (int, int) {
+	gridX := math.Floor(float64(p.Position.X+24) / float64(CellSize))
+	gridY := math.Floor(float64(p.Position.Y+27) / float64(CellSize))
+	return int(gridX), int(gridY)
 }
 
-func (g *GameState) LightCell(c *Cell) {
-	if c.BlockType == 1 { // dont light unbreakable blocks
-		return
-	}
-	c.OnFire = true
-	fmt.Println("Fire started at:", c.X, c.Y)
+func GetCellPos(x, y float32) (int, int) {
+	gridX := math.Floor(float64(x) / float64(CellSize))
+	gridY := math.Floor(float64(y) / float64(CellSize))
+	return int(gridX), int(gridY)
+}
 
+func (g *GameState) Explosion(c *Cell, r int) {
+	g.LightCell(c)
+	directionBlocked := [4]bool{false, false, false, false}
+	for i := 1; i <= r; i++ {
+		if c.X-i >= 0 && !directionBlocked[0] { // left
+			directionBlocked[0] = g.LightCell(&g.GameGrid[c.X-i][c.Y])
+		}
+		if c.X+i < len(g.GameGrid) && !directionBlocked[1] { // right
+			directionBlocked[1] = g.LightCell(&g.GameGrid[c.X+i][c.Y])
+		}
+		if c.Y-i >= 0 && !directionBlocked[2] { // up
+			directionBlocked[2] = g.LightCell(&g.GameGrid[c.X][c.Y-i])
+		}
+		if c.Y+i < len(g.GameGrid[0]) && !directionBlocked[3] { // down
+			directionBlocked[3] = g.LightCell(&g.GameGrid[c.X][c.Y+i])
+		}
+	}
+
+	var reply Message
+	reply.Type = "gameState"
+	reply.GameState = gameState
+	broadcast(nil, 1, reply)
 	timer := time.NewTimer(1 * time.Second)
 	go func() {
 		<-timer.C
-		c.OnFire = false
-		if c.BlockType == 2 { // if breakable block, turn it into air
-			c.BlockType = 0
+		g.ExtinguishCell(c)
+		for i := 1; i <= r; i++ {
+			if c.X-i >= 0 { // left
+				g.ExtinguishCell(&g.GameGrid[c.X-i][c.Y])
+			}
+			if c.X+i < len(g.GameGrid) { // right
+				g.ExtinguishCell(&g.GameGrid[c.X+i][c.Y])
+			}
+			if c.Y-i >= 0 { // up
+				g.ExtinguishCell(&g.GameGrid[c.X][c.Y-i])
+			}
+			if c.Y+i < len(g.GameGrid[0]) { // down
+				g.ExtinguishCell(&g.GameGrid[c.X][c.Y+i])
+			}
 		}
-		fmt.Println("Fire ended at:", c.X, c.Y)
+		var reply Message
+		reply.Type = "gameState"
+		reply.GameState = gameState
+		broadcast(nil, 1, reply)
 	}()
+}
+
+func (g *GameState) LightCell(c *Cell) bool {
+	if c.BlockType == 1 { // dont light unbreakable blocks
+		return true
+	}
+	c.OnFire = true
+	if c.BlockType == 2 { // if breakable block, turn it into air
+		c.BlockType = 0
+	}
+	return false
+}
+
+func (g *GameState) ExtinguishCell(c *Cell) {
+	if c.BlockType == 1 {
+		return
+	}
+	c.OnFire = false
 }
 
 /*
@@ -252,6 +341,7 @@ func (g *GameState) LightCell(c *Cell) {
 		1 - MORE BOMBS
 		2 - BLAST RADIUS
 */
+
 func (c *Cell) RollDrop() {
 	if rand.Intn(3) == 0 {
 		c.DropType = rand.Intn(3)
@@ -260,15 +350,31 @@ func (c *Cell) RollDrop() {
 
 // Update Player.Position
 func (g *GameState) MovePlayer(p Player, pos Position) {
-	// log.Println(p.Index, p.Username)
 	g.Players[p.Index].Position = pos
 }
 
-func (g *GameState) removePlayer(player Player) {
+func (g *GameState) removePlayer(player *Player) {
 	for i, p := range g.Players {
 		if p.Username == player.Username {
-			g.Players = append(g.Players[:i], g.Players[i+1:]...)
+			g.Players[i] = Player{Username: "Player Dead", Index: -999}
 			break
 		}
 	}
+}
+
+
+func (g *GameState) CheckWin()Player{
+	playerCount := 0
+	var winner Player
+			for _, p := range gameState.Players {
+				if p.Index > -999 {
+					playerCount++
+					winner = p
+				}
+			}
+
+	if playerCount == 1 {
+		return winner
+	}
+	return Player{}
 }

@@ -3,6 +3,7 @@ import { sendMessage } from "../websocket";
 export class Player {
     constructor(element, gameWorldDiv, name, cells) {
         this.element = element
+        this.gameWorldDiv = gameWorldDiv
         this.clientGameRect = gameWorldDiv.getBoundingClientRect();
         this.playerRect = this.element.getBoundingClientRect();
         this.name = name;
@@ -18,6 +19,7 @@ export class Player {
     }
 
     update(input, dt) {
+
         const movement = this.speed * dt;
         let right = 0;
         let left = 0;
@@ -40,6 +42,16 @@ export class Player {
         // Create a hypothetical future position for the player
         let dx = (right - left) * movement
         let dy = (down - up) * movement
+
+
+        //normalize movement vectors for diagonal movement
+        let length = Math.sqrt(dx * dx + dy * dy);
+        if (length > 0) {
+            dx /= length;
+            dy /= length;
+        }
+        dx *= movement;
+        dy *= movement;
         
         //only send position info if client has moved
         if (this.oldX !== this.x || this.oldY !== this.y){
@@ -67,15 +79,59 @@ export class Player {
             let obsX = oRect.x - this.clientGameRect.x
             let obsY = oRect.y - this.clientGameRect.y
             let calibratedObstacle = {x:obsX, y:obsY, height:oRect.height, width:oRect.width}
-            if (obstacle.BlockType === 1){
+            if (obstacle.BlockType === 1 || obstacle.BlockType === 2 || obstacle.HasBomb || obstacle.DropType > -1 || obstacle.OnFire){ // 
                 if (this.isColliding(futurePlayer, calibratedObstacle)) {
+                    
+                    //check for player damage
+                    if (obstacle.OnFire){
+                        sendMessage(JSON.stringify({type:'playerInFire'}))
+                        continue
+                    }
+                    //if player is on top of bomb, don't collide with it
+                    if (obstacle.HasBomb && !obstacle.collidableBomb){
+                        continue
+                    } 
+                    //powerup pickup logic
+                    if (obstacle.DropType > -1 && obstacle.BlockType === 0){
+                        if (obstacle.DropType === 0){
+                            this.speed += 100
+                            setTimeout(()=>{
+                                if (this.speed > 100){
+                                    this.speed -= 100
+                                }
+                            }, 5000)
+                        } else if (obstacle.DropType > 0) {
+                            console.log("i found a drop type", obstacle.DropType)
+                        }
+                        sendMessage(JSON.stringify({type: 'powerup', position: {x:obsX,y:obsY}}))
+                        obstacle.DropType = -1
+                        continue
+                    }
+
+                    //collision logic
                     if (this.isColliding({x: futureX, y: this.y, width: this.width, height: this.height}, calibratedObstacle)) {
-                    dx = 0; // Stop horizontal movement
+                        //need ifid viivad playeri vastu blocki, kui oleks lihtsalt dx=0 ja player kiirus on suur siis ta j22b enne seina seisma vahel
+                        if (dx>0){
+                            dx = calibratedObstacle.x - (this.x+this.width)
+                        } else if (dx<0) {
+                            dx = (calibratedObstacle.x + calibratedObstacle.width) - this.x
+                        } else dx = 0
+                        }
+                        if (this.isColliding({x: this.x, y: futureY, width: this.width, height: this.height}, calibratedObstacle)) {
+                        if (dy>0){
+                            dy = calibratedObstacle.y - (this.y+this.height)
+                        } else if (dy<0) {
+                            dy = (calibratedObstacle.y + calibratedObstacle.height) - this.y
+                        } else dy = 0
                     }
-                    if (this.isColliding({x: this.x, y: futureY, width: this.width, height: this.height}, calibratedObstacle)) {
-                    dy = 0; // Stop vertical movement
-                    }
+
+
+                } else if (obstacle.HasBomb){// if player isnt on top of bomb, make it collideable
+                        obstacle.collidableBomb = true;
                 }
+            }
+            if (obstacle.collidableBomb && !obstacle.HasBomb){
+                obstacle.collidableBomb = false
             }
         }
         
@@ -95,5 +151,23 @@ export class Player {
     moveOther(){
         this.element.style.left = this.x + 'px'
         this.element.style.top = this.y + 'px'
+    }
+
+    updateOnResize() {
+
+        const newGameRect = this.gameWorldDiv.getBoundingClientRect();
+
+        // Calculate the proportion of the player's position relative to the old game world size
+        const xRatio = this.x / this.clientGameRect.width;
+        const yRatio = this.y / this.clientGameRect.height;
+    
+        this.clientGameRect = newGameRect;
+    
+        // Recalculate the player's x and y based on the new game world size and the saved ratios
+        this.x = xRatio * this.clientGameRect.width;
+        this.y = yRatio * this.clientGameRect.height;
+    
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
     }
 }

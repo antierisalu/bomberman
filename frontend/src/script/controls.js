@@ -17,6 +17,9 @@ export class InputHandler {
                 this.keys.push(e.key)
             }
             if (e.key === " "){
+                var chatInput = document.getElementById('chatInput');
+                var isFocused = (document.activeElement === chatInput);
+                if (isFocused) return;
                 sendMessage(JSON.stringify({type:'bomb'}))
             }
         })

@@ -19,6 +19,7 @@ export class Player {
     }
 
     update(input, dt) {
+
         const movement = this.speed * dt;
         let right = 0;
         let left = 0;

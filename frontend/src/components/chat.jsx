@@ -46,6 +46,7 @@ const Chat = (prop) => {
 
             <div className="input-container">
                 <textarea  
+                    id="chatInput"
                     value={currentMessage}
                     onInput={(e) => setCurrentMessage(e.target.value)}
                     onKeyDown={(e) => {

@@ -74,46 +74,7 @@ const Players = (prop) => {
                     initCellElements();
                     initPlayers();
                     const dom = document.getElementById('HUD');
-              
-                    console.log("THE DOM:", dom);
-                    console.log(prop.gameState);
-                    // prop.gameState --> vdom interpreter atm veel puudu *todo
-                    const vdom = {
-                        health: 4,
-                        powerLvl: {
-                            speed: 0,
-                            bombs: 0,
-                            fire: 0,
-                        },
-                        players: [
-                            {
-                                isClient: false,
-                                isAlive: true,
-                                name: 'Chris',
-                                color: 'blue',
-                            },
-                            {
-                                isClient: false,
-                                isAlive: true,
-                                name: 'Lukas',
-                                color: 'red',
-                            },
-                            {
-                                isClient: false,
-                                isAlive: true,
-                                name: 'Anti',
-                                color: 'purple',
-                            },
-                            {
-                                isClient: true,
-                                isAlive: true,
-                                name: 'LukasAnti',
-                                color: 'green',
-                            },
-                        ]
-                    }
-                    hud = new HUD(dom, vdom, prop);
-                    console.log(hud)
+                    hud = new HUD(dom, prop);
                     hud.emoji("Chris", "die")
                     
                     input = new InputHandler();
@@ -134,7 +95,7 @@ const Players = (prop) => {
                     });
                     break;
                 case "death":
-                    console.log(data);
+                    hud.kill(data.player.username)
                     if (data.player.username == client.name) {
                         players = [];
                         prop.killPlayer(false);
@@ -147,25 +108,25 @@ const Players = (prop) => {
                     }
                     break;
                 case "chat_message":
-                    console.log("received chat_message", data);
                     prop.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+                    // hud.chatEmoji()
+                    console.log("EMOJI CHAT: ", data.player.username, data.content);
+                    hud.chatEmoji(data.player.username, data.content);
                     break;
                 case "damage":
-                    console.log(`player ${data.player.username} took damage`);
                     prop.updatePlayers((pleierid) => {
-                        console.log(
-                            "UPDATING PLAYER LIVES:",
-                            pleierid,
-                            data.player
-                        );
                         pleierid.forEach((player) => {
                             if (player.username === data.player.username) {
-                                console.log("updating", player);
+                                hud.emoji(player.username, "cry")
                                 player.lives = data.player.lives;
+                                if (player.username === prop.clientInfo.name){
+                                  hud.updateHealth(data.player.lives)
+                                }
                             }
                         });
                         return pleierid;
                     });
+                    
                     break;
                 case "winner":
                     console.log(data.player.username, "is the winner");
@@ -180,7 +141,12 @@ const Players = (prop) => {
         initCellElements();
         players.forEach((player) => {
             //update the cell info for player class when gamestate gets updated
-            player.cells = prop.gameState.GameGrid;
+            player.cells = prop.gameState.GameGrid; 
+            if (player.name === prop.clientInfo.name && hud !== undefined){
+            hud.updatePowerupSpeed(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.speed)
+            hud.updatePowerupBomb(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.bombs)
+            hud.updatePowerupFire(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.flames)
+            }
         });
     }, [prop.gameState]);
 

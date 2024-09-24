@@ -31,7 +31,7 @@ type GameState struct {
 type Timer struct {
 	Active        bool
 	TimeRemaining time.Duration
-	LobbyTimer	  bool
+	LobbyTimer    bool
 }
 
 type Cell struct {
@@ -53,10 +53,8 @@ var CellSize = 58
 
 func (g *GameState) StartTimer(totalTimeSeconds int) {
 
-
-	
 	g.Timer = Timer{
-		LobbyTimer: true,
+		LobbyTimer:    true,
 		Active:        true,
 		TimeRemaining: time.Duration(totalTimeSeconds) * time.Second,
 	}
@@ -64,10 +62,10 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		for g.Timer.TimeRemaining > 0 && g.Timer.Active {
 			time.Sleep(1 * time.Second)
 			g.Timer.TimeRemaining -= 1 * time.Second
-			
-				// check if timer has been manually stoped
+
+			// check if timer has been manually stoped
 			if !g.Timer.Active {
-                break
+				break
 			}
 
 			// broadcastTimer
@@ -82,9 +80,9 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
-			if g.Timer.LobbyTimer == true{
-			gameState.StartTimer(5)
-			g.Timer.LobbyTimer = false
+			if g.Timer.LobbyTimer == true {
+				gameState.StartTimer(1)
+				g.Timer.LobbyTimer = false
 			}
 			if g.Timer.LobbyTimer == false && g.Timer.TimeRemaining == 0 {
 				g.OnTimerEnd()
@@ -93,8 +91,6 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 	}()
 }
-
-
 
 func (g *GameState) OnTimerEnd() {
 	timer := time.NewTimer(1 * time.Second)
@@ -109,12 +105,12 @@ func (g *GameState) OnTimerEnd() {
 
 // stops the routine and resets gamestate(this allows new players to join)
 func (g *GameState) StopTimer() {
-    g.Timer.Active = false
+	g.Timer.Active = false
 	g.Timer.LobbyTimer = false
-    g.Timer.TimeRemaining = -1 * time.Second
-    g.Started = false
+	g.Timer.TimeRemaining = -1 * time.Second
+	g.Started = false
 	conns.Lock()
-	for _, val := range conns.m{
+	for _, val := range conns.m {
 		g.Players = []Player{*val}
 	}
 	conns.Unlock()
@@ -362,16 +358,15 @@ func (g *GameState) removePlayer(player *Player) {
 	}
 }
 
-
-func (g *GameState) CheckWin()Player{
+func (g *GameState) CheckWin() Player {
 	playerCount := 0
 	var winner Player
-			for _, p := range gameState.Players {
-				if p.Index > -999 {
-					playerCount++
-					winner = p
-				}
-			}
+	for _, p := range gameState.Players {
+		if p.Index > -999 {
+			playerCount++
+			winner = p
+		}
+	}
 
 	if playerCount == 1 {
 		return winner

@@ -38,7 +38,8 @@ func StartServer() {
 	mux.HandleFunc("/ws", wsHandler)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			http.ServeFile(w, r, "./frontend/index.html")
+			http.FileServer(http.Dir("./frontend")).ServeHTTP(w, r)
+			//http.ServeFile(w, r, "./frontend/index.html")
 		} else {
 			http.FileServer(http.Dir("./frontend")).ServeHTTP(w, r)
 		}
@@ -94,7 +95,7 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 	})
 	if !gameState.Timer.Active && !gameState.Started && len(gameState.Players) > 1 {
 		fmt.Println("STARTING TIMER")
-		gameState.StartTimer(5)
+		gameState.StartTimer(1)
 	}
 
 	jsonResponse, err := json.Marshal(playerIndex)

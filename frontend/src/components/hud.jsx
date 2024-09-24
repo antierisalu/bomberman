@@ -2,14 +2,14 @@ import { LAR } from "../framework";
 
 
 const Hud = (prop) => {
-    console.log("HUD LOADED PROPS:");
+/*     console.log("HUD LOADED PROPS:");
     console.log("players: ", prop.players)
     console.log("updatePlayers: ", prop.updatePlayers)
     console.log("updateGameState: ", prop.updateGameState)
     console.log("gameState: ", prop.gameState)
     console.log("clientInfo: ", prop.clientInfo)
-
-
+    
+    */
 
 
 
@@ -33,14 +33,14 @@ const Hud = (prop) => {
                                 <div class="hudThunder"></div>
                             </div>
                             <div class="digital-counter">
-                                <p id="powerupSpeed-counter">3</p>
+                                <p id="powerupSpeed-counter">0</p>
                             </div>
                         </div>
 
                         <div class="powerup-bombs">
                             <div class="hudBomb"></div>
                             <div class="digital-counter">
-                                <p id="powerupBomb-counter">3</p>
+                                <p id="powerupBomb-counter">0</p>
                             </div>
                         </div>
 
@@ -49,7 +49,7 @@ const Hud = (prop) => {
                             <div class="hudFire"></div>
 
                             <div class="digital-counter">
-                                <p id="powerupFire-counter">3</p>
+                                <p id="powerupFire-counter">0</p>
                             </div>
                         </div>
                     </div>

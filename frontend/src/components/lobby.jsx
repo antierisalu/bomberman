@@ -40,7 +40,6 @@ const Lobby = (props) => {
             const data = JSON.parse(event.data);
             switch (data.type) {
                 case "player_list": //backendilt saadud player list (saadab iga kord kui keegi joinib). clienti info on clientInfo stateis App tasemel
-                    console.log("Updating players with:", data.players);
                     props.updatePlayers(data.players);
                     break;
                 case "gameState":
@@ -61,7 +60,6 @@ const Lobby = (props) => {
                     }
                     break;
                 case "chat_message":
-                    console.log("received chat_message", data);
                     props.setMessages((prevMessages) => [
                         ...prevMessages,
                         data,

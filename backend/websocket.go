@@ -108,11 +108,10 @@ func reader(conn *websocket.Conn) {
 				msg.Type = "winner"
 				msg.Player = gameState.CheckWin()
 				broadcast(nil, websocket.TextMessage, msg)
-				
+
 			}
 
-
-			if playerCount<1 {
+			if playerCount < 1 {
 				log.Println("restarting")
 				gameState.RestartGame()
 			}
@@ -139,6 +138,10 @@ func reader(conn *websocket.Conn) {
 			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
+			var reply Message
+			reply.Type = "gameState"
+			reply.GameState = gameState
+			broadcast(conn, messageType, reply)
 		case "chat_message":
 			fmt.Println("received chat message", msg.Content)
 			broadcast(conn, messageType, msg)
@@ -192,6 +195,15 @@ func reader(conn *websocket.Conn) {
 			case 0:
 				player.PowerUpLevel.Speed++
 				log.Println(" speed")
+				timer := time.NewTimer(5 * time.Second)
+
+				go func() {
+					<-timer.C
+
+					if conns.m[conn] != nil {
+						player.PowerUpLevel.Speed--
+					}
+				}()
 			case 1:
 				player.PowerUpLevel.Bombs++
 				player.BombCount++

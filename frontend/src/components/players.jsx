@@ -107,8 +107,6 @@ const Players = (prop) => {
                     break;
                 case "chat_message":
                     prop.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
-                    // hud.chatEmoji()
-                    console.log("EMOJI CHAT: ", data.player.username, data.content);
                     hud.chatEmoji(data.player.username, data.content);
                     break;
                 case "damage":
@@ -177,15 +175,6 @@ const Players = (prop) => {
                 <div></div>
             )}
             <Chat messages={prop.messages} setMessages={prop.setMessages} />
-            <div className="hud">
-                <div className="hudPlayers">
-                    {prop.players.map((player, index) => (
-                        <div key={index} className="hudPlayer">
-                            {player.username} Lives:{player.lives}
-                        </div>
-                    ))}
-                </div>
-            </div>
             {prop.players.map((player, index) => (
                 <div>
                     {player.index !== -999 ? (

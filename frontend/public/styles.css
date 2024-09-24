@@ -440,10 +440,7 @@ body {
   flex-direction: column;
 }
 
-
-
 /* <| HUD.JSX |> */
-
 @font-face {
   font-family: 'silkscreen';
   src: url('./fonts/silkscreen/Silkscreen-Regular.ttf') format('truetype');
@@ -451,21 +448,15 @@ body {
   font-style: normal;
 }
 
-
 .hudEmoji {
-
   position: absolute;
-  /* background-color: red; */
   width: 25px;
   height: 25px;
   background-image: url('./assets/die.png');
-  /* background-image: url('./assets/extraBomb.png'); */
-
   background-repeat: no-repeat;
   background-size: 25px 25px;
   transform: translate(10px, 0px);
   opacity: 0;
-  /* transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1); */
   transition: transform 2s cubic-bezier(0.2, 0, 0.05, 1), opacity 2s cubic-bezier(0.2, 0, 0.05, 1);
 }
 
@@ -499,14 +490,12 @@ body {
 
 
 .playerIconContainer {
-  /* display: flex; */
   display: none;
   flex-direction: column;
   align-items: center;
   width: 60px;
   margin-left: 18px;
   margin-right: 18px;
-
 }
 
 .playerCross {
@@ -524,14 +513,12 @@ body {
 .grayScale {
   filter: grayscale(72%);
 }
-.playerIcon {
 
+.playerIcon {
   height: 22px;
   width: 22px;
-
   background-repeat: no-repeat;
   background-size: 22px 22px;
-
 }
 
 .playerIcon-blue {
@@ -547,59 +534,40 @@ body {
   background-image: url('./assets/green.png');
 }
 
-
 .alivePlayersIcons {
   display: flex;
   height: 30px;
   width: 240px;
-  /* background-color: rgb(149, 149, 149); */
 }
 
-
-
-.powerup-fire{
+.powerup-fire {
   margin-left: 10px;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
-
 }
 
 .hudFire {
-  /* position: absolute; */
   height: 32px;
   width: 32px;
-
+  margin-right: 8px;
   background-image: url('./assets/flame.png');
   background-repeat: no-repeat;
   background-size: 32px 32px;
-  /* transform: translate(0px, -4px) */
-  /* transform: translateY(7px); */
-  /* transform: translate(-9px, 4px) */
-
 }
-
 
 .powerup-bombs{
   margin-left: 10px;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
-
 }
 
 .hudBomb {
-  /* position: absolute; */
   height: 43px;
   width: 43px;
-
   background-image: url('./assets/bomba.png');
   background-repeat: no-repeat;
   background-size: 43px 43px;
   transform: translate(0px, -4px)
-  /* transform: translateY(7px); */
-  /* transform: translate(-9px, 4px) */
-
 }
 
 .powerup-speed {
@@ -609,8 +577,6 @@ body {
 .hudSpeed {
   display: block;
   height: 35px;
-  /* height: 40px; */
-
   width: 40px;
   margin-right: 12px;
 }
@@ -622,7 +588,6 @@ body {
   background-image: url('./assets/thunder.png');
   background-repeat: no-repeat;
   background-size: 21px 21px;
-  /* transform: translateY(7px); */
   transform: translate(-9px, 4px);
 }
 
@@ -639,7 +604,6 @@ body {
 .digital-counter {
   overflow: hidden;
   position: relative;
-
   display: flex;
   align-items: left;
   justify-content: center;
@@ -657,23 +621,16 @@ body {
   font-size: x-large;
   transform: translateY(-3px);
   color: white;
-  user-select: none;
-  /* animation: slide-up 0.5s ease-in-out forwards; */
-  
+  user-select: none;  
 }
 
 .digital-counter p.animate-slide-up {
-  /* animation: slide-up 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; */
   animation: slide-up 0.5s ease-in-out forwards;
-
 }
 
 .digital-counter p.animate-slide-down{
-  /* animation: slide-down 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; */
   animation: slide-down 0.5s ease-in-out forwards;
-
 }
-
 
 .hudHeart {
   height: 40px;
@@ -681,25 +638,21 @@ body {
   background-image: url('./assets/heart.png');
   background-repeat: no-repeat;
   background-size: 40px 40px;
-
 }
 
 .hudInfo-lives {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background-color: rgb(0, 255, 255); */
-      width: 300px;
-      height: 100%;
-
+  width: 300px;
+  height: 100%;
 }
 
 .hudInfo-powerups {
   display: flex;
   align-items: center;
-  /* background-color: rgb(191, 0, 255); */
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
   margin-right: 12px;
 }
 
@@ -707,7 +660,6 @@ body {
 .hudInfo-alivePlayers {
   display: flex;
   align-items: center;
-  /* background-color: green; */
   width: 100%;
   height: 100%;
 }
@@ -717,30 +669,19 @@ body {
   padding-left: 15px;
   padding-right: 15px;
   position: relative;
-
-  /* ADJUST THESE TO MATCH WITH GAME */
   /* background-color: rgba(0, 0, 0, 0.047); */
   /* filter:brightness(70%); */
-  /* ADJUST THESE TO MATCH WITH GAME */
   width: 726px;
   height: 58px;
   transform: translateY(58px);
   margin: 0;
 }
 
-
-
-
-/* PRIOR */
 .hudContainer {
   width: 756px;
   height: 58px; 
-  /* background-color: red; */
-  /* background-image: url('./assets/hardbrick.png'); */
-  /* background-repeat: repeat; */
-  /* background-size: 58px 58px; */
-
 }
+
 .hudContainerBorder {
   display: flex;
   align-items: center;
@@ -755,15 +696,9 @@ body {
 .hudContainerBackground {
   width: 730px;
   height: 36px; 
-
-  /* width: 100%; */
-  /* height: 100%; */
   background-image: url('./assets/softbrick.png');
-
   background-repeat: repeat;
   background-size: 57px 39px;
-
-
 }
 
 @keyframes slide-up {
@@ -813,8 +748,6 @@ body {
     opacity: 1;
   }
 }
-
-
 
 /* <| HUD.JSX |> */
 

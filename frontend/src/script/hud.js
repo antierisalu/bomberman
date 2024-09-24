@@ -51,9 +51,6 @@ export class HUD {
         });
     }
 
-
-
-
     setPlayerIcons(players) {
         const colors = ['red', 'blue', 'purple', 'green']
         const clientPlayer = players.find(player => player.username === this.prop.clientInfo.name);
@@ -79,7 +76,6 @@ export class HUD {
             playerNameElement.style.backgroundColor = `${colors[player.index]}`;
             playerIconElement.classList.add(`playerIcon-${colors[player.index]}`);
             playerIconContainer.style.display = 'flex';
-
             }
         });
     }
@@ -90,7 +86,6 @@ export class HUD {
         if (!counterElement) return;
 
         const currentValue = parseInt(counterElement.dataset.currentValue, 10) || 0;
-
         counterElement.classList.remove('animate-slide-up', 'animate-slide-down');
 
         if (newNumber > currentValue) {
@@ -99,12 +94,9 @@ export class HUD {
             counterElement.classList.add('animate-slide-down');
         }
 
-
         counterElement.textContent = newNumber;
         counterElement.dataset.currentValue = newNumber;
-
         counterElement.offsetWidth;
-
 
         const handleAnimationEnd = () => {
             counterElement.classList.remove('animate-slide-up', 'animate-slide-down');
@@ -112,7 +104,6 @@ export class HUD {
         };
 
         counterElement.addEventListener('animationend', handleAnimationEnd);
-        // counter.classList.add('animate-slide-up');
     }
 
     updateHealth(newHealthValue) {
@@ -124,7 +115,7 @@ export class HUD {
         if (newPowerupValue > 0){
             setTimeout(()=>{
                 this.updateCounter(this.powerupSpeed, newPowerupValue-1)
-            }, 5000)
+            }, 5000);
         }
     }
 
@@ -161,9 +152,7 @@ export class HUD {
             playerEmoji.style.display = 'block';
             playerEmoji.classList.remove('show');
 
-
             void playerEmoji.offsetWidth;
-            
             playerEmoji.classList.add('show');
 
             setTimeout(() => {
@@ -174,7 +163,6 @@ export class HUD {
                 playerEmoji.style.display = 'none'
                 playerEmoji.classList.remove('show', 'fade-out');
             }, 2000);
-            // playerEmoji.style.display = 'none';
         }
 
     }
@@ -218,6 +206,4 @@ export class HUD {
                 break;
         }
     }
-
-
 }

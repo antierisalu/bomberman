@@ -12,14 +12,12 @@ export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState)
         const data = JSON.parse(event.data);
         switch (data.type) {
             case "player_list"://backendilt saadud player list. clienti info on clientInfo stateis App tasemel
-                console.log("Initial player list:", data.players);
                 updatePlayers(data.players);
                 break;
             case "gameState":
                 updateGameState(data.gameState);
                 break;
             case "chat_message":
-                console.log('nahui')
                 setMessages((prevMessages) => [...prevMessages, { content: data.content, sender: data.sender}]);
         }
     }

@@ -570,7 +570,7 @@ body {
   height: 32px;
   width: 32px;
 
-  background-image: url('./assets/fire.png');
+  background-image: url('./assets/flame.png');
   background-repeat: no-repeat;
   background-size: 32px 32px;
   /* transform: translate(0px, -4px) */
@@ -593,7 +593,7 @@ body {
   height: 43px;
   width: 43px;
 
-  background-image: url('./assets/bomb.png');
+  background-image: url('./assets/bomba.png');
   background-repeat: no-repeat;
   background-size: 43px 43px;
   transform: translate(0px, -4px)

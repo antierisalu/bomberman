@@ -2,13 +2,26 @@ import die from '../../public/assets/die.png';
 import cry from '../../public/assets/cry.png';
 import crying from '../../public/assets/crying.png';
 import annoyed from '../../public/assets/annoyed.png'; 
+import blush from '../../public/assets/blush.png'; 
+import heart from '../../public/assets/heart.png'; 
+import laugh from '../../public/assets/laugh.png'; 
+import questioning from '../../public/assets/questioning.png'; 
+import smile from '../../public/assets/smile.png'; 
+import wink from '../../public/assets/wink.png'; 
+
 
 
 const emojiBank = {
-    "die": die,
-    "cry": cry,
-    "crying": crying,
-    "annoyed": annoyed,
+    'die': die,
+    'cry': cry,
+    'crying': crying,
+    'annoyed': annoyed,
+    'blush': blush,
+    'heart': heart,
+    'laugh': laugh,
+    'questioning': questioning,
+    'smile': smile,
+    'wink': wink,
 }
 
 export class HUD {
@@ -167,8 +180,42 @@ export class HUD {
     }
 
     chatEmoji(playername, message) {
-        if (message === ":<") {
-            this.emoji(playername, 'annoyed');
+        switch(message) {
+            case "-.-":
+                this.emoji(playername, 'annoyed');
+                break;
+            case "o.o":
+                this.emoji(playername, 'blush');
+                break;
+            case ";)":
+                this.emoji(playername, 'wink');
+                break;
+            case ":'(":
+                this.emoji(playername, 'cry');
+                break;
+            case ":'":
+                this.emoji(playername, 'crying');
+                break;
+            case "x.x":
+                this.emoji(playername, 'die');
+                break;
+            case "LOL":
+            case "lol":
+            case "XD":
+            case "xd":
+                this.emoji(playername, 'laugh');
+                break;
+            case ":D":
+                this.emoji(playername, 'smile');
+                break;
+            case "<3":
+                this.emoji(playername, 'heart');
+                break;
+            case "?":
+            case "O.o":
+            case "o.O":
+                this.emoji(playername, 'questioning');
+                break;
         }
     }
 

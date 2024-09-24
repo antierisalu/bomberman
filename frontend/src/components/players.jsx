@@ -74,9 +74,7 @@ const Players = (prop) => {
                     initCellElements();
                     initPlayers();
                     const dom = document.getElementById('HUD');
-                    hud = new HUD(dom, prop);
-                    hud.emoji("Chris", "die")
-                    
+                    hud = new HUD(dom, prop);                    
                     input = new InputHandler();
                     GameLoop(0);
                     break;

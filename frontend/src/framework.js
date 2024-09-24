@@ -6,10 +6,8 @@ function createElement(type, props, ...children) {
         }
         return [...acc, child];
     }, []);
-
     //validate children
     flattenedChildren.forEach(child=>{
-
         if (child && !child.type && typeof child === 'object'){
             const propsString = Object.entries(props).map(([key, value]) => {
                 return `${key}="${value}"`;
@@ -19,7 +17,6 @@ function createElement(type, props, ...children) {
             throw new Error("Te ei tohi panna objecteid JSXi sisse textina! "+errormessage+" object on konsoolis ka");
         }
     })
-
     return {
         type,
         props: {
@@ -96,8 +93,9 @@ function updateDom(dom, prevProps, nextProps) {
             } else if (name in dom) {
                 dom[name] = nextProps[name]
                 if (name === "style" && typeof nextProps[name] === "object") {
-                    let keys = Object.keys(nextProps[name])
-                    dom.style[keys[0]] = nextProps[name][keys[0]]
+                    Object.keys(nextProps[name]).forEach((key)=>{
+                        dom.style[key] = nextProps[name][key]
+                    })
                 }
             } else {
                 dom.setAttribute(name, nextProps[name])

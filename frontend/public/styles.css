@@ -12,6 +12,12 @@ html {
   font-size: x-large;
 }
 
+.winner{
+  width: 100%;
+  height: 100%;
+  font-size: xx-large;
+}
+
 body {
     background-color: beige;
     height: 100%;
@@ -27,7 +33,6 @@ body {
     height: 516px;
     border: 5px green inset;
 }
-
 
 .name {
     position: relative;
@@ -346,12 +351,15 @@ body {
   }
 
   .hudPlayers {
-    font-size: x-small;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 20px
-    ;
+    padding: 20px;
+  }
+
+  .hudPlayer {
+    font-size: x-large;
+    margin-right: 20px;
   }
 
   .gameArea {
@@ -373,8 +381,8 @@ body {
 
 .player {
     position: absolute;
-    width: 50px;
-    height: 58px;
+    width: 48px;
+    height: 54px;
 }
 
 #player0 {
@@ -402,24 +410,23 @@ body {
   background-size: cover;
 }
 
-.box-1 { /* in-desctructible */
-    width: 58px;
-    height: 58px;
-    background-image: url('./assets/hardbrick.png');
-    background-size: cover;
-}
-
-.box-2 { /* desctructible */
+.box-0, .box-1, .box-2, .hasBomb, .onFire, .extraBomb, .extraRange, .extraSpeed {
   width: 58px;
   height: 58px;
-  background-image: url('./assets/softbrick.png');
   background-size: cover;
 }
 
-.box-0 { /* empty */
-  width: 58px;
-  height: 58px;
+.box-0 { 
+  background-size: auto;
 }
+
+.box-1 { background-image: url('./assets/hardbrick.png'); } /* indestructible */
+.box-2 { background-image: url('./assets/softbrick.png'); } /* destructible */
+.hasBomb { background-image: url('./assets/bomb.png'); }
+.onFire { background-image: url('./assets/fire.png'); }
+.extraBomb { background-image: url('./assets/extraBomb.png'); }
+.extraRange { background-image: url('./assets/extraRange.png'); }
+.extraSpeed { background-image: url('./assets/speed.png'); }
 
 .topBoxes, .bottomBoxes, .leftBoxes, .rightBoxes {
   position:absolute;
@@ -807,3 +814,69 @@ body {
 /* <| HUD.JSX |> */
 
 
+/* Chat component */
+.chat-container {
+  position: absolute;
+  left: 750px;
+  top: -9px;
+  padding: 10px;
+  width: 200px;
+}
+
+
+.chat-messages {
+  height: 549px;
+  overflow-y: scroll;
+  background-color: #888;
+  padding: 10px;
+  border: 2px solid black;
+  max-width: 100%;  /* Ensures it doesn't overflow horizontally */
+  overflow-y: auto; /* Allows vertical scrolling for long content */
+  word-wrap: break-word;  /* Forces long words to break and wrap */
+  word-break: break-word;  /* Ensures that long words break inside the container */
+}
+
+
+.messages {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+  color: whitesmoke;
+  max-width: 190px;
+  
+}
+.message {
+  white-space: pre-wrap; /* Preserves spaces, line breaks, and prevents overflow */
+  word-break: break-word; /* Breaks long words that don't fit */
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.chat-textarea {
+  width: 100%;
+  padding: 10px;
+  /* border: 1px solid #ccc; */
+  resize: none;
+  overflow: hidden;
+  border-radius: 4px;
+  /* margin-right: 100px; */
+  box-sizing: border-box;
+}
+
+.send-button {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.bomb-icon {
+  background-image: url('./assets/bomb.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

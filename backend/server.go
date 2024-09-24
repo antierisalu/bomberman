@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func enableCors(next http.Handler) http.Handler {
@@ -61,18 +62,17 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	color := r.FormValue("color")
-	name := r.FormValue("text")
-	if color == "" {
+	name := strings.TrimSpace(r.FormValue("text"))
+
+	if name == "" {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
-		fmt.Println(name, "ei valinud v2rvi")
-		fmt.Fprintf(w, "vali v2rv")
+		fmt.Fprintf(w, "Please enter a name")
 		return
 	}
+
 	if gameState.hasPlayerName(name) {
 		w.WriteHeader(http.StatusUnavailableForLegalReasons)
-		fmt.Println(name, " nimi on taken")
-		fmt.Fprintf(w, "vali orginaalsem nimi")
+		fmt.Fprintf(w, "This name is taken")
 		return
 	}
 
@@ -85,15 +85,16 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 
 	playerIndex := gameState.AddPlayer(Player{
 		Username:     name,
-		Color:        color,
 		Position:     Position{X: 0, Y: 0},
 		Lives:        3,
 		Speed:        1,
+		BombCount:    1,
+		BombRange:    1,
 		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
 	})
-	if !gameState.Timer.Active {
+	if !gameState.Timer.Active && !gameState.Started && len(gameState.Players) > 1 {
 		fmt.Println("STARTING TIMER")
-		gameState.StartTimer(3)
+		gameState.StartTimer(5)
 	}
 
 	jsonResponse, err := json.Marshal(playerIndex)
@@ -102,5 +103,4 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResponse)
-
 }

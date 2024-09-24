@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTHUD</title>
+</head>
+<body style="margin: 0; position: absolute; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;">
+    <div class="hudContainer" id="HUD">
+        <div class="hudInfoContainer">
+            <div class="hudInfo-lives">
+                <div class="hudHeart"></div>
+                <div class="digital-counter">
+                    <p id="health-counter">3</p>
+                </div>
+            </div>
+
+            <div class="hudInfo-powerups">
+                <div class="powerup-speed">
+                    <div class="hudSpeed">
+                        <div class="hudShoes"></div>
+                        <div class="hudThunder"></div>
+                    </div>
+                    <div class="digital-counter">
+                        <p id="powerupSpeed-counter">3</p>
+                    </div>
+                </div>
+
+                <div class="powerup-bombs">
+                    <div class="hudBomb"></div>
+                    <div class="digital-counter">
+                        <p id="powerupBomb-counter">3</p>
+                    </div>
+                </div>
+
+
+                <div class="powerup-fire">
+                    <div class="hudFire"></div>
+
+                    <div class="digital-counter">
+                        <p id="powerupFire-counter">3</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hudInfo-alivePlayers">
+                <div class="alivePlayersIcons">
+                    <div class="playerIconContainer" id="hudPlayer-0">
+                        <div class="hudEmoji"></div>
+                        <!-- <div class="playerIcon playerIcon-blue"> -->
+                        <div class="playerIcon">
+
+                        </div>
+                        <div class="playerCross"></div>
+                        <div class="playerIconName">
+                            <p style="margin: 0;font-family: silkscreen; color:white;"></p>
+                        </div>
+                    </div>
+
+                    <div class="playerIconContainer" id="hudPlayer-1">
+                        <div class="hudEmoji"></div>
+                        <!-- <div class="playerIcon playerIcon-blue"> -->
+                        <div class="playerIcon">
+
+                        </div>
+                        <div class="playerCross"></div>
+                        <div class="playerIconName">
+                            <p style="margin: 0;font-family: silkscreen; color:white;"></p>
+                        </div>
+                    </div>
+                    <div class="playerIconContainer" id="hudPlayer-2">
+                        <div class="hudEmoji"></div>
+                        <!-- <div class="playerIcon playerIcon-blue"> -->
+                        <div class="playerIcon">
+
+                        </div>
+                        <div class="playerCross"></div>
+                        <div class="playerIconName">
+                            <p style="margin: 0;font-family: silkscreen; color:white;"></p>
+                        </div>
+                    </div>
+                    <div class="playerIconContainer" id="hudPlayer-3">
+                        <div class="hudEmoji"></div>
+                        <!-- <div class="playerIcon playerIcon-blue"> -->
+                        <div class="playerIcon">
+
+
+                        </div>
+                        <div class="playerCross"></div>
+                        <div class="playerIconName">
+                            <p style="margin: 0;font-family: silkscreen; color:white;"></p>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
+        </div>
+        <div class="hudContainerBorder">
+            <div class="hudContainerBackground">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+
+    @font-face {
+        font-family: 'silkscreen';
+        src: url('./fonts/silkscreen/Silkscreen-Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+    .hudEmoji {
+
+        position: absolute;
+        /* background-color: red; */
+        width: 25px;
+        height: 25px;
+        background-image: url('./assets/emojis/die.png');
+        background-repeat: no-repeat;
+        background-size: 25px 25px;
+        transform: translate(10px, 0px);
+        opacity: 0;
+        transition: transform 2s cubic-bezier(0.2, 0, 0.05, 1), opacity 2s cubic-bezier(0.2, 0, 0.05, 1);
+    }
+
+    .hudEmoji.show {
+        transform: translate(15px, -20px);
+        opacity: 1;
+    }
+    
+    .hudEmoji.fade-out {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+
+    .playerIconName {
+        position: absolute;
+        text-align: center;
+        margin: 0;
+        font-family: silkscreen;
+        font-size: 8px;
+        letter-spacing: -1px;
+        transform: translateY(21px);
+        color: white;
+        max-width: 60px;
+        text-wrap: wrap;
+        word-break: break-all;
+        white-space: initial;
+        user-select: none;
+        
+    }
+
+
+    .playerIconContainer {
+        /* display: flex; */
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 60px;
+        margin-left: 18px;
+        margin-right: 18px;
+
+    }
+
+    .playerCross {
+        position: absolute;
+        top: 14px;
+        height: 22px;
+        width: 22px;
+        background-image: url('./assets/cross.png');
+        background-repeat: no-repeat;
+        background-size: 22px 22px;
+        transform: translate(0px, 1px);
+        display: none;
+    }
+
+    .grayScale {
+        filter: grayscale(72%);
+    }
+    .playerIcon {
+
+        height: 22px;
+        width: 22px;
+
+        background-repeat: no-repeat;
+        background-size: 22px 22px;
+
+    }
+
+    .playerIcon-blue {
+        background-image: url('./assets/blue.png');
+    }
+    .playerIcon-red {
+        background-image: url('./assets/red.png');
+    }
+    .playerIcon-purple {
+        background-image: url('./assets/purple.png');
+    }
+    .playerIcon-green {
+        background-image: url('./assets/green.png');
+    }
+    
+
+    .alivePlayersIcons {
+        display: flex;
+        height: 30px;
+        width: 240px;
+        /* background-color: rgb(149, 149, 149); */
+    }
+
+
+
+    .powerup-fire{
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+
+    }
+
+    .hudFire {
+        /* position: absolute; */
+        height: 32px;
+        width: 32px;
+
+        background-image: url('./assets/fire.png');
+        background-repeat: no-repeat;
+        background-size: 32px 32px;
+        /* transform: translate(0px, -4px) */
+        /* transform: translateY(7px); */
+        /* transform: translate(-9px, 4px) */
+
+    }
+
+
+    .powerup-bombs{
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+
+    }
+
+    .hudBomb {
+        /* position: absolute; */
+        height: 43px;
+        width: 43px;
+
+        background-image: url('./assets/bomb.png');
+        background-repeat: no-repeat;
+        background-size: 43px 43px;
+        transform: translate(0px, -4px)
+
+    }
+
+    .powerup-speed {
+        display: flex;
+    }
+
+    .hudSpeed {
+        display: block;
+        height: 35px;
+        width: 40px;
+        margin-right: 12px;
+    }
+
+    .hudThunder {
+        position: absolute;
+        height: 21px;
+        width: 21px;
+        background-image: url('./assets/thunder.png');
+        background-repeat: no-repeat;
+        background-size: 21px 21px;
+        transform: translate(-9px, 4px);
+    }
+
+    .hudShoes {
+        position: absolute;
+        height: 40px;
+        width: 38px;
+        background-image: url('./assets/shoes.png');
+        background-repeat: no-repeat;
+        background-size: 38px 40px;
+    }
+
+
+    .digital-counter {
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: left;
+        justify-content: center;
+        border: 3px inset gray;
+        background-color: black;
+        width: 30px;
+        height: 30px;
+    }
+
+    .digital-counter p {
+        position: absolute;
+        text-align: center;
+        margin: 0;
+        font-family: silkscreen;
+        font-size: x-large;
+        transform: translateY(-3px);
+        color: white;
+        user-select: none;
+        
+    }
+
+    .digital-counter p.animate-slide-up {
+        animation: slide-up 0.5s ease-in-out forwards;
+
+    }
+
+    .digital-counter p.animate-slide-down{
+        animation: slide-down 0.5s ease-in-out forwards;
+
+    }
+
+
+    .hudHeart {
+        height: 40px;
+        width: 40px;
+        background-image: url('./assets/heart.png');
+        background-repeat: no-repeat;
+        background-size: 40px 40px;
+
+    }
+
+    .hudInfo-lives {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* background-color: rgb(0, 255, 255); */
+            width: 300px;
+            height: 100%;
+
+    }
+
+    .hudInfo-powerups {
+        display: flex;
+        align-items: center;
+        /* background-color: rgb(191, 0, 255); */
+            width: 100%;
+            height: 100%;
+        margin-right: 12px;
+    }
+
+
+    .hudInfo-alivePlayers {
+        display: flex;
+        align-items: center;
+        /* background-color: green; */
+        width: 100%;
+        height: 100%;
+    }
+
+    .hudInfoContainer {
+        display: flex;
+        padding-left: 15px;
+        padding-right: 15px;
+        position: relative;
+
+        /* ADJUST THESE TO MATCH WITH GAME */
+        /* background-color: rgba(0, 0, 0, 0.047); */
+        /* filter:brightness(70%); */
+        /* ADJUST THESE TO MATCH WITH GAME */
+        width: 726px;
+        height: 58px;
+        transform: translateY(58px);
+        margin: 0;
+    }
+
+
+
+
+    /* PRIOR */
+    .hudContainer {
+        width: 756px;
+        height: 58px; 
+        /* background-color: red; */
+        /* background-image: url('./assets/hardbrick.png'); */
+        /* background-repeat: repeat; */
+        /* background-size: 58px 58px; */
+    
+    }
+    .hudContainerBorder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-image: url('./assets/hardbrick.png');
+        background-repeat: repeat;
+        background-size: 29px 29px;
+    }
+
+    .hudContainerBackground {
+        width: 730px;
+        height: 36px; 
+
+        /* width: 100%; */
+        /* height: 100%; */
+        background-image: url('./assets/softbrick.png');
+
+        background-repeat: repeat;
+        background-size: 57px 39px;
+
+
+    }
+
+
+@keyframes slide-up {
+    0% {
+        transform: translateY(100%) translateX(0);
+        opacity: 0;
+    }
+    70% {
+        transform: translateY(-3px) translateX(0);
+        opacity: 1;
+    }
+    85% {
+        transform: translateY(-3px) translateX(-1px);
+    }
+    90% {
+        transform: translateY(-3px) translateX(1px);
+    }
+    95% {
+        transform: translateY(-3px) translateX(-0.5px);
+    }
+    100% {
+        transform: translateY(-3px) translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-down {
+    0% {
+        transform: translateY(-100%) translateX(0);
+        opacity: 0;
+    }
+    70% {
+        transform: translateY(-3px) translateX(0);
+        opacity: 1;
+    }
+    85% {
+        transform: translateY(-3px) translateX(-1px);
+    }
+    90% {
+        transform: translateY(-3px) translateX(1px);
+    }
+    95% {
+        transform: translateY(-3px) translateX(-0.5px);
+    }
+    100% {
+        transform: translateY(-3px) translateX(0);
+        opacity: 1;
+    }
+}
+
+
+</style>
+<script>
+    console.log("HUD LOADED");
+
+
+    class HUD {
+        constructor(DOM, vDOM)  {
+            this.dom = DOM;
+
+            this.health = this.dom.querySelector('#health-counter');
+            this.health.dataset.currentValue = vDOM.health;
+            this.health.textContent = vDOM.health;
+
+            this.powerupSpeed = this.dom.querySelector('#powerupSpeed-counter');
+            this.powerupSpeed.dataset.currentValue = 0;
+            this.powerupBomb = this.dom.querySelector('#powerupBomb-counter');
+            this.powerupBomb.dataset.currentValue = 0;
+            this.powerupFire = this.dom.querySelector('#powerupFire-counter');
+            this.powerupFire.dataset.currentValue = 0;
+
+            this.setPlayerIcons(vDOM.players);
+        }
+
+        setPlayerIcons(players) {
+            const clientPlayer = players.find(player => player.isClient);
+            if (clientPlayer) {
+                const playerIconContainer = this.dom.querySelector('#hudPlayer-0');
+                const playerNameElement = playerIconContainer.querySelector('.playerIconName p');
+                const playerIconElement = playerIconContainer.querySelector('.playerIcon');
+
+                playerNameElement.textContent = clientPlayer.name;
+                playerNameElement.style.backgroundColor = `${clientPlayer.color}`;
+                playerIconElement.classList.add(`playerIcon-${clientPlayer.color}`);
+                playerIconContainer.style.display = 'flex';
+
+            }
+
+            // Non client icons
+            players.forEach((player, idx) => {
+                if (!player.isClient && idx < 3) {
+                const playerIconContainer = this.dom.querySelector(`#hudPlayer-${idx+1}`);
+                const playerNameElement = playerIconContainer.querySelector('.playerIconName p');
+                const playerIconElement = playerIconContainer.querySelector('.playerIcon');
+                playerNameElement.textContent = player.name;
+                playerNameElement.style.backgroundColor = `${player.color}`;
+                playerIconElement.classList.add(`playerIcon-${player.color}`);
+                playerIconContainer.style.display = 'flex';
+
+                }
+            });
+        }
+
+
+        // displayInfo() {
+        //     console.log(`Info|| ${this.who}, ${this.players}, ${this.dom}`)
+        // }
+
+
+        updateCounter(counterElement, newNumber) {
+            // const counter = document.getElementById(counterElement);
+            // console.log(counter);
+            if (!counterElement) return;
+
+            const currentValue = parseInt(counterElement.dataset.currentValue, 10) || 0;
+
+
+            counterElement.classList.remove('animate-slide-up', 'animate-slide-down');
+
+
+            if (newNumber > currentValue) {
+                counterElement.classList.add('animate-slide-up');
+            } else if (newNumber < currentValue) {
+                counterElement.classList.add('animate-slide-down');
+            }
+
+
+            counterElement.textContent = newNumber;
+            counterElement.dataset.currentValue = newNumber;
+
+            counterElement.offsetWidth;
+
+
+            const handleAnimationEnd = () => {
+                counterElement.classList.remove('animate-slide-up', 'animate-slide-down');
+                counterElement.removeEventListener('animationend', handleAnimationEnd);
+            };
+
+            counterElement.addEventListener('animationend', handleAnimationEnd);
+            // counter.classList.add('animate-slide-up');
+        }
+
+        updateHealth(newHealthValue) {
+            this.updateCounter(this.health, newHealthValue)
+        }
+
+        updatePowerupSpeed(newPowerupValue) {
+            this.updateCounter(this.powerupSpeed, newPowerupValue)
+        }
+
+        updatePowerupBomb(newPowerupValue) {
+            this.updateCounter(this.powerupBomb, newPowerupValue)
+        }
+
+        updatePowerupFire(newPowerupValue) {
+            this.updateCounter(this.powerupFire, newPowerupValue)
+        }
+
+        kill(playerName) {
+            const playerContainer = Array.from(this.dom.querySelectorAll('.playerIconContainer')).find(container => {
+                return container.querySelector('.playerIconName p').textContent === playerName;
+            });
+
+            if (playerContainer) {
+                const playerIconElement = playerContainer.querySelector('.playerIcon');
+                const playerCross = playerContainer.querySelector('.playerCross');
+                playerIconElement.classList.add('grayScale');
+                playerCross.style.display = 'block';
+                this.emoji(playerName, "die");
+            }
+        }
+
+        emoji(playerName, emoji) {
+            const playerContainer = Array.from(this.dom.querySelectorAll('.playerIconContainer')).find(container => {
+                return container.querySelector('.playerIconName p').textContent === playerName;
+            });
+
+            if (playerContainer) {
+                const playerEmoji = playerContainer.querySelector('.hudEmoji');
+                playerEmoji.style.backgroundImage = `url(./assets/emojis/${emoji}.png)`;
+                playerEmoji.style.display = 'block';
+                playerEmoji.classList.remove('show');
+
+
+                void playerEmoji.offsetWidth;
+                
+                playerEmoji.classList.add('show');
+
+                setTimeout(() => {
+                    playerEmoji.classList.add('fade-out');
+                }, 1500);
+
+                setTimeout(() => {
+                    playerEmoji.style.display = 'none'
+                    playerEmoji.classList.remove('show', 'fade-out');
+                }, 2000);
+                // playerEmoji.style.display = 'none';
+            }
+
+        }
+
+
+    }
+
+    const dom = document.getElementById('HUD');
+    console.log(dom);
+    const vdom = {
+        health: 4,
+        powerLvl: {
+            speed: 0,
+            bombs: 0,
+            fire: 0,
+        },
+        players: [
+            {
+                isClient: false,
+                isAlive: true,
+                name: 'Chris',
+                color: 'blue',
+            },
+            {
+                isClient: false,
+                isAlive: true,
+                name: 'Lukas',
+                color: 'red',
+            },
+            {
+                isClient: false,
+                isAlive: true,
+                name: 'Anti',
+                color: 'purple',
+            },
+            {
+                isClient: true,
+                isAlive: true,
+                name: 'LukasAnti',
+                color: 'green',
+            },
+        ]
+    }
+    const vdom2 = {
+        health: 4,
+        powerLvl: {
+            speed: 0,
+            bombs: 0,
+            fire: 0,
+        },
+        players: [
+            {
+                isClient: true,
+                isAlive: true,
+                name: 'Chris',
+                color: 'blue',
+            },
+            {
+                isClient: false,
+                isAlive: true,
+                name: 'Lukas',
+                color: 'red',
+            },
+            {
+                isClient: false,
+                isAlive: true,
+                name: 'Anti',
+                color: 'purple',
+            },
+        ]
+    }
+    const hud = new HUD(dom, vdom);
+
+
+</script>
+</html>

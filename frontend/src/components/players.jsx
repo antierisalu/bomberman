@@ -4,9 +4,12 @@ import { ws } from "../websocket";
 import { updateGame } from "../script/update";
 import { InputHandler } from "../script/controls";
 import Chat from "./chat";
+import { HUD } from "../script/hud";
+
 
 let players = []; //not state but game class entities
 let cells = []; //
+let hud;
 
 const Players = (prop) => {
     window.addEventListener("resize", resizeAction);
@@ -70,6 +73,8 @@ const Players = (prop) => {
                 case "start":
                     initCellElements();
                     initPlayers();
+                    const dom = document.getElementById('HUD');
+                    hud = new HUD(dom, prop);                    
                     input = new InputHandler();
                     GameLoop(0);
                     break;
@@ -88,7 +93,7 @@ const Players = (prop) => {
                     });
                     break;
                 case "death":
-                    console.log(data);
+                    hud.kill(data.player.username)
                     if (data.player.username == client.name) {
                         players = [];
                         prop.killPlayer(false);
@@ -101,25 +106,23 @@ const Players = (prop) => {
                     }
                     break;
                 case "chat_message":
-                    console.log("received chat_message", data);
                     prop.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+                    hud.chatEmoji(data.player.username, data.content);
                     break;
                 case "damage":
-                    console.log(`player ${data.player.username} took damage`);
                     prop.updatePlayers((pleierid) => {
-                        console.log(
-                            "UPDATING PLAYER LIVES:",
-                            pleierid,
-                            data.player
-                        );
                         pleierid.forEach((player) => {
                             if (player.username === data.player.username) {
-                                console.log("updating", player);
+                                hud.emoji(player.username, "cry")
                                 player.lives = data.player.lives;
+                                if (player.username === prop.clientInfo.name){
+                                  hud.updateHealth(data.player.lives)
+                                }
                             }
                         });
                         return pleierid;
                     });
+                    
                     break;
                 case "winner":
                     console.log(data.player.username, "is the winner");
@@ -134,7 +137,12 @@ const Players = (prop) => {
         initCellElements();
         players.forEach((player) => {
             //update the cell info for player class when gamestate gets updated
-            player.cells = prop.gameState.GameGrid;
+            player.cells = prop.gameState.GameGrid; 
+            if (player.name === prop.clientInfo.name && hud !== undefined){
+            hud.updatePowerupSpeed(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.speed)
+            hud.updatePowerupBomb(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.bombs)
+            hud.updatePowerupFire(prop.gameState.Players[prop.clientInfo.index].powerUpLevel.flames)
+            }
         });
     }, [prop.gameState]);
 
@@ -167,15 +175,6 @@ const Players = (prop) => {
                 <div></div>
             )}
             <Chat messages={prop.messages} setMessages={prop.setMessages} />
-            <div className="hud">
-                <div className="hudPlayers">
-                    {prop.players.map((player, index) => (
-                        <div key={index} className="hudPlayer">
-                            {player.username} Lives:{player.lives}
-                        </div>
-                    ))}
-                </div>
-            </div>
             {prop.players.map((player, index) => (
                 <div>
                     {player.index !== -999 ? (

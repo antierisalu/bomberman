@@ -1,5 +1,6 @@
 import { LAR } from "../framework";
 import Players from "./players";
+import Hud from "./hud";
 import { sendMessage } from "../websocket";
 import Chat from "./chat";
 
@@ -75,6 +76,13 @@ const Level = (prop) => {
     return (
       <div>{alive ? 
           <div id="level">
+            <Hud
+            players={prop.players}
+            updatePlayers={prop.updatePlayers} 
+            updateGameState={prop.updateGameState} 
+            gameState={prop.gameState} 
+            clientInfo={prop.clientInfo}
+            />
             <div className="gameArea" id="gameArea">
               {cells.map((cell, index) => (
                 <div key={index}>

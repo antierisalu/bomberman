@@ -101,7 +101,7 @@ export class Player {
                                 }
                             }, 5000)
                         } else if (obstacle.DropType > 0) {
-                            console.log("i found a drop type", obstacle.DropType)
+                            // console.log("i found a drop type", obstacle.DropType)
                         }
                         sendMessage(JSON.stringify({type: 'powerup', position: {x:obsX,y:obsY}}))
                         obstacle.DropType = -1

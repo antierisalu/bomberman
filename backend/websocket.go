@@ -132,6 +132,18 @@ func reader(conn *websocket.Conn) {
 		case "join":
 			conns.Lock()
 
+			playerCount := 0
+			for _, p := range gameState.Players {
+				if p.Index > -999 {
+					playerCount++
+				}
+			}
+
+			log.Println(playerCount, gameState.Timer)
+			if playerCount > 3 && gameState.Timer.LobbyTimer {
+				gameState.Timer.TimeRemaining = 0
+			}
+
 			// link gameState player to connection
 			conns.m[conn] = &gameState.Players[msg.Player.Index]
 			conns.rm[msg.Player.Index] = conn

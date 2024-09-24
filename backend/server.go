@@ -84,18 +84,10 @@ func handleNewPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerIndex := gameState.AddPlayer(Player{
-		Username:     name,
-		Position:     Position{X: 0, Y: 0},
-		Lives:        3,
-		Speed:        1,
-		BombCount:    1,
-		BombRange:    1,
-		PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0},
-	})
+	playerIndex := gameState.AddPlayer(Player{Username: name, Position: Position{X: 0, Y: 0}, Lives: 3, Speed: 1, BombCount: 1, BombRange: 1, PowerUpLevel: PowerUpLevel{Speed: 0, Bombs: 0, Flames: 0}})
 	if !gameState.Timer.Active && !gameState.Started && len(gameState.Players) > 1 {
 		fmt.Println("STARTING TIMER")
-		gameState.StartTimer(1)
+		gameState.StartTimer(20)
 	}
 
 	jsonResponse, err := json.Marshal(playerIndex)

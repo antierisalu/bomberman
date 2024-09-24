@@ -80,11 +80,12 @@ func (g *GameState) StartTimer(totalTimeSeconds int) {
 		}
 		if g.Timer.TimeRemaining <= 0 {
 			g.Timer.Active = false
-			if g.Timer.LobbyTimer == true {
-				gameState.StartTimer(1)
+			if g.Timer.LobbyTimer {
+				gameState.StartTimer(10)
+				fmt.Println("CMOON")
 				g.Timer.LobbyTimer = false
 			}
-			if g.Timer.LobbyTimer == false && g.Timer.TimeRemaining == 0 {
+			if !g.Timer.LobbyTimer && g.Timer.TimeRemaining == 0 {
 				g.OnTimerEnd()
 			}
 

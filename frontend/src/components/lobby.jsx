@@ -64,7 +64,20 @@ const Lobby = (props) => {
             {props.isRegistered ? 
             <div>
                 {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
-                <Chat messages={props.messages} setMessages={props.setMessages}/> 
+                <Chat 
+                messages={props.messages} 
+                setMessages={props.setMessages}
+                style={{ 
+                    position: 'absolute',
+                    left: '600px',
+                    top: '-9px',
+                    padding: '10px',
+                    width: '200px',   
+                }}
+                messagesStyle={{
+                    height: '510px',
+                }}
+                /> 
                 <div className="players">{props.players.map(elem=><div>{elem.username} - {elem.color}</div>)}</div>
                 <button onClick={()=>sendMessage(JSON.stringify({ type:'ping'}))}>Ping Test</button>
             </div> : 

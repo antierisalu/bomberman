@@ -93,8 +93,9 @@ function updateDom(dom, prevProps, nextProps) {
             } else if (name in dom) {
                 dom[name] = nextProps[name]
                 if (name === "style" && typeof nextProps[name] === "object") {
-                    let keys = Object.keys(nextProps[name])
-                    dom.style[keys[0]] = nextProps[name][keys[0]]
+                    Object.keys(nextProps[name]).forEach((key)=>{
+                        dom.style[key] = nextProps[name][key]
+                    })
                 }
             } else {
                 dom.setAttribute(name, nextProps[name])

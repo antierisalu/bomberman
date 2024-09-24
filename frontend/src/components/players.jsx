@@ -90,7 +90,10 @@ const Players = (prop) => {
 
   return (
     <div>
-      <Chat messages={prop.messages} setMessages={prop.setMessages}/> 
+      <Chat 
+      messages={prop.messages} 
+      setMessages={prop.setMessages}
+      /> 
       <div className="hud">
         <div className="hudPlayers">
           {prop.players.map((player, index) => (

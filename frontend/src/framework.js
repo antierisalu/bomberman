@@ -6,10 +6,8 @@ function createElement(type, props, ...children) {
         }
         return [...acc, child];
     }, []);
-
     //validate children
     flattenedChildren.forEach(child=>{
-
         if (child && !child.type && typeof child === 'object'){
             const propsString = Object.entries(props).map(([key, value]) => {
                 return `${key}="${value}"`;
@@ -19,7 +17,6 @@ function createElement(type, props, ...children) {
             throw new Error("Te ei tohi panna objecteid JSXi sisse textina! "+errormessage+" object on konsoolis ka");
         }
     })
-
     return {
         type,
         props: {

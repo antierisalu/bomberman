@@ -1,6 +1,7 @@
 import { LAR } from "../framework";
 import Players from "./players";
 import { sendMessage } from "../websocket";
+import Chat from "./chat";
 
 let cells = [];
 
@@ -89,6 +90,8 @@ const Level = (prop) => {
               clientInfo={prop.clientInfo}
               alive={alive}
               killPlayer={killPlayer}
+              messages={prop.messages}
+              setMessages={prop.setMessages}
               />
             </div>
           </div> :

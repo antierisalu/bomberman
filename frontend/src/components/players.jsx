@@ -3,6 +3,7 @@ import { LAR } from "../framework";
 import { ws } from "../websocket";
 import { updateGame } from "../script/update";
 import { InputHandler } from "../script/controls";
+import Chat from "./chat";
 
 let players = [];//not state but game class entities
 let cells = []//
@@ -88,6 +89,10 @@ const Players = (prop) => {
                 })
               }
               break;
+            case "chat_message":
+            console.log('received chat_message', data)
+            prop.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+              break;
             case "damage":
               console.log(`player ${data.player.username} took damage`)
               prop.updatePlayers((pleierid)=>{
@@ -100,6 +105,7 @@ const Players = (prop) => {
                 })
                 return pleierid
               })
+              break;
             default:
 
               console.log("unknown data:",data.type)
@@ -113,6 +119,10 @@ const Players = (prop) => {
         player.cells = prop.gameState.GameGrid
       })
     },[prop.gameState])
+
+          
+        
+    
 
     let lastFrameTime = 0;
     let frame = 0;
@@ -134,6 +144,10 @@ const Players = (prop) => {
     } 
   return (
       <div>
+      <Chat 
+      messages={prop.messages} 
+      setMessages={prop.setMessages}
+      /> 
         <div className="hud">
           <div className="hudPlayers">
             {prop.players.map((player, index) => (

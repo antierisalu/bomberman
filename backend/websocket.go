@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -13,13 +14,13 @@ import (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
+	CheckOrigin:     func(r *http.Request) bool { return true }, ////sellega kinnitab millised võtab vastu
 }
 
 type Connections struct {
 	sync.RWMutex
 	m  map[*websocket.Conn]*Player
-	rm map[int]*websocket.Conn
+	rm map[int]*websocket.Conn //sama sisu mis eelmises aga key ja value on vastupidi
 }
 
 type Message struct {
@@ -30,6 +31,8 @@ type Message struct {
 	Position  Position  `json:"position"`
 	Players   []Player  `json:"players"`
 	GameState GameState `json:"gameState"`
+	Content   string    `json:"content"`
+	//kasuta seda strukti ja salvesta frontendis tulev asi variabli ja saada kõikidele klientidele edasi fronti
 }
 
 type Position struct {
@@ -61,6 +64,7 @@ var conns = Connections{
 	rm: make(map[int]*websocket.Conn),
 }
 
+// võtab tava requesti ja teeb selle websoketiks
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -118,6 +122,9 @@ func reader(conn *websocket.Conn) {
 			conn.WriteMessage(messageType, message) // saada endale tagasi et joinisid
 			broadcastPlayerList()                   // saadab koigile playerlisti
 			conns.Unlock()
+		case "chat_message":
+			fmt.Println("received chat message", msg.Content)
+			broadcast(conn, messageType, msg)
 		case "gameState":
 			var reply Message
 			reply.Type = "gameState"
@@ -224,6 +231,8 @@ func respond(from *websocket.Conn, messageType int, message Message) {
 	from.WriteMessage(messageType, r)
 }
 
+// LUKAS TEGI SELLE, KUI PUCCIS SIIS TEAB KES TEGI
+// saadab kõikidele klientidele sõnumid välja
 func broadcast(from *websocket.Conn, messageType int, message Message) {
 	conns.Lock()
 	if from != nil {

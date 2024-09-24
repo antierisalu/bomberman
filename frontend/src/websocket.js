@@ -18,9 +18,9 @@ export function StartClientWebsocket(clientInfo, updatePlayers, updateGameState)
             case "gameState":
                 updateGameState(data.gameState);
                 break;
-            case "pong":
-                console.log("pong pong")
-                break;
+            case "chat_message":
+                console.log('nahui')
+                setMessages((prevMessages) => [...prevMessages, { content: data.content, sender: data.sender}]);
         }
     }
 }

@@ -430,3 +430,71 @@ body {
 .leftBoxes, .rightBoxes {
   flex-direction: column;
 }
+
+
+/* Chat component */
+.chat-container {
+  position: absolute;
+  left: 750px;
+  top: -9px;
+  padding: 10px;
+  width: 200px;
+}
+
+
+.chat-messages {
+  height: 549px;
+  overflow-y: scroll;
+  background-color: #888;
+  padding: 10px;
+  border: 2px solid black;
+  max-width: 100%;  /* Ensures it doesn't overflow horizontally */
+  overflow-y: auto; /* Allows vertical scrolling for long content */
+  word-wrap: break-word;  /* Forces long words to break and wrap */
+  word-break: break-word;  /* Ensures that long words break inside the container */
+}
+
+
+.messages {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+  color: whitesmoke;
+  max-width: 190px;
+  
+}
+.message {
+  white-space: pre-wrap; /* Preserves spaces, line breaks, and prevents overflow */
+  word-break: break-word; /* Breaks long words that don't fit */
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.chat-textarea {
+  width: 100%;
+  padding: 10px;
+  /* border: 1px solid #ccc; */
+  resize: none;
+  overflow: hidden;
+  border-radius: 4px;
+  /* margin-right: 100px; */
+  box-sizing: border-box;
+}
+
+.send-button {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.bomb-icon {
+  background-image: url('./assets/bomb.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

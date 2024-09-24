@@ -1,6 +1,7 @@
 import { LAR } from "../framework"
-import { StartClientWebsocket } from '../websocket.js'
 import { sendMessage, ws } from "../websocket";
+import  Chat  from "./chat"
+
 
 const Lobby = (props) => {
 
@@ -49,6 +50,11 @@ const Lobby = (props) => {
                     if (data.gameState.Timer.TimeRemaining < 1){
                         props.sendToGame(true)
                     }
+                    break
+                case "chat_message":
+                    console.log('received chat_message', data)
+                    props.setMessages((prevMessages) => [...prevMessages, data]); // Update chat messages
+                    break;
                 }
             }
         }
@@ -58,6 +64,20 @@ const Lobby = (props) => {
             {props.isRegistered ? 
             <div>
                 {timer>0 ? <div className="timer">{timer} seconds remaining</div> : "Waiting for players"}
+                <Chat 
+                messages={props.messages} 
+                setMessages={props.setMessages}
+                style={{ 
+                    position: 'absolute',
+                    left: '600px',
+                    top: '-9px',
+                    padding: '10px',
+                    width: '200px',   
+                }}
+                messagesStyle={{
+                    height: '510px',
+                }}
+                /> 
                 <div className="players">{props.players.map(elem=><div>{elem.username}</div>)}</div>
             </div> : 
             <div>       

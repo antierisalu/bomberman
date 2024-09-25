@@ -19,6 +19,14 @@ The Bomberman Game
 >>cd bomberman-dom/
 >>```
 >
+>#### 2.5) Check npm and node versions:
+> Make sure your node version is >= v22.8.0
+> Make sure your npm version is >= 10.8.2
+>>```bash
+>>node --version
+>>npm --version
+>>```
+>
 >#### 3) Install npm modules with init script:
 >>```bash
 >>npm run init

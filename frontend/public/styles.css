@@ -14,11 +14,44 @@ html {
 
 .winner{
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top:50vh;
-  left:50vh;
+  width: 416px;
+  height: 200px;
   font-size: xx-large;
+  background-color: #24221fc2;
+  border: 3px solid #bb9959;
+  transform: translate(160px,-460px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 3px;
+  color: wheat;
+  font-family: 'silkscreen';
+  padding: 10px;
+  user-select: none;
+}
+
+.winner button, .actuallyloser button {
+  font-family: 'silkscreen';
+  background-color: #24221fc2;
+  border: 3px solid #bb9959;
+  border-radius: 3px;
+  color: wheat;
+  padding: 10px;
+  font-size: large;
+}
+
+.winner button:hover, .actuallyloser button:hover{
+  cursor: pointer;
+  background-color: #24221fed;
+  border-color: #eac98a;
+  color: #d3b06d;
+}
+
+.actuallyloser {
+  position: relative;
+  transform: none;
 }
 
 body {

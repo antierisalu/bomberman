@@ -103,8 +103,8 @@ const Level = (prop) => {
               />
             </div>
           </div> :
-          <div>
-            <span>u ded</span>
+          <div class="winner actuallyloser">
+            <span>You Died!</span>
             <button onClick={()=> window.location.reload()}>Main Menu</button>
           </div>
           }

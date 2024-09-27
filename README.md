@@ -19,6 +19,14 @@ The Bomberman Game
 >>cd bomberman-dom/
 >>```
 >
+>#### 2.5) Check npm and node versions:
+> Make sure your node version is >= v22.8.0
+> Make sure your npm version is >= 10.8.2
+>>```bash
+>>node --version
+>>npm --version
+>>```
+>
 >#### 3) Install npm modules with init script:
 >>```bash
 >>npm run init
@@ -35,4 +43,22 @@ The Bomberman Game
 >```
 > <br/>
 ---
+---
+---
+---
+><br/>
+>
+># How to play
+>
+>>
+>### 1) WASD or arrow keys for movement
+>
+>### 2) Spacebar for placing bombs
+>
+>### 3) There are three powerups:
+> - Speed - makes you faster for 5 seconds
+> - Bomb - gives you an extra bomb
+> - Flames - makes your bombs explode further
+>### 4) Last alive is the winner
+> <br/>
 ---
